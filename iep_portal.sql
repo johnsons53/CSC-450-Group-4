@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Feb 12, 2022 at 10:49 PM
+-- Generation Time: Feb 13, 2022 at 12:06 AM
 -- Server version: 5.7.34
 -- PHP Version: 7.4.21
 
@@ -30,8 +30,15 @@ SET time_zone = "+00:00";
 CREATE TABLE `admin` (
   `admin_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `admin_status` varchar(20) DEFAULT NULL
+  `admin_status` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `admin`
+--
+
+INSERT INTO `admin` (`admin_id`, `user_id`, `admin_status`) VALUES
+(1, 11, 1);
 
 -- --------------------------------------------------------
 
@@ -117,6 +124,14 @@ CREATE TABLE `provider` (
   `provider_title` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `provider`
+--
+
+INSERT INTO `provider` (`provider_id`, `user_id`, `provider_title`) VALUES
+(1, 15, 'teacher'),
+(2, 16, 'teacher');
+
 -- --------------------------------------------------------
 
 --
@@ -139,7 +154,7 @@ CREATE TABLE `report` (
 CREATE TABLE `student` (
   `student_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `provider_id` int(11) NOT NULL,
+  `provider_id` int(11) DEFAULT NULL,
   `student_school` varchar(50) DEFAULT NULL,
   `student_grade` varchar(10) DEFAULT NULL,
   `student_homeroom` varchar(50) DEFAULT NULL,
@@ -151,6 +166,16 @@ CREATE TABLE `student` (
   `student_eval_status` varchar(20) DEFAULT NULL,
   `student_iep_status` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `student`
+--
+
+INSERT INTO `student` (`student_id`, `user_id`, `provider_id`, `student_school`, `student_grade`, `student_homeroom`, `student_dob`, `student_eval_start`, `student_eval_due`, `student_iep_review_start`, `student_iep_due`, `student_eval_status`, `student_iep_status`) VALUES
+(1, 17, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, 18, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, 19, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 20, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -184,6 +209,22 @@ CREATE TABLE `user` (
   `user_district` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_type` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`user_id`, `user_name`, `user_password`, `user_first_name`, `user_last_name`, `user_email`, `user_phone`, `user_address`, `user_city`, `user_district`, `user_type`) VALUES
+(11, 'Reginald.Dax', 'appleChair123!', 'Reginald', 'Dax', 'reginald.dax@example.com', '1234567890', '2234 Example Street', 'Randomburg', 'Randomburg SD 234', 'admin'),
+(12, 'Julian.Crusher', 'appleChair123!', 'Julian', 'Crusher', 'julian.crusher@example.com', '1234567891', '2235 Example Street', 'Randomburg', 'Randomburg SD 235', 'user'),
+(13, 'Christine.Chapel', 'appleChair123!', 'Christine', 'Chapel', 'christine.chapel@example.com', '1234567892', '2236 Example Street', 'Randomburg', 'Randomburg SD 236', 'user'),
+(14, 'Hikaru.Scott', 'appleChair123!', 'Hikaru', 'Scott', 'Hikaru.Scott@example.com', '1234567893', '2237 Example Street', 'Randomburg', 'Randomburg SD 237', 'user'),
+(15, 'Nerys.Chekov', 'appleChair123!', 'Nerys', 'Chekov', 'Nerys.Chekov@example.com', '1234567894', '2238 Example Street', 'Randomburg', 'Randomburg SD 238', 'provider'),
+(16, 'Nyota.Kira', 'appleChair123!', 'Nyota', 'Kira', 'Nyota.Kira@example.com', '1234567895', '2239 Example Street', 'Randomburg', 'Randomburg SD 239', 'provider'),
+(17, 'Hikaru.Paris', 'appleChair123!', 'Hikaru', 'Paris', 'Hikaru.Paris@example.com', '1234567896', '2240 Example Street', 'Randomburg', 'Randomburg SD 240', 'student'),
+(18, 'Deanna.Paris', 'appleChair123!', 'Deanna', 'Paris', 'Deanna.Paris@example.com', '1234567897', '2241 Example Street', 'Randomburg', 'Randomburg SD 241', 'student'),
+(19, 'Julian.Uhura', 'appleChair123!', 'Julian', 'Uhura', 'Julian.Uhura@example.com', '1234567898', '2242 Example Street', 'Randomburg', 'Randomburg SD 242', 'student'),
+(20, 'James.McCoy', 'appleChair123!', 'James', 'McCoy', 'James.McCoy@example.com', '1234567899', '2243 Example Street', 'Randomburg', 'Randomburg SD 243', 'student');
 
 --
 -- Indexes for dumped tables
@@ -275,7 +316,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `document`
@@ -305,7 +346,7 @@ ALTER TABLE `objective`
 -- AUTO_INCREMENT for table `provider`
 --
 ALTER TABLE `provider`
-  MODIFY `provider_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `provider_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `report`
@@ -317,13 +358,13 @@ ALTER TABLE `report`
 -- AUTO_INCREMENT for table `student`
 --
 ALTER TABLE `student`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Constraints for dumped tables
