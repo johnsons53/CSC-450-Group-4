@@ -1,0 +1,23 @@
+/* style.css - IEP Portal stylesheet
+  Spring 100 CSC 450 Capstone, Group 4
+  Author: Sienna-Rae Johnson
+  Written: 02/11/2022
+  Revised: N/A
+  */
+
+body {
+  color: black;
+  font-family:'Segoe UI', Tahoma, 'Geneva', Verdana, sans-serif;
+  margin: 0em;
+}
+
+h1 {
+  margin: 0.2em;
+  text-align: center;
+}
+
+header {
+  background-color: rgb(217, 252, 247);
+  justify-content: center;
+  height: fit-content;
+}
