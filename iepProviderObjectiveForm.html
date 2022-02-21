@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- iepProviderGoalForm.html - IEP Portal Provider Add/Edit Goal form
+      Spring 100 CSC 450 Capstone, Group 4
+      Author: Lisa Ahnell
+      Date Created: 02/21/2022
+      Revised: n/a
+    -->
+    <title>IEP Portal: Objective Detail Form</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+  <body>
+    <header>
+      <!-- Insert logo image here -->
+      <h1>Objective Detail Form</h1>
+    </header>
+    <div id="providerObjectiveForm">
+        <form action="" method="post">
+            
+            <!-- Hidden field with objective_id-->
+            <div>
+                <input type="hidden" id="objective_id" value="0">
+            </div>
+            <!-- Hidden field with goal_id-->
+            <div>
+                <input type="hidden" id="goal_id" value="0">
+            </div>
+            
+
+            <!-- Disabled field to show student name -->
+            <div>
+                <label for="student_name">Student Name</label>
+                <input type="text" id="student_name" value="First McLast" disabled>
+            </div>
+            <!-- Disabled field for goal label -->
+            <div>
+                <label for="goal_label">Goal Label</label>
+                <input type="text" id="goal_label" value="Goal Label" disabled>
+            </div>
+
+            <!-- Text field for objective_label -->
+            <div>
+                <label for="objective_label">Objective Label</label>
+                <input type="text" id="objective_label">
+            </div>
+            <!-- Text field for objective_text -->
+            <div>
+                <label for="objective_text">Objective Desctiption</label>
+                <textarea id="objective_text" rows="6" cols="40"></textarea>
+            </div>
+
+            <!-- Number picker for objective_attempts -->
+            <div>
+                <label for="objective_attempts">Objective Attempts</label>
+                <input type="number" id="objective_attempts" value="10">
+            </div>
+
+            <!-- Number picker for objective_target -->
+            <div>
+                <label for="objective_target">Objective Target</label>
+                <input type="number" id="objective_target" value="7">
+            </div>
+
+            <!-- Radio buttons to set objective_status -->
+            <div>
+                <label for="objective_status">Objective Status</label>
+                <label><input type="radio" name="objective_status" value="0">Active</label>
+                <label><input type="radio" name="objective_status" value="1">Complete</label>
+            </div>
+            <!--Submit button to Save goal-->
+            <div>
+                <input type="submit" class="submit" value="Save Objective">
+            </div>
+
+
+        </form>
+    </div>
+
+    <div id="navigation">
+        <a href="iepHome.html" class="navigation">Return to Dashboard</a>
+    </div>
+
+  </body>
+</html>
