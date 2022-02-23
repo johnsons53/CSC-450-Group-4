@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- iepHome.html - IEP Portal home page test file
+    <!-- iepHome.html - IEP Portal home page
       Spring 100 CSC 450 Capstone, Group 4
       Author: Sienna-Rae Johnson
       Date Written: 02/11/2022
@@ -15,11 +14,56 @@
   </head>
 
   <body>
-    <header>
-      <!-- Insert logo image here -->
-      <h1>IEP Portal Home</h1>
-    </header>
-    
+    <!-- Page is encompassed in grid -->
+    <div class="gridContainer">
+      <header>
+        <!-- Insert logo image here -->
+        <h1>IEP Portal</h1>
+        <div id="accountHolderInfo">
+          <!-- Username, messages button, and account settings button here -->
+        </div>
+        <div id="horizontalNav">
+          <!-- Links are inactive: no further pages have been built -->
+          <a class="hNavButton" href=""><h3 class="button">Documents</h3></a>
+          <a class="hNavButton" href=""><h3>Goals</h3></a>
+          <a class="hNavButton" href=""><h3>Events</h3></a>
+          <a class="hNavButton" href=""><h3>Messages</h3></a>
+          <a class="hNavButton" href=""><h3>Information</h3></a>
+          <a class="hNavButton" href=""><h3>Settings</h3></a>
+        </div>
+      </header>
 
+      <!-- Vertical navigation bar -->
+      <div class="left" id="verticalNav">
+        <h3>Navigation</h3>
+        <a class="vNavButton" href=""><h3>Student #1</h3></a>
+        <a class="vNavButton" href=""><h3>Student #2</h3></a>
+        <a class="vNavButton" href=""><h3>Student #3</h3></a>
+      </div>
+
+      <!-- Main content of page -->
+      <div class="middle" id="mainContent">
+        <h3>Goals</h3>
+        <div class="contentCard">
+          <h4>Goal #1</h4>
+          <p>Goal #1 example text</p>
+        </div>
+
+        <div class="contentCard">
+          <h4>Goal #2</h4>
+          <p>Goal #2 example text</p>
+        </div>
+
+        <div class="contentCard">
+          <h4>Goal #3</h4>
+          <p>Goal #3 example text</p>
+        </div>
+      </div>
+      
+      <footer>
+        <!-- Insert footer info here -->
+      </footer>
+
+    </div>
   </body>
 </html>

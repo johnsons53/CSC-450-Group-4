@@ -6,21 +6,13 @@
   02/21/2022 by Lisa Ahnell : added .navigation for navigation links
   */
 
+
+
+/* ********** Page settings ********** */
 body {
   color: black;
-  font-family:'Segoe UI', Tahoma, 'Geneva', Verdana, sans-serif;
+  font-family: 'Segoe UI', Tahoma, 'Geneva', Verdana, sans-serif;
   margin: 0em;
-}
-
-h1 {
-  margin: 0.2em;
-  text-align: center;
-}
-
-header {
-  background-color: rgb(217, 252, 247);
-  justify-content: center;
-  height: fit-content;
 }
 
 .navigation {
@@ -28,4 +20,136 @@ header {
   padding: 2px, 5px, 2px, 5px;
   border-radius: 5px;
   border: 1px solid black;
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-areas:
+    'top top top top top top'
+    'left middle middle middle middle middle'
+    'bottom bottom bottom bottom bottom bottom';
+}
+
+/* ********** Text-specific settings ********** */
+a {
+  border: none;
+  color: black;
+  margin: 0em 0em;
+  padding: 0.2em 0em;
+  text-align: center;
+  text-decoration: none;
+}
+
+h1 {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', Verdana, sans-serif;
+  grid-area: header-left;
+  margin: 0em;
+  padding: 0.3em 0.5em;
+  text-align: left;
+}
+
+h2 {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', Verdana, sans-serif;
+  margin: 0.2em 1.5em;
+  text-align: right;
+  font-size: medium;
+}
+
+h3 {
+  margin: 0em;
+  padding: 0.5em;
+}
+
+h4 {
+  margin: 0em;
+  padding: 0em;
+}
+
+
+/* ********** Header section settings ********** */
+#accountHolderInfo {
+  grid-area: header-right;
+  margin: 0em;
+  padding: 1em 0em;
+}
+
+header {
+  background-color: #d8fdf4;
+  display: grid;
+  grid-template-areas: 
+    'header-left header-left header-mid header-mid header-right header-right'
+    'header-bottom header-bottom header-bottom header-bottom header-bottom header-bottom';
+  grid-area: top;
+  height: fit-content;
+}
+
+
+/* ********** Horizontal navigation settings ********** */
+#horizontalNav {
+  display: flex;
+  flex-flow: row wrap;
+  grid-area: header-bottom;
+  justify-content: space-around;
+}
+
+.hNavButton {
+  background-color: #d8fdf4;
+  min-width: 16.66%;
+}
+
+.hNavButton:hover {
+  background-color: #ebfffa; 
+}
+
+.hNavButton:active {
+  background-color: #c2f0e4;
+}
+
+
+/* ********** Left side settings ********** */
+#verticalNav {
+  background-color: #fff9e9;
+  display: flex;
+  flex-flow: column wrap;
+  grid-area: left;
+  padding: 0em;
+}
+
+.vNavButton {
+  background-color: #fff9e9;
+  text-align: left;
+}
+
+.vNavButton:hover {
+  background-color: #fffdf6;
+}
+
+.vNavButton:active {
+  background-color: #fcf3d9;
+}
+
+
+/* ********** Middle area settings ********** */
+#mainContent {
+  display: flex;
+  flex-flow: column wrap;
+  grid-area: middle;
+  justify-content: space-around;
+  padding: 0.3em;
+}
+
+.contentCard {
+  border: solid black 1px;
+  border-radius: 5px;
+  margin: 0.2em;
+  padding: 0.4em;
+}
+
+
+/* ********** Responsive settings ********** */
+@media (max-width: 600px) {
+  #horizontalNav {
+    flex-flow: column wrap;
+    justify-content: center;
+  }
 }
