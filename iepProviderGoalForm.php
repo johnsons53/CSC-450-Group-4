@@ -10,7 +10,7 @@
       Date Created: 02/18/2022
       Revised: 02/21/22 Form fields created
     -->
-    <title>IEP Portal</title>
+    <title>IEP Portal: Goal Detail Form</title>
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
 
@@ -121,47 +121,49 @@ function test_input($data) {
             
             <!-- Hidden field with goal_id-->
             <div>
-                <input type="hidden" id="goal_id" value="<?php echo $goal_id;?>">
+                <input type="hidden" id="goal_id" name="goal_id" value="<?php echo $goal_id;?>">
                 <span class="error"><?php echo $goal_id_err;?></span>
             </div>
             <!-- Hidden field with student_id-->
             <div>
-                <input type="hidden" id="student_id" value="<?php echo $student_id;?>">
+                <input type="hidden" id="student_id" name="student_id" value="<?php echo $student_id;?>">
                 <span class="error"><?php echo $student_id_err;?></span>
             </div>
 
             <!-- Disabled field to show student first name -->
+            <!-- TODO: Combine student first name and last name into single field, populated with data from user table -->
             <div>
                 <label for="student_first_name">Student First Name</label>
-                <input type="text" id="student_first_name" value="<?php echo $student_first_name;?>" disabled>
+                <input type="text" id="student_first_name" name="student_first_name" value="<?php echo $student_first_name;?>" disabled>
                 <span class="error"><?php echo $student_first_name_err;?></span>
             </div>
 
             <!-- Disabled field to show student last name -->
             <div>
                 <label for="student_last_name">Student Last Name</label>
-                <input type="text" id="student_last_name" value="<?php echo $student_last_name;?>" disabled>
+                <input type="text" id="student_last_name" name="student_last_name" value="<?php echo $student_last_name;?>" disabled>
                 <span class="error"><?php echo $student_last_name_err;?></span>
             </div>
             <!-- Text field for goal_label-->
             <div>
                 <label for="goal_label">Goal Label</label>
-                <input type="text" id="goal_label" value="<?php echo $goal_label;?>">
+                <input type="text" id="goal_label" name="goal_label" value="<?php echo $goal_label;?>">
                 <span class="error"><?php echo $goal_label_err;?></span>
             </div>
             <!-- Text field for goal_category-->
             <div>
                 <label for="goal_category--">Goal Category</label>
-                <input type="text" id="goal_category" value="<?php echo $goal_category;?>">
+                <input type="text" id="goal_category" name="goal_category" value="<?php echo $goal_category;?>">
                 <span class="error"><?php echo $goal_category_err;?></span>
             </div>
             <!-- Text field for goal_description-->
             <div>
                 <label for="goal_description">Goal Description</label>
-                <textarea id="goal_description" rows="6" cols="40"><?php echo $goal_description; ?></textarea>
+                <textarea id="goal_description" name="goal_description" rows="6" cols="40"><?php echo $goal_description; ?></textarea>
                 <span class="error"><?php echo $goal_description_err;?></span>
             </div>
             <!--Submit button to Save goal-->
+            <!-- Go back to provider dashboard and reload on submit? -->
             <div>
                 <input type="submit" class="submit" value="Save Goal">
             </div>
