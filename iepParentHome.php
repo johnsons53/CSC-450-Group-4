@@ -7,13 +7,25 @@
       Spring 100 CSC 450 Capstone, Group 4
       Author: Lisa Ahnell, Sienna-Rae Johnson
       Date Written: 02/26/2022
-      Revised: N/A
+      Revised: 02/28/2022 Added containers for expanded view. Began setting up PHP sections.
     -->
     <title>IEP Portal: Parent Home</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="iepDetailView.js"></script>
   </head>
 
   <body>
+    <!-- TODO Add PHP here to manage variables and queries to database -->
+    <?php 
+    // Variables needed: array of student_id values associated with the parent user
+    // array of student names, pulled from user table and combined into one string for display
+    // selected student to control which student's records are displayed
+    // array of selected student values from student table
+    // array for selected student's current goals
+    // array for selected student's current objectives
+    // report data for creating graph
+    //  
+    ?>
     <!-- Page is encompassed in grid -->
     <div class="gridContainer">
       <header>
@@ -82,13 +94,36 @@
                   <meter min="0" max="10" high="7" low="4" optimum="10" value="5">5</meter>
               </p>
 
-              <!-- Whne view is expanded, display graph of report observed values over time -->
+              
 
+              <!-- When view is expanded, display graph of report observed values over time -->
+              <div class="expandedDetails">
+                <!-- Objective Description, Latest report date and graph of report data -->
+                <!-- TODO include PHP to display values for each tag -->
+                <!-- TODO Toggle between hidden and displayed using JavaScript -->
+                <p>Description:</p> 
+                <p>Latest Report Date:</p>
+                <p>Report Data</p>
+              </div>
               <!-- Button to expand the objective card for more detailed information -->
-              <button type="custom" id="objectiveDetails">+</button>
+              <button type="custom" id="objectiveDetails" onclick="showHide(this);">+</button>
           </div>
-          <!-- Button to expand the goal card for mor detailed information -->
-          <button type="custom" id="goalDetails">+</button>
+
+          <div>
+            <div class="expandedDetails">
+            <!-- Goal Category, Description, Date Range  -->
+            <!-- TODO include PHP to display values for each tag -->
+            <!-- TODO Toggle between hidden and displayed using JavaScript -->
+            <p>Category:</p>
+            <p>Description:</p>
+            <p>Date Range:</p>
+            </div>
+            <!-- Button to expand the goal card for more detailed information -->
+            <button type="custom" id="goalDetails" onclick="showHide(this);">+</button>
+
+          </div>
+
+          
         </div>
       
       <footer>

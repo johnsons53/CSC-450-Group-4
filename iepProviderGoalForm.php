@@ -20,64 +20,41 @@
 // define variables from form and set to empty values
 // This is not the final version, since some values will be sent when the page
 // loads.
-$goal_id_err =
-$student_id_err =
-$student_first_name_err =
-$student_last_name_err =
+
 $goal_label_err =
 $goal_category_err =
 $goal_description_err = "";
 
 
-// Goal ID, Student ID, student first name and student last name should
-// be sent from previous page
-$goal_id = "0";
-$student_id = "0";
-$student_first_name = "First";
-$student_last_name = "McLast";
+// if updating or deleting an existing goal:    
+    // goal_id, student_id, student_name, sent from calling page
+    $goal_id = "0";
+    $student_id = "0";
+    $student_first_name = "First";
+    $student_last_name = "McLast";
 
-// These values can be modified by this form
-$goal_label = 
-$goal_category = 
-$goal_description = "";
+    // use goal_id to populate goal_label, goal_catagory, goal_description
+
+
+// if creating a new goal:
+    // no value for goal_id,
+    // student_id, student_name sent from calling page
+
+    // goal_label, goal_category, goal_description will be blank
+
+    $goal_label = 
+    $goal_category = 
+    $goal_description = "";
 
 // Has the form been submitted? If not, can display blank values, if so, 
 // validate form
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Test inputs to make sure there are values when form is submitted
-    if (empty($_POST["goal_id"])) {
-        $goal_id_err = "Goal ID is required";
-    } else {
-        $goal_id = test_input($_POST["goal_id"]);
-    }
+
     
-    if (empty($_POST["student_id"])) {
-        $student_id_err = "Student ID is required";
-    } else {
-        $student_id = test_input($_POST["student_id"]);
-    }
-    
-    if (empty($_POST["student_first_name"])) {
-        $student_first_name_err = "Student First Name is required";
-    } else {
-        $student_first_name = test_input($_POST["student_first_name"]);
-        // Validate name input
-        if (!preg_match("/^[a-zA-Z-' ]*$/",$student_first_name)) {
-            $student_first_name_err = "Only letters and white space allowed";
-        }
-    }
-    
-    if (empty($_POST["student_last_name"])) {
-        $student_last_name_err = "Student Last Name is required";
-    } else {
-        $student_last_name = test_input($_POST["student_last_name"]);
-        // Validate name input
-        if (!preg_match("/^[a-zA-Z-' ]*$/",$student_last_name)) {
-            $student_last_name_err = "Only letters and white space allowed";
-        }
-    }
-    
+    // These are the fields that are modified by this form. They aren't mandatory in the database,
+    // but they are required here.
     if (empty($_POST["goal_label"])) {
         $goal_label_err = "Goal Label is required";
     } else {
@@ -122,12 +99,12 @@ function test_input($data) {
             <!-- Hidden field with goal_id-->
             <div>
                 <input type="hidden" id="goal_id" name="goal_id" value="<?php echo $goal_id;?>">
-                <span class="error"><?php echo $goal_id_err;?></span>
+                
             </div>
             <!-- Hidden field with student_id-->
             <div>
                 <input type="hidden" id="student_id" name="student_id" value="<?php echo $student_id;?>">
-                <span class="error"><?php echo $student_id_err;?></span>
+                
             </div>
 
             <!-- Disabled field to show student first name -->
@@ -135,32 +112,32 @@ function test_input($data) {
             <div>
                 <label for="student_first_name">Student First Name</label>
                 <input type="text" id="student_first_name" name="student_first_name" value="<?php echo $student_first_name;?>" disabled>
-                <span class="error"><?php echo $student_first_name_err;?></span>
+                
             </div>
 
             <!-- Disabled field to show student last name -->
             <div>
                 <label for="student_last_name">Student Last Name</label>
                 <input type="text" id="student_last_name" name="student_last_name" value="<?php echo $student_last_name;?>" disabled>
-                <span class="error"><?php echo $student_last_name_err;?></span>
+                
             </div>
             <!-- Text field for goal_label-->
             <div>
                 <label for="goal_label">Goal Label</label>
                 <input type="text" id="goal_label" name="goal_label" value="<?php echo $goal_label;?>">
-                <span class="error"><?php echo $goal_label_err;?></span>
+                <span class="error">* <?php echo $goal_label_err;?></span>
             </div>
             <!-- Text field for goal_category-->
             <div>
                 <label for="goal_category--">Goal Category</label>
                 <input type="text" id="goal_category" name="goal_category" value="<?php echo $goal_category;?>">
-                <span class="error"><?php echo $goal_category_err;?></span>
+                <span class="error">* <?php echo $goal_category_err;?></span>
             </div>
             <!-- Text field for goal_description-->
             <div>
                 <label for="goal_description">Goal Description</label>
                 <textarea id="goal_description" name="goal_description" rows="6" cols="40"><?php echo $goal_description; ?></textarea>
-                <span class="error"><?php echo $goal_description_err;?></span>
+                <span class="error">* <?php echo $goal_description_err;?></span>
             </div>
             <!--Submit button to Save goal-->
             <!-- Go back to provider dashboard and reload on submit? -->
