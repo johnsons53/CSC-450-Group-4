@@ -12,6 +12,8 @@
     <title>IEP Portal: Parent Home</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="iepDetailView.js"></script>
+
+    
   </head>
 
   <body>

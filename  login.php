@@ -1,4 +1,9 @@
-
+<!DOCTYPE html>
+<html>
+<head>
+  <title>login</title>
+</head>
+<body>
 <?php // login.php
     /* login.php - Database Login information
       Spring 100 CSC 450 Capstone, Group 4
@@ -11,14 +16,40 @@
      To use on other pages include this:
      <?php
      require_once 'login.php';
-     $db_server = mysql_connect($db_hostname, $db_username, $db_password);
+    // Create connection
+    $conn = new mysqli($db_hostname, $db_username, $db_password, $db_database);
 
-     if (!$db_server) die("Unable to connect of MySQL: " . mysql_error());
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    echo "Connected successfully. <br />";
+
+    $conn->close();
+
+    echo "Connection closed.";
      ?>
     */
 
-    $db_hostname = 'localhost';
-    $db_database = 'iep_portal';
-    $db_username = 'add user name here';
-    $db_password = 'add password here';
+    echo "This message is on the login page. <br />";
+    return [
+      "DB_HOSTNAME" => "localhost",
+      "DB_DATABASE" => 'iep_portal',
+      "DB_USERNAME" => 'root',
+      'DB_PASSWORD' => 'root'
+
+    ];
+
+    //$db_hostname = 'localhost';
+    //$db_database = 'iep_portal';
+    //$db_username = 'root';
+    //$db_password = 'root';
+
+    
 ?>
+
+</body>
+</html>
+
+
