@@ -10,10 +10,10 @@ function showHide(elm) {
     //alert(currentNode);
 
     if (currentNode.style.display === "none") {
-        alert("blarg");
+        //alert("blarg");
         currentNode.style.display = "block";
     } else {
-        alert("garble");
+        //alert("garble");
         currentNode.style.display = "none";
     }
     
