@@ -5,7 +5,10 @@
 </head>
 <body>
     <?php 
-    $config = require ' login.php'; 
+    $filepath = realpath('login.php');
+    echo "filepath: " . $filepath . "<br />";
+    $config = require($filepath);
+    //$config = require 'login.php'; 
     $db_hostname = $config['DB_HOSTNAME'];
     $db_username = $config['DB_USERNAME'];
     $db_password = $config['DB_PASSWORD'];
@@ -134,7 +137,7 @@
     }
 
     // select objective by goal_id
-    
+
 
     // select report by objective_id
 

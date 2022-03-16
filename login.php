@@ -16,7 +16,7 @@
     /* Replace these values for use on your local host, will update for site hosting.
      To use on other pages include this:
      <?php
-      $config = require ' login.php'; 
+      $config = require 'login.php'; 
       $db_hostname = $config['DB_HOSTNAME'];
       $db_username = $config['DB_USERNAME'];
       $db_password = $config['DB_PASSWORD'];
