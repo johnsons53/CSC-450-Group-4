@@ -55,7 +55,9 @@ class Objective {
     }
     // method to assign an array of Reports to $reports
     function set_objective_reports($reports) {
-        this->$reports = $reports;
+        foreach($reports as $r) {
+            this->$reports
+        }
     }
 
     // getter methods to go here

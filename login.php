@@ -11,12 +11,14 @@
       Date Written: 03/03/2022
       Revised: 03/07/2022 - modify method of storing data on page, update connection code'
       removed testing notes and old functionality.
+      03/17/2022 - remove old testing notes, update comments for connection code
       */
 
     /* Replace these values for use on your local host, will update for site hosting.
      To use on other pages include this:
      <?php
-      $config = require 'login.php'; 
+      $filepath = realpath('login.php');
+      $config = require $filepath;
       $db_hostname = $config['DB_HOSTNAME'];
       $db_username = $config['DB_USERNAME'];
       $db_password = $config['DB_PASSWORD'];
@@ -29,20 +31,11 @@
         die("Connection failed: " . $conn->connect_error);
       }
 
-      echo "Connected successfully. <br />";
-
       $conn->close();
-
-      echo "Connection closed.";
       ?>
     */
-    /*$filepath = realpath('login.php');
-    echo "filepath: " . $filepath . "<br />";
-
-    echo $_SERVER["DOCUMENT_ROOT"];
-    echo "<br />";
+    /*
     */
-    echo __FILE__;
     
     return [
       "DB_HOSTNAME" => "localhost",
