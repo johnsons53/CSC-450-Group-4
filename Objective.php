@@ -4,6 +4,7 @@
     Author: Lisa Ahnell
     Date Written: 03/23/2022
     Revised: 
+    03/29/2022: Removed alert statements used for testing
 */
 
 ini_set('display_errors', 1);
@@ -31,13 +32,13 @@ class Objective {
         $this->objective_status = $status;
         
         $this->store_reports($id);
+        
     }
 
     // Getter methods
     function get_objective_id() {
         return $this->objective_id;
     }
-    // Should be able to get rid of this one
     function get_objective_label() {
         return $this->objective_label;
     }
@@ -55,9 +56,7 @@ class Objective {
     }
     function get_reports() {
         return array_values($this->reports);
-        //return $this->reports;
     }
-    // Setter methods--probably don't actually want to include these.
 
     // Fill reports array with any available reports matching the passed objective_id
     function store_reports($id) {
@@ -85,29 +84,15 @@ class Objective {
         $result = $conn->query($sql);
         // save each result row as a Report object in $reports
         if ($result->num_rows > 0) {
-            echo "number of reports found for objective_id " . $id . ":" . $result->num_rows . "<br />";
             while ($row = $result->fetch_assoc()) {
-                //echo "report id: " . $row['report_id'] . "<br />";
-                //echo "report date: " . $row['report_date'] . "<br />";
-                //echo "report observed: " . $row['report_observed'] . "<br />";
                 // new Report object from row data
                 $report = new Report($row['report_id'], $row['report_date'], $row['report_observed']);
-                
                 $this->reports[] = $report;
-                echo "report added <br />";
-                //echo "report data: <br />";
-                
             }
-            foreach ($this->reports as $value) {
-                echo $value->get_report_id() . " " . $value->get_report_observed() . " " . $value->get_report_date() . "<br />";
-                //echo $value->get_user_id() . "..." . $value->get_user_first_name() . "..." . $value->get_user_type() . "<br />";
-            }
+
         } else {
-            echo "0 Report results <br />";
-        }
-        echo "Reports array created by store_reports() function in Objective class: <br />";
-        print_r($this->reports);
-        echo "<br />"; 
+            //echo "0 Report results <br />";
+        } 
         // close connection to database
         $conn->close();
 
