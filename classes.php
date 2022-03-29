@@ -3,37 +3,38 @@
       Spring 100 CSC 450 Capstone, Group 4
       Author: Lisa Ahnell
       Date Written: 03/14/2022
-      Revised: 
+      Revised: 03/21/2022: filled out and corrected User class, tested use on databaseConnectionTestPage.php
+      TODO: split this page into individual pages for each class
       */
 
-class Report {
-    public $report_id;
-    public $objective_id;
-    public $report_date;
-    public $report_observed;
+// class Report {
+//     public $report_id;
+//     public $objective_id;
+//     public $report_date;
+//     public $report_observed;
 
-    function __construct($r_id, $o_id, $date, $observed) {
-        this->$report_id = $r_id;
-        this->$objective_id = $o_id;
-        this->$report_date = $date;
-        this->$report_observed = $observed;
-    }
+//     function __construct($r_id, $o_id, $date, $observed) {
+//         this->$report_id = $r_id;
+//         this->$objective_id = $o_id;
+//         this->$report_date = $date;
+//         this->$report_observed = $observed;
+//     }
 
-    function get_report_id() {
-        return this->$report_id;
-    }
-    function get_objective_id() {
-        return this->$objective_id;
-    }
-    function get_report_date() {
-        return this->$report_date;
-    }
-    function get_report_observed() {
-        return this->$report_observed;
-    }
-}
+//     function get_report_id() {
+//         return this->$report_id;
+//     }
+//     function get_objective_id() {
+//         return this->$objective_id;
+//     }
+//     function get_report_date() {
+//         return this->$report_date;
+//     }
+//     function get_report_observed() {
+//         return this->$report_observed;
+//     }
+// }
 
-class Objective {
+/* class Objective {
     $objective_id;
     $goal_id;
     $objective_label;
@@ -61,9 +62,9 @@ class Objective {
     }
 
     // getter methods to go here
-}
+} */
 
-class Goal {
+/* class Goal {
     $goal_id;
     $student_id;
     $goal_label;
@@ -108,24 +109,10 @@ class Provider {
 
 class Admin {
 
-}
+} */
 
-class User {
-    $user_id;
-    $user_name;
-    $user_password;
-    $user_first_name;
-    $user_last_name;
-    $user_email;
-    $user_phone;
-    $user_address;
-    $user_city;
-    $user_district;
-    $user_type;
 
-}
-
-class Message_recipient {
+/* class Message_recipient {
 
 }
  
@@ -135,5 +122,5 @@ class Message {
 
 class Document {
 
-}
+} */
 ?>
