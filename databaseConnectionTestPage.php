@@ -12,9 +12,14 @@
 
     require_once realpath('User.php');
     require_once realpath('Admin.php');
+    require_once realpath('Document.php');
+    require_once realpath('Goal.php');
+    require_once realpath('Guardian.php');
+    require_once realpath('Provider.php');
     require_once realpath('Report.php');
     require_once realpath('Objective.php');
-    require_once realpath('Goal.php');
+    require_once realpath('Student.php');
+
     
     $db_hostname = $config['DB_HOSTNAME'];
     $db_username = $config['DB_USERNAME'];
@@ -322,6 +327,123 @@
     } else {
         echo "0 results <br />";
     }
+
+    // Admin class:
+    echo "<br /> *** <br /><br /> ADMIN CLASS TEST<br /> *** <br /><br />";
+    $admins = [];
+    $sql = "SELECT * 
+            FROM user
+            INNER JOIN admin
+            ON user.user_id=admin.user_id
+            WHERE user.user_type='admin'
+            AND admin.admin_active='1'";
+
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        // show the data in each row
+        while ($row = $result->fetch_assoc()) {
+            // new User object from row data
+            $admin = new Admin($row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
+                $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
+                $row['user_city'], $row['user_district'], $row['user_type'], 
+                $row['admin_id'], $row['admin_active']);
+            // add current user to $users array
+            $admins[] = $admin;
+            //echo "user_id: " . $row["user_id"] . " ... first name: " . $row["user_first_name"] . " ... last name: " . $row["user_last_name"] . "<br />";
+            echo "Admin added <br />";
+            foreach ($admins as $value) {
+                echo $value->get_full_name() . "<br />";
+                echo $value->get_user_type() . "<br />";
+                echo $value->get_admin_id() . "<br />";
+                echo $value->get_admin_active() . "<br />";
+            }
+        }
+    } else {
+        echo "0 results <br />";
+    }
+
+    // Student class:
+    echo "<br /> *** <br /><br /> STUDENT CLASS TEST<br /> *** <br /><br />";
+    $students = [];
+    $sql = "SELECT * 
+            FROM user
+            INNER JOIN student
+            ON user.user_id=student.user_id
+            WHERE user.user_type='student'";
+
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        // show the data in each row
+        while ($row = $result->fetch_assoc()) {
+            // new User object from row data
+            $student = new Student($row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
+                $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
+                $row['user_city'], $row['user_district'], $row['user_type'], 
+                $row['student_id'], $row['provider_id'], $row['student_school'], $row['student_grade'], 
+                $row['student_homeroom'], $row['student_dob'], $row['student_eval_date'], $row['student_next_evaluation'],
+                $row['student_iep_date'], $row['student_next_iep'], $row['student_eval_status'],
+                $row['student_iep_status']);
+            // add current user to $users array
+            $students[] = $student;
+            echo "Student added <br />";
+            foreach ($students as $value) {
+                echo "Student full name: ";
+                echo $value->get_full_name() . "<br />";
+                echo "User type: ";
+                echo $value->get_user_type() . "<br />";
+                echo "Student ID: ";
+                echo $value->get_student_id() . "<br />";
+                echo "Student Grade: ";
+                echo $value->get_student_grade() . "<br />";
+                echo "Student Evaluation Date: ";
+                echo $value->get_student_eval_date() . "<br />";
+            }
+        }
+    } else {
+        echo "0 results <br />";
+    }
+
+     // Guardian Class test
+    echo "<br /> *** <br /><br /> GUARDIAN CLASS TEST<br /> *** <br /><br />";
+    $guardians = [];
+    $sql = "SELECT * 
+            FROM user
+            WHERE user_type='user'";
+
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        // show the data in each row
+        while ($row = $result->fetch_assoc()) {
+            print_r($row);
+            echo "<br />";
+            // new Guardian object from row data
+            $guardian = new Guardian($row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
+                $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
+                $row['user_city'], $row['user_district'], $row['user_type']);
+            // add current user to $users array
+            $guardians[] = $guardian;
+            echo "Guardian added <br />";
+            foreach ($guardians as $value) {
+                echo "Guardian full name: ";
+                echo $value->get_full_name() . "<br />";
+                echo "User type: ";
+                echo $value->get_user_type() . "<br />";
+                echo "User ID: ";
+                echo $value->get_user_id() . "<br />";
+                echo "Guardian Students: ";
+                print_r ($value->get_guardian_students());
+                echo "<br />";
+                
+            }
+        } 
+    } else {
+        echo "0 results <br />";
+    } 
+
+    // Provider Class test
 
 
     // close connection

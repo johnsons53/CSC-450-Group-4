@@ -39,7 +39,7 @@ class Provider extends User {
         $this->provider_title = $title;
 
         // call store_provider_students()
-        this->store_provider_students($id);
+        $this->store_provider_students($id);
 
     }
 

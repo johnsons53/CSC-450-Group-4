@@ -26,9 +26,9 @@ class Student extends User {
     protected $student_eval_status;
     protected $student_iep_status;
 
-    // student will also have an arrays for goals, parents, documents 
+    // student will also have an arrays for goals, guardians, documents 
     public $goals = [];
-    public $parents = [];
+    public $guardians = [];
     public $documents = [];
 
 
@@ -63,8 +63,10 @@ class Student extends User {
         $this->student_eval_status = $eval_status;
         $this->student_iep_status = $iep_status;
 
-        // use methods to fill goals, parents and documents
+        // use methods to fill goals, guardians and documents
         $this->store_student_goals($id);
+        //$this->store_student_guardians($id);
+        $this->store_student_documents($id);
 
     }
 
@@ -108,13 +110,13 @@ class Student extends User {
     function get_goals() {
         return $this->goals;
     }
-    function get_parents() {
-        return $this->parents;
-    }
+    /* function get_guardians() {
+        return $this->guardians;
+    } */
     function get_documents() {
         return $this->documents;
     }
-    // Methods to store student goals, parents, documents run queries passing in student id value
+    // Methods to store student goals, guardians, documents run queries passing in student id value
     function store_student_goals($id) {
         // connection to database
         $filepath = realpath('login.php');
@@ -166,7 +168,7 @@ class Student extends User {
         //echo "Connection closed.<br />";
     }
 
-    function store_student_parents($id) {
+/*     function store_student_guardians($id) {
         // connection to database
         $filepath = realpath('login.php');
         $config = require($filepath);
@@ -184,63 +186,63 @@ class Student extends User {
         }
        
         // run query to select all objectives where goal_id matches
-        // hold parent user_id values
-        $parent_ids =[];
-        echo "<br />Get Parents for student wtih ID: " . $id .  "<br />";
+        // hold guardian user_id values
+        $guardian_ids =[];
+        echo "<br />Get Guardians for student wtih ID: " . $id .  "<br />";
         $sql = "SELECT user_id 
                 FROM student_parent
                 WHERE student_id=" . $id . "AND parent_access='1'";
            
         $result = $conn->query($sql);
-        // If parent_ids are found, store their user_id values in parent_ids
+        // If guardian_ids are found, store their user_id values in guardian_ids
         if ($result->num_rows > 0) {
-            echo "number of parents found with student_id= " . $id . " : " . $result->num_rows . "<br />";
+            echo "number of guardians found with student_id= " . $id . " : " . $result->num_rows . "<br />";
             while ($row =$result->fetch_assoc()) {
-                $parent_ids[] = $row['user_id'];
+                $guardian_ids[] = $row['user_id'];
             }
         } else {
             echo "0 results <br />";
         }
         
-        // If parents are found, create users with their information to be held in parents array
-        if (isset($this->parents)) {
-            // query for each parent value
-            foreach($this->parents as $value) {
+        // If guardians are found, create users with their information to be held in guardians array
+        if (isset($this->guardians)) {
+            // query for each guardian value
+            foreach($this->guardians as $value) {
                 $sql = "SELECT *
                         FROM user
                         WHERE user_id=" . $value;
                 $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
-                    // user data for parent found, create new User object and store in parents array
-                    echo "number of parents found with student_id= " . $id . " : " . $result->num_rows . "<br />";
+                    // user data for guardian found, create new User object and store in guardians array
+                    echo "number of guardians found with student_id= " . $id . " : " . $result->num_rows . "<br />";
                     while ($row =$result->fetch_assoc()) {
-                        // new parent from row data
-                        $parent = new User($row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], $row['user_last_name'],
+                        // new guardian from row data
+                        $guardian = new Guardian($row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], $row['user_last_name'],
                             $row['user_email'], $row['user_phone'], $row['user_address'], $row['user_city'], $row['user_district'], $row['user_type']);
                         // add current user to $users array
-                        $this->parents[] = $parent;
+                        $this->guardians[] = $guardian;
                         //echo "user_id: " . $row["user_id"] . " ... first name: " . $row["user_first_name"] . " ... last name: " . $row["user_last_name"] . "<br />";
-                        echo "parent added <br />";
-                        foreach ($parents as $value) {
+                        echo "guardian added <br />";
+                        foreach ($guardians as $value) {
                             echo $value->get_full_name() . "<br />";
                         }
                     }
                 } else {
-                    echo "No parents information found for user id: " . $value . "<br />";
+                    echo "No guardians information found for user id: " . $value . "<br />";
                 }
             }    
         } else {
-            echo "No parents found for student with id: " . $id . "<br />";
+            echo "No guardians found for student with id: " . $id . "<br />";
         }
            
-        echo "Parents array created by store_studnet_parents() function in Student class: <br />";
-        print_r($this->parents);
+        echo "Parents array created by store_student_guardians() function in Student class: <br />";
+        print_r($this->guardians);
         echo "<br />"; 
        
         // close connection to database
         $conn->close();
        
-    }
+    } */
 
     function store_student_documents($id) {
         // connection to database
@@ -282,7 +284,7 @@ class Student extends User {
             echo "0 results <br />";
         } 
         echo "Document array created by store_student_documents() function in Student class: <br />";
-        print_r($this->goals);
+        print_r($this->documents);
         echo "<br />"; 
         
         // close connection to database
