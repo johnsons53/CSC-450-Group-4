@@ -4,11 +4,11 @@
     Author: Lisa Ahnell
     Date Written: 03/23/2022
     Revised: 
+    03/29/2022: Removed extraneous comments
 */
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL|E_STRICT);      
-//require_once realpath('Objective.php');
 
 class Report {
     // change these to public
@@ -28,16 +28,12 @@ class Report {
     function get_report_id() {
         return $this->report_id;
     }
-    // Should be able to get rid of this one
     function get_report_date() {
         return $this->report_date;
     }
     function get_report_observed() {
         return $this->report_observed;
     }
-
-
-    // Setter methods--probably don't actually want to include these.
 }
 
 ?>

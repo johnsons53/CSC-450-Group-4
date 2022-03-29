@@ -19,18 +19,7 @@ class Admin extends User {
     function __construct($u_id, $name, $password, $first_name, $last_name, $email, $phone, $address, $city, $district, $type, 
             $id, $active) {
         
-        // carried over from User
-        $this->user_id = $u_id;
-        $this->user_name = $name;
-        $this->user_password = $password;
-        $this->user_first_name = $first_name;
-        $this->user_last_name = $last_name;
-        $this->user_email = $email;
-        $this->user_phone = $phone;
-        $this->user_address = $address;
-        $this->user_city = $city;
-        $this->user_district = $district;
-        $this->user_type = $type;
+        parent::__construct($u_id, $name, $password, $first_name, $last_name, $email, $phone, $address, $city, $district, $type);
 
         // specific to Admin
         $this->admin_id = $id;

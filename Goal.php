@@ -4,6 +4,7 @@
     Author: Lisa Ahnell
     Date Written: 03/23/2022
     Revised: 
+    03/29/2022: Removed testing alerts
 */
 
 ini_set('display_errors', 1);
@@ -27,7 +28,6 @@ class Goal {
         $this->goal_category = $category;
         $this->goal_text = $text;
         $this->goal_active = $active;
-        
         $this->store_objectives($id);
     }
 
@@ -35,7 +35,6 @@ class Goal {
     function get_goal_id() {
         return $this->goal_id;
     }
-    // Should be able to get rid of this one
     function get_goal_label() {
         return $this->goal_label;
     }
@@ -50,10 +49,7 @@ class Goal {
     }
     function get_objectives() {
         return array_values($this->objectives);
-        //return $this->objectives;
     }
-
-    // Setter methods--probably don't actually want to include these.
 
     // Fill objectives array with any available objectives matching the passed goal_id
     function store_objectives($id) {
@@ -81,32 +77,16 @@ class Goal {
         $result = $conn->query($sql);
         // save each result row as a Objective object in $objectives
         if ($result->num_rows > 0) {
-            echo "number of objectives found for goal_id " . $id . ":" . $result->num_rows . "<br />";
             while ($row = $result->fetch_assoc()) {
-                //echo "objective id: " . $row['objective_id'] . "<br />";
-                //echo "objective label: " . $row['objective_label'] . "<br />";
-                //echo "objective text: " . $row['objective_text'] . "<br />";
-                //echo "objective attempts: " . $row['objective_attempts'] . "<br />";
-                //echo "objective target: " . $row['objective_target'] . "<br />";
-                //echo "objective status: " . $row['objective_status'] . "<br />";
                 // new Objective object from row data
                 $objective = new Objective($row['objective_id'], $row['objective_label'], $row['objective_text'], 
                     $row['objective_attempts'], $row['objective_target'], $row['objective_status']);
                 
                 $this->objectives[] = $objective;
-                echo "objective added <br />";
-                //echo "objective data: <br />";
-                foreach ($this->objectives as $value) {
-                    echo $value->get_objective_id() . " " . $value->get_objective_label() . "<br />";
-                }
             }
         } else {
-            echo "0 Objective results <br />";
+            //echo "0 Objective results <br />";
         } 
-        echo "Objectives array created by store_objectives() function in Goal class: <br />";
-        print_r($this->objectives);
-        echo "<br />"; 
-
         // close connection to database
         $conn->close();
 
