@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -19,6 +22,65 @@
   <body>
     <!-- TODO Add PHP here to manage variables and queries to database -->
     <?php 
+    // display errors for testing
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL|E_STRICT);
+
+    // connect to other files
+    $filepath = realpath('login.php');
+    $config = require($filepath);
+
+    require_once realpath('User.php');
+    require_once realpath('Admin.php');
+    require_once realpath('Document.php');
+    require_once realpath('Goal.php');
+    require_once realpath('Guardian.php');
+    require_once realpath('Provider.php');
+    require_once realpath('Report.php');
+    require_once realpath('Objective.php');
+    require_once realpath('Student.php');
+
+    
+    $db_hostname = $config['DB_HOSTNAME'];
+    $db_username = $config['DB_USERNAME'];
+    $db_password = $config['DB_PASSWORD'];
+    $db_database = $config['DB_DATABASE'];
+
+    // Create connection
+    $conn = new mysqli($db_hostname, $db_username, $db_password, $db_database);
+
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+    // Select a guardian from the database for demonstration purposes
+    $sql = "SELECT * 
+            FROM user
+            WHERE user_id='12'";
+
+    $result = $conn->query($sql);
+
+    if ($result->num_rows == 1) {
+        // show the data in each row
+        while ($row = $result->fetch_assoc()) {
+            // new Guardian object from row data
+            $guardian = new Guardian($row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
+                $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
+                $row['user_city'], $row['user_district'], $row['user_type']);
+            // add current user to $users array
+            $_SESSION['guardianUser'] = $guardian;
+            echo $guardian->get_full_name() . " created as GUARDIAN <br />";
+            echo "User for this SESSION: " . $_SESSION['guardianUser']->get_full_name() . " <br />";
+
+        } 
+    } else {
+        echo "0 results <br />";
+    }
+    $students = $_SESSION['guardianUser']->get_guardian_students();
+    $current_student = $students[0];
+    echo "Current Student: " . $current_student->get_full_name() . " <br />";
+    
+    
     // Variables needed: array of student_id values associated with the parent user
     // array of student names, pulled from user table and combined into one string for display
     // selected student to control which student's records are displayed
@@ -50,15 +112,20 @@
       <!-- Vertical navigation bar -->
       <div class="left" id="verticalNav">
         <h3>Navigation</h3>
-        <a class="vNavButton" href=""><h3>Child #1</h3></a>
-        <a class="vNavButton" href=""><h3>Child #2</h3></a>
-        <a class="vNavButton" href=""><h3>Child #3</h3></a>
+        <?php
+        // Links to each student for this user
+        // Make these buttons that change the value of $current_student
+        foreach ($students as $value) {
+          echo "<a class='vNavButton' href=''><h3>" . $value->get_full_name() . "</h3></a>";
+          //echo "<button type='custom' id='" . $value->get_full_name() . "' onclick='" . $current_student = $value ."'>" . $value->get_full_name() . "</button>";
+        }
+        ?>
       </div>
 
       <!-- Main content of page -->
       <div class="middle" id="mainContent">
         <div class="currentStudentName">
-            <h3>Student Name</h3>
+            <?php echo "<h3>" . $current_student->get_full_name() . "</h3>"; ?>
         </div>   
         <div class="calendar contentCard">
             <h3>Calendar</h3>
@@ -66,67 +133,72 @@
         </div>
         <div class="schedule contentCard">
             <h3>Upcoming</h3>
-
+            <ul>
+            <?php
+              // Display list of next IEP and next Evaluation for $current_student
+              echo "<li> Next IEP due: " . $current_student->get_student_next_iep() . "</li>";
+              echo "<li> Next Evaluation due: " . $current_student->get_student_next_evaluation() . "</li>";
+            ?>
+            </ul>
         </div>
         <h3>Current Goals</h3>
-        <div class="contentCard">
-          <h4>Goal: Goal Label</h4>
-          <p>Goal #1 example text</p>
-          <!-- When goal is expanded, Goal Category, Goal Start Date, 
-            Goal End Date and Goal Descriptiuon text should be displayed -->
+        <?php 
+        // Display each student goal in a card, with each goal's objectives nested inside
+        $goals = $current_student->get_goals();
+        foreach ($goals as $g) {
+          // Collect objectives for this Goal
+          $objectives = $g->get_objectives();
+          // Display Content for each Goal
+          echo "<div class='contentCard'>";
+          echo "<h4>Goal:" . $g->get_goal_label() . "</h4>";
+          echo "<p>Goal Description: " . $g->get_goal_text() . "</p>";
+          // Display each Objective in a box
+          foreach ($objectives as $o) {
+            // Collect Reports for this Objective
+            $reports = $o->get_reports();
+            echo "<div class='contentCard'>";
+            echo "<h5>Objective: " . $o->get_objective_label() . "</h5>";
+            // Display meter of latest report if available
+            if (isset($reports) && count($reports) > 0) {
+              // Display latest report information
+              $latest_report = $reports[0];
+              $max = $o->get_objective_attempts();
+              $high = $o->get_objective_target();
+              $low = $o->get_objective_target() /2;
+              $value = $latest_report->get_report_observed();
+              echo "<p>Latest Report: ";
+              echo "<meter min='0' max='" . $max . "' high='" . $high ."' low='" . $low . "' optimum='" . $max . "' value='" . $value . "'>" . $value . "</meter>";
+              echo "</p>";
+            }
 
-          <div class="contentCard">
-              <h5>Objective: Objective Label</h5>
+            // Expanded details for Objective
+            echo "<div class='expandedDetails'>";
+            echo "<p>Description: " . $o->get_objective_text() ."</p> ";
+            echo "<p>Latest Report Date: " . $latest_report->get_report_date() . "</p>";
+            echo "<p>Report Data: Graph of report data to come</p>";
+            echo "</div>";
 
-              <!-- When view is expanded, Objective Description text should be displayed -->
-              <!-- Progress bar view of data from most recent objective report -->
-              <p>Latest Report: (progress) 
-                  <progress id="objectiveProgress1" value="5" max="10">5</progress>
-              </p>
+            // Expand/Hide button
+            echo "<button type='custom' id='objectiveDetails' onclick='showHide(this);'>+</button>";
+            
+            echo "</div>"; // end of Objective Div
 
-              <!-- Meter view of data from most recent objective report
-                Lisa: I like this one, since it changes color depending on the value 
-                min should always be 0 
-                max would be the number of observation opportunities
-                high is the target number
-                low ?
-                optimum is probably the same as max
-                value is observed in most recent report-->
-              <p>Latest Report: (meter) 
-                  <meter min="0" max="10" high="7" low="4" optimum="10" value="5">5</meter>
-              </p>
+            // Expanded details for Goal
+            echo "<div class='expandedDetails'>";
+            echo "<p>Category: " . $g->get_goal_category() . "</p>";
+            echo "<p>Description: " . $g->get_goal_text() . "</p>";
+            echo "<p>Date Range: " . $current_student->get_student_iep_date() . " - " . $current_student->get_student_next_iep() . "</p>";
+            echo "</div>";
 
-              
+            // Expand/Hide button
+            echo "<button type='custom' id='objectiveDetails' onclick='showHide(this);'>+</button>";
 
-              <!-- When view is expanded, display graph of report observed values over time -->
-              <div class="expandedDetails">
-                <!-- Objective Description, Latest report date and graph of report data -->
-                <!-- TODO include PHP to display values for each tag -->
-                <!-- TODO Toggle between hidden and displayed using JavaScript -->
-                <p>Description:</p> 
-                <p>Latest Report Date:</p>
-                <p>Report Data</p>
-              </div>
-              <!-- Button to expand the objective card for more detailed information -->
-              <button type="custom" id="objectiveDetails" onclick="showHide(this);">+</button>
-          </div>
+          }
+          echo "</div>"; // end of Goal Div
+        }
+        ?>
+        
 
-          <div>
-            <div class="expandedDetails">
-            <!-- Goal Category, Description, Date Range  -->
-            <!-- TODO include PHP to display values for each tag -->
-            <!-- TODO Toggle between hidden and displayed using JavaScript -->
-            <p>Category:</p>
-            <p>Description:</p>
-            <p>Date Range:</p>
-            </div>
-            <!-- Button to expand the goal card for more detailed information -->
-            <button type="custom" id="goalDetails" onclick="showHide(this);">+</button>
-
-          </div>
-
-          
-        </div>
       
       <footer>
         <!-- Insert footer info here -->
