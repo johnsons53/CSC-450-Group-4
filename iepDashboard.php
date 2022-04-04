@@ -18,24 +18,42 @@ error_reporting(E_ALL|E_STRICT);
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="iepDetailView.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- <script>
-        //jQuery code to go here???
-        $(document).ready(function() {
-          $(document).on('click', ".vNavButton", function() {
-            // Code to run when vNavButton is clicked
-            alert($(this).attr('data-student_id'));
-
-            $("#mainContent").load("changeStudent.php", {
-              // Data to pass to changeStudent.php
-              newStudentID : $(this).attr('data-student_id')
-            });
-            alert("Inside the function!");
-            
+    <!-- <script> document.getElementById("defaultOpen").click(); </script> -->
+    <script>
+      //jQuery
+      $(document).ready(function() {
+          $(".tablinks").click(function() {
+              $(".tabcontent").load("mainContent.php", {
+                  activeStudentId: $(this).attr("data-studentId"),
+                  activeStudentName: $(this).attr("data-studentName")
+              });
           });
+          //Identify the defaultOpen element
+          document.getElementById("defaultOpen").click();
+      });
 
-        });
-    </script> -->
-    <script></script>
+      function openTab(evt, tabName) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+          
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+      }
+    </script>
 
     
   </head>
@@ -123,12 +141,15 @@ error_reporting(E_ALL|E_STRICT);
         $_SESSION['currentUser'] = serialize($provider);
         $currentUser = $provider;
         
-        echo $provider->get_full_name() . " created as PROVIDER <br />";
+        echo $provider->get_full_name() . " created as PROVIDER  LINE 144<br />";
         //echo "User for this SESSION: " . $_SESSION['currentUser']->get_full_name() . " <br />";
 
     } 
     } else {
     echo "0 results <br />";
+    }
+    if(array_key_exists('currentUser', $_SESSION)) {
+      echo "SESSION contains currentUser value";
     }
 
     // Save array of students
@@ -136,7 +157,10 @@ error_reporting(E_ALL|E_STRICT);
 
     // Set default current student to first student in the list
     $_SESSION['currentStudent'] = serialize($students[0]);
-    
+    if(array_key_exists('currentStudent', $_SESSION)) {
+      echo "SESSION contains currentStudent value";
+    }
+
     
     
     //$_SESSION['current_student'] = $current_student;
@@ -180,30 +204,31 @@ error_reporting(E_ALL|E_STRICT);
         <h3>Navigation</h3>
 
         <?php
-        if(array_key_exists('selectStudent', $_POST)) {
-          echo "Selected Student: " . $_POST['selectStudent'];
-        }
-        // Links to each student for this user
-        // Make these buttons that change the value of $current_student
-        $student_count = 0;
+        // Toggle between different students for this user
+        $studentCount = 0;
         foreach ($students as $value) {
-          $full_name = $value->get_full_name();
-          $student_id = $value->get_student_id();
-          if ($student_count === 0) {
-            echo "<a class='vNavButton' href='' id='defaultStudent' onclick='openStudent(\"" . $full_name . $student_id . "\");' data-student_id='" . $student_id . "'><h3>" . $full_name . "</h3></a>";
+          $studentName = $value->get_full_name();
+          $studentId = $value->get_student_id();
 
+          // Version from testing
+          if ($studentCount == 0) {
+            echo "<div class=\"tab\">";
+            //echo "<a class='vNavButton, tablinks' href='' id='defaultOpen' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
+
+            echo "<button class=\"tablinks, vNavButton\" onclick=\"openTab(event, '" . $studentName . "')\" id=\"defaultOpen\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\">" . $studentName . "</button>";
+            echo "</div>";
           } else {
-            echo "<a class='vNavButton' href='' onclick='openStudent(\"" . $full_name . $student_id . "\");' data-student_id='" . $student_id . "'><h3>" . $full_name . "</h3></a>";
+            echo "<div class=\"tab\">";
+            //echo "<a class='vNavButton, tablinks' href='' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
 
-          }
-          //echo "<a class='vNavButton' href='' onclick='changeStudent(\"" . $full_name . $student_id . "\");' data-student_id='" . $student_id . "'><h3>" . $full_name . "</h3></a>";
-          // php version of button to change value of current_student
-          echo "<form method=\"post\"><input type=\"submit\" name=\"selectStudent\"
-            class=\"button\" value=\"" . $full_name . "\"/></form>";
-          // Can it be done with JavaScript instead?
-          echo "<button type='custom' id='button" . $full_name . "' onclick=\"changeStudentAJAX();\">" . $full_name . "</button>";
-          $student_count++;
+            echo "<button class=\"tablinks, vNavButton\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\" onclick=\"openTab(event, '" . $studentName . "')\">" . $studentName . "</button>";
+            echo "</div>";
         }
+        
+
+        $studentCount++;
+          
+      }
          
         ?>
 
@@ -217,7 +242,9 @@ error_reporting(E_ALL|E_STRICT);
           $current_student_name = $value->get_full_name();
           $current_student_id = $value->get_student_id();
           // create a mainContent Div for each Student
-          echo "<div class='middle, mainContent' id='" . $current_student_name . $current_student_id . "' >";
+          // Only need to create an empty div here for each student with correct name, id and classes
+
+          echo "<div class='middle, mainContent, tabcontent' id='" . $current_student_name . "' >";
             // Student Name
             echo "<div class='currentStudentName'>";
               echo "<h3>" . $current_student->get_full_name() . "</h3>";
@@ -246,13 +273,7 @@ error_reporting(E_ALL|E_STRICT);
             // Display each student goal in a card, with each goal's objectives nested inside
 
             // New Goal button for Provider users
-            echo get_class($currentUser);
-
-            if (get_class($currentUser) === 'Guardian') {
-              echo "This user is a Guardian. <br />";
-            }
-
-             if (get_class($currentUser) === 'Provider') {
+            if (get_class($currentUser) === 'Provider') {
                
               echo "<form action=\"iepProviderGoalForm.php\" method=\"post\">";
               echo "<input type=\"submit\" value=\"New Goal\">";
@@ -327,7 +348,7 @@ error_reporting(E_ALL|E_STRICT);
             } // end of foreach(goal)
 
           echo "</div>";  // end of div id='mainContent'
-        }
+        } // end of foreach students as value
       ?>
 
       

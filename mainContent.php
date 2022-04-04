@@ -1,7 +1,7 @@
 <?php 
  session_start();
- //$sessionStudent = unserialize($_SESSION['currentStudent']);
- //echo $sessionStudent->get_full_name();
+ $sessionStudent = unserialize($_SESSION['currentStudent']);
+ echo $sessionStudent->get_full_name();
  
  ini_set('display_errors', 1);
     error_reporting(E_ALL|E_STRICT);
@@ -18,59 +18,10 @@
     require_once realpath('Objective.php');
     require_once realpath('Student.php');
 
-/*     
-    $db_hostname = $config['DB_HOSTNAME'];
-    $db_username = $config['DB_USERNAME'];
-    $db_password = $config['DB_PASSWORD'];
-    $db_database = $config['DB_DATABASE'];
-
-    // Create connection
-    $conn = new mysqli($db_hostname, $db_username, $db_password, $db_database);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-        // Select a Provider 
-        $sql = "SELECT * 
-        FROM user
-        INNER JOIN provider USING (user_id)
-        WHERE user_id='15'";
-    
-        $result = $conn->query($sql);
-    
-        if ($result->num_rows == 1) {
-        // show the data in each row
-        while ($row = $result->fetch_assoc()) {
-            // new Guardian object from row data
-            $provider = new Provider($row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
-                $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
-                $row['user_city'], $row['user_district'], $row['user_type'],
-                $row['provider_id'], $row['provider_title']);
-            // add current user to $_SESSION array
-            $_SESSION['currentUser'] = serialize($provider);
-            $currentUser = $provider;
-            
-            echo $provider->get_full_name() . " created as PROVIDER <br />";
-            //echo "User for this SESSION: " . $_SESSION['currentUser']->get_full_name() . " <br />";
-    
-        } 
-        } else {
-        echo "0 results <br />";
-        }
-    
-        // Save array of currentStudents
-        $currentStudents = $currentUser->get_provider_students();
-    
-        // Set default current student to first student in the list
-        $_SESSION['currentStudent'] = serialize($currentStudents[0]);
-        $myCurrentStudent =$currentStudents[0]; */
  
  ?>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="iepDetailView.js"></script>
  <!DOCTYPE html>
  <html>
 
@@ -128,7 +79,11 @@
     // New Goal button for Provider users
     echo get_class($currentUser);
 
-     if (get_class($currentUser) === 'Provider') {
+    if (get_class($currentUser) === 'Guardian') {
+      echo "This user is a Guardian. <br />";
+    }
+
+    if (get_class($currentUser) === 'Provider') {
        
       echo "<form action=\"iepProviderGoalForm.php\" method=\"post\">";
       echo "<input type=\"submit\" value=\"New Goal\">";
@@ -198,15 +153,7 @@
                 echo "<button type='custom' id='goalDetails' onclick='showHide(\"" . $goalDetailsID . "\");'>+</button>";
               echo "</div>"; // end of Goal Div
             } // end of foreach(goal)
-
         
 ?>
-
-
-
-
-
-
-
-   
+  
 </html>
