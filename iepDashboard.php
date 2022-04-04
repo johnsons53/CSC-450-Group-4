@@ -19,41 +19,7 @@ error_reporting(E_ALL|E_STRICT);
     <script src="iepDetailView.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- <script> document.getElementById("defaultOpen").click(); </script> -->
-    <script>
-      //jQuery
-      $(document).ready(function() {
-          $(".tablinks").click(function() {
-              $(".tabcontent").load("mainContent.php", {
-                  activeStudentId: $(this).attr("data-studentId"),
-                  activeStudentName: $(this).attr("data-studentName")
-              });
-          });
-          //Identify the defaultOpen element
-          document.getElementById("defaultOpen").click();
-      });
 
-      function openTab(evt, tabName) {
-        // Declare all variables
-        var i, tabcontent, tablinks;
-
-        // Get all elements with class="tabcontent" and hide them
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
-        }
-
-        // Get all elements with class="tablinks" and remove the class "active"
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-          
-        }
-
-        // Show the current tab, and add an "active" class to the button that opened the tab
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
-      }
-    </script>
 
     
   </head>
@@ -215,13 +181,13 @@ error_reporting(E_ALL|E_STRICT);
             echo "<div class=\"tab\">";
             //echo "<a class='vNavButton, tablinks' href='' id='defaultOpen' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
 
-            echo "<button class=\"tablinks, vNavButton\" onclick=\"openTab(event, '" . $studentName . "')\" id=\"defaultOpen\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\">" . $studentName . "</button>";
+            echo "<button class=\"tablinks vNavButton\" onclick=\"openTab(event, '" . $studentName . "')\" id=\"defaultOpen\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\">" . $studentName . "</button>";
             echo "</div>";
           } else {
             echo "<div class=\"tab\">";
             //echo "<a class='vNavButton, tablinks' href='' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
 
-            echo "<button class=\"tablinks, vNavButton\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\" onclick=\"openTab(event, '" . $studentName . "')\">" . $studentName . "</button>";
+            echo "<button class=\"tablinks vNavButton\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\" onclick=\"openTab(event, '" . $studentName . "')\">" . $studentName . "</button>";
             echo "</div>";
         }
         
@@ -244,7 +210,7 @@ error_reporting(E_ALL|E_STRICT);
           // create a mainContent Div for each Student
           // Only need to create an empty div here for each student with correct name, id and classes
 
-          echo "<div class='middle, mainContent, tabcontent' id='" . $current_student_name . "' >";
+          echo "<div class='middle mainContent tabcontent' id='" . $current_student_name . "' >";
             // Student Name
             echo "<div class='currentStudentName'>";
               echo "<h3>" . $current_student->get_full_name() . "</h3>";
@@ -359,6 +325,42 @@ error_reporting(E_ALL|E_STRICT);
 
     </div>
   </body>
+
+  <script>
+      //jQuery
+      $(document).ready(function() {
+          $(".tablinks").click(function() {
+              $(".tabcontent").load("mainContent.php", {
+                  activeStudentId: $(this).attr("data-studentId"),
+                  activeStudentName: $(this).attr("data-studentName")
+              });
+          });
+          //Identify the defaultOpen element
+          document.getElementById("defaultOpen").click();
+      });
+
+      function openTab(evt, tabName) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+          
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+      }
+    </script>
 </html>
 <?php
 //Functions for this page
