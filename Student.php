@@ -27,7 +27,7 @@ class Student extends User {
 
     // student will also have an arrays for goals, guardians, documents 
     public $goals = [];
-    public $guardians = [];
+    //public $guardians = [];
     public $documents = [];
 
 
@@ -122,7 +122,7 @@ class Student extends User {
         // run query to select all objectives where goal_id matches
         $sql = "SELECT * 
                 FROM goal
-                WHERE student_id=" . $id;
+                WHERE goal_active='1' AND student_id=" . $id;
     
         $result = $conn->query($sql);
     

@@ -1,3 +1,17 @@
+<?php
+session_start();
+ini_set('display_errors', 1);
+error_reporting(E_ALL|E_STRICT);
+require_once realpath('User.php');
+require_once realpath('Admin.php');
+require_once realpath('Document.php');
+require_once realpath('Goal.php');
+require_once realpath('Guardian.php');
+require_once realpath('Provider.php');
+require_once realpath('Report.php');
+require_once realpath('Objective.php');
+require_once realpath('Student.php');
+?>
 <!DOCTYPE html>
 
 <html lang="en">
@@ -17,6 +31,7 @@
   <body>
 
   <?php
+  
 // define variables from form and set to empty values
 // This is not the final version, since some values will be sent when the page
 // loads.
@@ -150,8 +165,13 @@ function test_input($data) {
     </div>
 
     <?php
-    echo "<h2>Contents of _POST:</h2>";
-    echo $_POST;
+    
+    $currentUser = unserialize($_SESSION['currentUser']);
+    echo "Current User from SESSION: " . $currentUser->get_full_name();
+    echo "<br>";
+    $currentStudent = unserialize($_SESSION['currentStudent']);
+    echo "Current User from SESSION: " . $currentStudent->get_full_name();
+
     echo "<br>";
 
     echo "<h2>Your Input:</h2>";

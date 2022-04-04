@@ -1,5 +1,7 @@
 <?php
 session_start();
+ini_set('display_errors', 1);
+error_reporting(E_ALL|E_STRICT);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +17,24 @@ session_start();
     <title>IEP Portal: Parent Home</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="iepDetailView.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        //jQuery code to go here???
+        $(document).ready(function() {
+          $(document).on('click', ".vNavButton", function() {
+            // Code to run when vNavButton is clicked
+            alert($(this).attr('data-student_id'));
+
+            $("#mainContent").load("changeStudent.php", {
+              // Data to pass to changeStudent.php
+              newStudentID : $(this).attr('data-student_id')
+            });
+            alert("Inside the function!");
+            
+          });
+
+        });
+    </script>
 
     
   </head>
@@ -56,7 +76,7 @@ session_start();
     // Select a guardian from the database for demonstration purposes
     $sql = "SELECT * 
             FROM user
-            WHERE user_id='12'";
+            WHERE user_id='13'";
 
     $result = $conn->query($sql);
 
@@ -69,6 +89,7 @@ session_start();
                 $row['user_city'], $row['user_district'], $row['user_type']);
             // add current user to $users array
             $_SESSION['guardianUser'] = $guardian;
+            
             echo $guardian->get_full_name() . " created as GUARDIAN <br />";
             echo "User for this SESSION: " . $_SESSION['guardianUser']->get_full_name() . " <br />";
 
@@ -78,7 +99,12 @@ session_start();
     }
     $students = $_SESSION['guardianUser']->get_guardian_students();
     $current_student = $students[0];
-    echo "Current Student: " . $current_student->get_full_name() . " <br />";
+    //$_SESSION['current_student'] = $current_student;
+    
+    //echo "Current Student SESSION: ";
+    //print_r $_SESSION['current_student'];
+    //echo "<br />";
+    //echo "Current Student: " . $current_student->get_full_name() . " <br />";
     
     
     // Variables needed: array of student_id values associated with the parent user
@@ -112,26 +138,41 @@ session_start();
       <!-- Vertical navigation bar -->
       <div class="left" id="verticalNav">
         <h3>Navigation</h3>
+
         <?php
+        if(array_key_exists('selectStudent', $_POST)) {
+          echo "Selected Student: " . $_POST['selectStudent'];
+        }
         // Links to each student for this user
         // Make these buttons that change the value of $current_student
         foreach ($students as $value) {
-          echo "<a class='vNavButton' href=''><h3>" . $value->get_full_name() . "</h3></a>";
-          //echo "<button type='custom' id='" . $value->get_full_name() . "' onclick='" . $current_student = $value ."'>" . $value->get_full_name() . "</button>";
+          $full_name = $value->get_full_name();
+          $student_id = $value->get_student_id();
+          echo "<a class='vNavButton' href='' data-student_id='" . $student_id . "'><h3>" . $full_name . "</h3></a>";
+          // php version of button to change value of current_student
+          echo "<form method=\"post\"><input type=\"submit\" name=\"selectStudent\"
+            class=\"button\" value=\"" . $full_name . "\"/></form>";
+          // Can it be done with JavaScript instead?
+          echo "<button type='custom' id='button" . $full_name . "' onclick=\"changeStudentAJAX();\">" . $full_name . "</button>";
+
         }
+         
         ?>
+
       </div>
 
       <!-- Main content of page -->
+
       <div class="middle" id="mainContent">
+        
         <div class="currentStudentName">
             <?php echo "<h3>" . $current_student->get_full_name() . "</h3>"; ?>
-        </div>   
+          </div>   
         <div class="calendar contentCard">
             <h3>Calendar</h3>
 
-        </div>
-        <div class="schedule contentCard">
+          </div>
+          <div class="schedule contentCard">
             <h3>Upcoming</h3>
             <ul>
             <?php
@@ -140,7 +181,7 @@ session_start();
               echo "<li> Next Evaluation due: " . $current_student->get_student_next_evaluation() . "</li>";
             ?>
             </ul>
-        </div>
+          </div>
         <h3>Current Goals</h3>
         <?php 
         // Display each student goal in a card, with each goal's objectives nested inside
@@ -150,55 +191,63 @@ session_start();
           $objectives = $g->get_objectives();
           // Display Content for each Goal
           echo "<div class='contentCard'>";
-          echo "<h4>Goal:" . $g->get_goal_label() . "</h4>";
-          echo "<p>Goal Description: " . $g->get_goal_text() . "</p>";
-          // Display each Objective in a box
-          foreach ($objectives as $o) {
-            // Collect Reports for this Objective
-            $reports = $o->get_reports();
-            echo "<div class='contentCard'>";
-            echo "<h5>Objective: " . $o->get_objective_label() . "</h5>";
-            // Display meter of latest report if available
-            if (isset($reports) && count($reports) > 0) {
-              // Display latest report information
-              $latest_report = $reports[0];
-              $max = $o->get_objective_attempts();
-              $high = $o->get_objective_target();
-              $low = $o->get_objective_target() /2;
-              $value = $latest_report->get_report_observed();
-              echo "<p>Latest Report: ";
-              echo "<meter min='0' max='" . $max . "' high='" . $high ."' low='" . $low . "' optimum='" . $max . "' value='" . $value . "'>" . $value . "</meter>";
-              echo "</p>";
-            }
+            echo "<h4>Goal:" . $g->get_goal_label() . "</h4>";
+            echo "<p>Goal Description: " . $g->get_goal_text() . "</p>";
+            // Display each Objective in a box
+            foreach ($objectives as $o) {
+              // Collect Reports for this Objective
+              $reports = $o->get_reports();
+              echo "<div class='contentCard'>";
+              echo "<h5>Objective: " . $o->get_objective_label() . "</h5>";
+              // Display meter of latest report if available
+              if (isset($reports) && count($reports) > 0) {
+                // Display latest report information
+                $latest_report = $reports[0];
+                $max = $o->get_objective_attempts();
+                $high = $o->get_objective_target();
+                $low = $o->get_objective_target() /2;
+                $value = $latest_report->get_report_observed();
+                echo "<p>Latest Report: ";
+                echo "<meter min='0' max='" . $max . "' high='" . $high ."' low='" . $low . "' optimum='" . $max . "' value='" . $value . "'>" . $value . "</meter>";
+                echo "</p>";
+              } // end of if
 
-            // Expanded details for Objective
-            echo "<div class='expandedDetails'>";
-            echo "<p>Description: " . $o->get_objective_text() ."</p> ";
-            echo "<p>Latest Report Date: " . $latest_report->get_report_date() . "</p>";
-            echo "<p>Report Data: Graph of report data to come</p>";
-            echo "</div>";
+              // Expanded details for Objective
+              $objectiveDetailsID = "objective" . $o->get_objective_id();
+              echo "objectiveDetailsID: " . $objectiveDetailsID . "<br />";
+              echo "<div class='expandedDetails' id=" . $objectiveDetailsID . ">";
+                echo "<p>Description: " . $o->get_objective_text() ."</p> ";
+                echo "<p>Latest Report Date: " . $latest_report->get_report_date() . "</p>";
+                echo "<p>Report Data: Graph of report data to come</p>";
+              echo "</div>"; //end of expandedDetails
 
-            // Expand/Hide button
-            echo "<button type='custom' id='objectiveDetails' onclick='showHide(this);'>+</button>";
-            
-            echo "</div>"; // end of Objective Div
+              // Expand/Hide button
+              //echo "<script> showMessage(); </script>";
+              echo "<button type='custom' id='objectiveDetails' onclick='showHide(\"" . $objectiveDetailsID . "\");'>+</button>";
+              // Try PHP version of button
+              
+              echo "</div>"; // end of Objective Div
+
+            } // end of foreach(objectives)
 
             // Expanded details for Goal
-            echo "<div class='expandedDetails'>";
+            $goalDetailsID = "goal" . $g->get_goal_id();
+            echo "goalDetailsID: " . $goalDetailsID . "<br />";
+            echo "<div class='expandedDetails' id=" . $goalDetailsID . ">";
             echo "<p>Category: " . $g->get_goal_category() . "</p>";
             echo "<p>Description: " . $g->get_goal_text() . "</p>";
             echo "<p>Date Range: " . $current_student->get_student_iep_date() . " - " . $current_student->get_student_next_iep() . "</p>";
-            echo "</div>";
+            echo "</div>"; // end of expandedDetails
 
             // Expand/Hide button
-            echo "<button type='custom' id='objectiveDetails' onclick='showHide(this);'>+</button>";
-
-          }
+            echo "<button type='custom' id='goalDetails' onclick='showHide(\"" . $goalDetailsID . "\");'>+</button>";
+            //echo "<button type='custom' id='goalDetails' onclick='showHide(this);'>+</button>";
           echo "</div>"; // end of Goal Div
-        }
+        } // end of foreach(goal)
         ?>
         
-
+      
+      </div>
       
       <footer>
         <!-- Insert footer info here -->
@@ -207,3 +256,7 @@ session_start();
     </div>
   </body>
 </html>
+<?php
+//Functions for this page
+
+?>
