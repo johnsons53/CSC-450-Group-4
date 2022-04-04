@@ -145,6 +145,32 @@ header {
   padding: 0.4em;
 }
 
+/* ********** Message settings ********** */
+#messageContent {
+  display: flex;
+  flex-flow: column nowrap;
+  grid-area: middle;
+  justify-content: space-around;
+  padding: 0.3em;
+}
+
+.userMessageCard {
+  border: solid black 1px;
+  border-radius: 5px;
+  margin: 0.2em;
+  padding: 0.4em;
+  min-width: 55%;
+  margin-left: auto;
+}
+
+.otherMessageCard {
+  border: solid black 1px;
+  border-radius: 5px;
+  margin: 0.2em;
+  padding: 0.4em;
+  min-width: 55%;
+  margin-right: auto;
+}
 
 /* ********** Responsive settings ********** */
 @media (max-width: 600px) {
