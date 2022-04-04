@@ -19,7 +19,41 @@ error_reporting(E_ALL|E_STRICT);
     <script src="iepDetailView.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- <script> document.getElementById("defaultOpen").click(); </script> -->
+    <script>
+      //jQuery
+      $(document).ready(function() {
+          $(".tablinks").click(function() {
+              $(".tabcontent").load("mainContent.php", {
+                  activeStudentId: $(this).attr("data-studentId"),
+                  activeStudentName: $(this).attr("data-studentName")
+              });
+          });
+          //Identify the defaultOpen element
+          document.getElementById("defaultOpen").click();
+      });
 
+      function openTab(evt, tabName) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+          
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+      }
+    </script>
 
     
   </head>
@@ -203,7 +237,15 @@ error_reporting(E_ALL|E_STRICT);
       <!-- Main content of page -->
       <?php
         // Generate content for each student, then only display one at a time
-        foreach ($students as $value) {
+        /*foreach ($students as $value) {
+          $studentName = $value->get_full_name();
+          echo "<div id=\"" . $studentName . "\" class=\"tabcontent mainContent middle\">";
+  
+          echo "</div>";
+      }*/
+
+
+         foreach ($students as $value) {
           $current_student = $value;
           $current_student_name = $value->get_full_name();
           $current_student_id = $value->get_student_id();
@@ -314,7 +356,7 @@ error_reporting(E_ALL|E_STRICT);
             } // end of foreach(goal)
 
           echo "</div>";  // end of div id='mainContent'
-        } // end of foreach students as value
+        } // end of foreach students as value 
       ?>
 
       
@@ -326,41 +368,7 @@ error_reporting(E_ALL|E_STRICT);
     </div>
   </body>
 
-  <script>
-      //jQuery
-      $(document).ready(function() {
-          $(".tablinks").click(function() {
-              $(".tabcontent").load("mainContent.php", {
-                  activeStudentId: $(this).attr("data-studentId"),
-                  activeStudentName: $(this).attr("data-studentName")
-              });
-          });
-          //Identify the defaultOpen element
-          document.getElementById("defaultOpen").click();
-      });
 
-      function openTab(evt, tabName) {
-        // Declare all variables
-        var i, tabcontent, tablinks;
-
-        // Get all elements with class="tabcontent" and hide them
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
-        }
-
-        // Get all elements with class="tablinks" and remove the class "active"
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-          
-        }
-
-        // Show the current tab, and add an "active" class to the button that opened the tab
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
-      }
-    </script>
 </html>
 <?php
 //Functions for this page

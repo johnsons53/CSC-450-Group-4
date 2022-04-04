@@ -1,10 +1,11 @@
 <?php 
  session_start();
- $sessionStudent = unserialize($_SESSION['currentStudent']);
- echo $sessionStudent->get_full_name();
- 
  ini_set('display_errors', 1);
-    error_reporting(E_ALL|E_STRICT);
+ error_reporting(E_ALL|E_STRICT);
+ //$sessionStudent = unserialize($_SESSION['currentStudent']);
+ //echo $sessionStudent->get_full_name();
+ 
+
     $filepath = realpath('login.php');
     $config = require($filepath);
 
@@ -105,12 +106,38 @@
               echo "<div class='contentCard'>";
                 echo "<h4>Goal:" . $g->get_goal_label() . "</h4>";
                 echo "<p>Goal Description: " . $g->get_goal_text() . "</p>";
+
+                // Add buttons to modify goal or add new objective
+                if (get_class($currentUser) === 'Provider') {
+       
+                    echo "<form action=\"iepProviderGoalForm.php\" method=\"post\">";
+                    echo "<input type=\"submit\" value=\"Modify Goal\">";
+                    echo "</form>";
+
+                    echo "<form action=\"iepProviderObjectiveForm.php\" method=\"post\">";
+                    echo "<input type=\"submit\" value=\"New Objective\">";
+                    echo "</form>";
+                    
+                  }
                 // Display each Objective in a box
                 foreach ($objectives as $o) {
                   // Collect Reports for this Objective
                   $reports = $o->get_reports();
                   echo "<div class='contentCard'>";
                   echo "<h5>Objective: " . $o->get_objective_label() . "</h5>";
+
+                    // Add buttons to modify objective or add new report
+                    if (get_class($currentUser) === 'Provider') {
+       
+                    echo "<form action=\"iepProviderObjectiveForm.php\" method=\"post\">";
+                    echo "<input type=\"submit\" value=\"Modify Objective\">";
+                    echo "</form>";
+
+                    echo "<form action=\"iepProviderReportForm.php\" method=\"post\">";
+                    echo "<input type=\"submit\" value=\"New Report\">";
+                    echo "</form>";
+                    
+                  }
                   // Display meter of latest report if available
                   if (isset($reports) && count($reports) > 0) {
                     // Display latest report information
