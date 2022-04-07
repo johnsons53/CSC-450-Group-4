@@ -118,13 +118,45 @@ function updateObjective ($conn, $objectiveId, $goalId, $objectiveLabel, $object
 /*
 Report functions: deleteReport, insertReport, updateReport 
 */
+function deleteReport($conn, $reportId) {
+    // Delete selected report in the database
+    $stmt = $conn->prepare("DELETE 
+                            FROM report
+                            WHERE report_id=?");
 
+    // prepare statement, bind parameters
+    $stmt->bind_param("i", $reportId);
+
+    // execute prepared statement
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    return true;
+}
 function insertReport($conn, $objectiveId, $reportDate, $reportObserved) {
     //Insert form data into database using prepared statement and bound parameters
     $stmt = $conn->prepare("INSERT INTO report (objective_id, report_date, report_observed) VALUES (?,?,?)");
 
     // prepare statement, bind parameters
     $stmt->bind_param("isi", $objectiveId, $reportDate, $reportObserved);
+
+    // execute prepared statement
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    return true;
+}
+
+function updateReport($conn, $objectiveId, $reportDate, $reportObserved, $reportId) {
+    // Update selected report in the database
+    $stmt = $conn->prepare("UPDATE report
+                            SET objective_id=?,
+                                report_date=?,
+                                report_observed=?
+                            WHERE report_id=?");
+
+    // prepare statement, bind parameters
+    $stmt->bind_param("isii", $objectiveId, $reportDate, $reportObserved, $reportId);
 
     // execute prepared statement
     $stmt->execute();
