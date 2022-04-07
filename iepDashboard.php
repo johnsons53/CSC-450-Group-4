@@ -13,6 +13,8 @@ error_reporting(E_ALL|E_STRICT);
       Author: Lisa Ahnell, Sienna-Rae Johnson
       Date Written: 02/26/2022
       Revised: 02/28/2022 Added containers for expanded view. Began setting up PHP sections.
+      04/05/2022 Implemented toggling between student tabs.
+
     -->
     <title>IEP Portal: Parent Home</title>
     <link rel="stylesheet" type="text/css" href="style.css">
@@ -20,7 +22,7 @@ error_reporting(E_ALL|E_STRICT);
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- <script> document.getElementById("defaultOpen").click(); </script> -->
     <script>
-      //jQuery
+      //Run when student tab link is clicked
       $(document).ready(function() {
           $(".tablinks").click(function() {
               $(".tabcontent").load("mainContent.php", {
@@ -31,6 +33,7 @@ error_reporting(E_ALL|E_STRICT);
           //Identify the defaultOpen element
           document.getElementById("defaultOpen").click();
       });
+
 
       function openTab(evt, tabName) {
         // Declare all variables
@@ -78,6 +81,8 @@ error_reporting(E_ALL|E_STRICT);
     require_once realpath('Report.php');
     require_once realpath('Objective.php');
     require_once realpath('Student.php');
+    require_once realpath('functions.php');
+
 
     
     $db_hostname = $config['DB_HOSTNAME'];
@@ -92,6 +97,7 @@ error_reporting(E_ALL|E_STRICT);
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
+    test();
 
     $currentUser;
     // Select a guardian from the database for demonstration purposes
@@ -149,36 +155,50 @@ error_reporting(E_ALL|E_STRICT);
     echo "0 results <br />";
     }
     if(array_key_exists('currentUser', $_SESSION)) {
-      echo "SESSION contains currentUser value";
+      echo "SESSION contains currentUser value <br />";
     }
 
-    // Save array of students
+    // Save array of students on page and in SESSION
     $students = $currentUser->get_provider_students();
+    $_SESSION["currentStudents"] = serialize($students);
 
     // Set default current student to first student in the list
     $_SESSION['currentStudent'] = serialize($students[0]);
     if(array_key_exists('currentStudent', $_SESSION)) {
-      echo "SESSION contains currentStudent value";
+      echo "SESSION contains currentStudent value <br />";
     }
 
-    
-    
-    //$_SESSION['current_student'] = $current_student;
-    
-    //echo "Current Student SESSION: ";
-    //print_r $_SESSION['current_student'];
-    //echo "<br />";
-    //echo "Current Student: " . $current_student->get_full_name() . " <br />";
-    
-    
-    // Variables needed: array of student_id values associated with the parent user
-    // array of student names, pulled from user table and combined into one string for display
-    // selected student to control which student's records are displayed
-    // array of selected student values from student table
-    // array for selected student's current goals
-    // array for selected student's current objectives
-    // report data for creating graph
-    //  
+    if(isset($_POST["insertReport"])) {
+      if (insertReport($conn, $_POST["objectiveId"], $_POST["reportDate"], $_POST["reportObserved"])) {
+        // Alert Report added successfully
+        echo "<script>>alert(\"Report saved\");</script>";
+      } else {
+        // Alert report not added
+        echo "<script>>alert(\"Unable to save report\");</script>";
+      }
+    } 
+
+    if(isset($_POST["saveObjective"])) {
+      echo "_POST['saveObjective'] is set <br />";
+      echo "POST objectiveId: " . $_POST["objectiveId"] . "<br />";
+      echo "POST goalId: " . $_POST["goalId"] . "<br />";
+      echo "POST objectiveLabel: " . $_POST["objectiveLabel"] . "<br />";
+      echo "POST objectiveText: " . $_POST["objectiveText"] . "<br />";
+      echo "POST objectiveAttempts: " . $_POST["objectiveAttempts"] . "<br />";
+      echo "POST objectiveTarget: " . $_POST["objectiveTarget"] . "<br />";
+      echo "POST objectiveStatus: " . $_POST["objectiveStatus"] . "<br />";
+      // Insert new objective or update existing objective?
+      if($_POST["objectiveId"] == "") {
+        // Insert objective
+      } else {
+        updateObjective($conn, $_POST["objectiveId"], $_POST["goalId"], $_POST["objectiveLabel"], 
+        $_POST["objectiveText"], $_POST["objectiveAttempts"], $_POST["objectiveTarget"], 
+        $_POST["objectiveStatus"]);
+      }
+    } else {
+      echo "_POST['saveObjective'] is NOT set <br />";
+    }
+  
     ?>
     <!-- Page is encompassed in grid -->
     <div class="gridContainer">
@@ -236,14 +256,6 @@ error_reporting(E_ALL|E_STRICT);
 
       <!-- Main content of page -->
       <?php
-        // Generate content for each student, then only display one at a time
-        /*foreach ($students as $value) {
-          $studentName = $value->get_full_name();
-          echo "<div id=\"" . $studentName . "\" class=\"tabcontent mainContent middle\">";
-  
-          echo "</div>";
-      }*/
-
 
          foreach ($students as $value) {
           $current_student = $value;
@@ -253,108 +265,7 @@ error_reporting(E_ALL|E_STRICT);
           // Only need to create an empty div here for each student with correct name, id and classes
 
           echo "<div class='middle mainContent tabcontent' id='" . $current_student_name . "' >";
-            // Student Name
-            echo "<div class='currentStudentName'>";
-              echo "<h3>" . $current_student->get_full_name() . "</h3>";
-            echo "</div>"; // end of student name div
-
-            // Calendar
-            echo "<div class='calendar contentCard'>";
-              echo "<h3>Calendar</h3>";
-
-            echo "</div>"; // end of Calendar div
-
-            // Schedule
-            echo "<div class='schedule contentCard'>";
-              echo "<h3>Upcoming</h3>";
-              echo "<ul>";
-            
-              // Display list of next IEP and next Evaluation for $current_student
-              echo "<li> Next IEP due: " . $current_student->get_student_next_iep() . "</li>";
-              echo "<li> Next Evaluation due: " . $current_student->get_student_next_evaluation() . "</li>";
-            
-            echo "</ul>";
-            echo "</div>"; // end of Schedule div
-
-            // Goals
-            echo "<h3>Current Goals</h3>";
-            // Display each student goal in a card, with each goal's objectives nested inside
-
-            // New Goal button for Provider users
-            if (get_class($currentUser) === 'Provider') {
-               
-              echo "<form action=\"iepProviderGoalForm.php\" method=\"post\">";
-              echo "<input type=\"submit\" value=\"New Goal\">";
-              echo "</form>";
-              
-            }
-            
-            if (isset($_POST['Submit'])) {
-              //$_SESSION['currentStudent'] = serialize($current_student);
-              //$_SESSION['currentStudent'] = $current_student;
-              
-            }
-
-            $goals = $current_student->get_goals();
-            foreach ($goals as $g) {
-              // Collect objectives for this Goal
-              $objectives = $g->get_objectives();
-              // Display Content for each Goal
-              echo "<div class='contentCard'>";
-                echo "<h4>Goal:" . $g->get_goal_label() . "</h4>";
-                echo "<p>Goal Description: " . $g->get_goal_text() . "</p>";
-                // Display each Objective in a box
-                foreach ($objectives as $o) {
-                  // Collect Reports for this Objective
-                  $reports = $o->get_reports();
-                  echo "<div class='contentCard'>";
-                  echo "<h5>Objective: " . $o->get_objective_label() . "</h5>";
-                  // Display meter of latest report if available
-                  if (isset($reports) && count($reports) > 0) {
-                    // Display latest report information
-                    $latest_report = $reports[0];
-                    $max = $o->get_objective_attempts();
-                    $high = $o->get_objective_target();
-                    $low = $o->get_objective_target() /2;
-                    $value = $latest_report->get_report_observed();
-                    echo "<p>Latest Report: ";
-                    echo "<meter min='0' max='" . $max . "' high='" . $high ."' low='" . $low . "' optimum='" . $max . "' value='" . $value . "'>" . $value . "</meter>";
-                    echo "</p>";
-                  } // end of if
-
-                  // Expanded details for Objective
-                  $objectiveDetailsID = "objective" . $o->get_objective_id();
-                  echo "objectiveDetailsID: " . $objectiveDetailsID . "<br />";
-                  echo "<div class='expandedDetails' id=" . $objectiveDetailsID . ">";
-                    echo "<p>Description: " . $o->get_objective_text() ."</p> ";
-                    echo "<p>Latest Report Date: " . $latest_report->get_report_date() . "</p>";
-                    echo "<p>Report Data: Graph of report data to come</p>";
-                  echo "</div>"; //end of expandedDetails
-
-                  // Expand/Hide button
-                  //echo "<script> showMessage(); </script>";
-                  echo "<button type='custom' id='objectiveDetails' onclick='showHide(\"" . $objectiveDetailsID . "\");'>+</button>";
-                  // Try PHP version of button
-                  
-                  echo "</div>"; // end of Objective Div
-
-                } // end of foreach(objectives)
-
-                // Expanded details for Goal
-                $goalDetailsID = "goal" . $g->get_goal_id();
-                echo "goalDetailsID: " . $goalDetailsID . "<br />";
-                echo "<div class='expandedDetails' id=" . $goalDetailsID . ">";
-                echo "<p>Category: " . $g->get_goal_category() . "</p>";
-                echo "<p>Description: " . $g->get_goal_text() . "</p>";
-                echo "<p>Date Range: " . $current_student->get_student_iep_date() . " - " . $current_student->get_student_next_iep() . "</p>";
-                echo "</div>"; // end of expandedDetails
-
-                // Expand/Hide button
-                echo "<button type='custom' id='goalDetails' onclick='showHide(\"" . $goalDetailsID . "\");'>+</button>";
-                //echo "<button type='custom' id='goalDetails' onclick='showHide(this);'>+</button>";
-              echo "</div>"; // end of Goal Div
-            } // end of foreach(goal)
-
+ 
           echo "</div>";  // end of div id='mainContent'
         } // end of foreach students as value 
       ?>
@@ -371,7 +282,5 @@ error_reporting(E_ALL|E_STRICT);
 
 </html>
 <?php
-//Functions for this page
-
-
+$conn->close();
 ?>
