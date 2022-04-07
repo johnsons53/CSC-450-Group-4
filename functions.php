@@ -44,7 +44,7 @@ function insertGoal($conn, $studentId, $goalLabel, $goalCategory, $goalText, $go
 }
 function updateGoal($conn, $studentId, $goalLabel, $goalCategory, $goalText, $goalActive, $goalId) {
     // Update selected goal in the database
-    $stmt = $conn->prepare("UPDATE objective
+    $stmt = $conn->prepare("UPDATE goal
                             SET student_id=?,
                                 goal_label=?,
                                 goal_category=?,
@@ -80,7 +80,7 @@ function deleteObjective($conn, $objectiveId) {
     return true;
 
 }
-function insertObjective($conn, $objectiveId, $goalId, $objectiveLabel, $objectiveText, $objectiveAttempts, $objectiveTarget, $objectiveStatus) {
+function insertObjective($conn, $goalId, $objectiveLabel, $objectiveText, $objectiveAttempts, $objectiveTarget, $objectiveStatus) {
     //Insert form data into database using prepared statement and bound parameters
     $stmt = $conn->prepare("INSERT INTO objective (goal_id, objective_label, objective_text, objective_attempts, objective_target, objective_status) 
                         VALUES (?,?,?,?,?,?)");

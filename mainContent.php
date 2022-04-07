@@ -74,12 +74,12 @@
     echo "Active Student Name: ";
     echo $activeStudent->get_full_name();
     $studentName = $activeStudent->get_full_name();
+    $studentId = $activeStudent->get_student_id();
     echo "<br />";
 
     // Using activeStudent, access content
 
-    // New Goal button for Provider users
-    echo get_class($currentUser);
+   
 
     if (get_class($currentUser) === 'Guardian') {
       echo "This user is a Guardian. <br />";
@@ -111,11 +111,17 @@
     // Goals
     echo "<h3>Current Goals</h3>";
     // Display each student goal in a card, with each goal's objectives nested inside
+     // New Goal button for Provider users
 
     if (get_class($currentUser) === 'Provider') {
        
-      echo "<form action=\"iepProviderGoalForm.php\" method=\"post\">";
+      /* NEW GOAL BUTTON */
+      echo "<form action=\"" . htmlspecialchars("iepProviderGoalForm.php") . "\" method=\"post\">";
       // Add hidden fields with data to send to report form. 
+      //echo "<input type=\"hidden\" id=\"NGgoalId\" name=\"goalId\" value=\"\">";
+      echo "<input type=\"hidden\" id=\"NGstudentId\" name=\"studentId\" value=\"" . $studentId . "\">";
+      echo "<input type=\"hidden\" id=\"NGstudentName\" name=\"studentName\" value=\"" . $studentName . "\">";
+      // New Goal button
       echo "<input type=\"submit\" name=\"newGoal\" value=\"New Goal\">";
       echo "</form>";
       
@@ -128,6 +134,7 @@
         $goalLabel = $g->get_goal_label();
         $goalCategory = $g->get_goal_category();
         $goalText = $g->get_goal_text();
+        $goalActive = $g->get_goal_active();
 
         $objectives = $g->get_objectives();
         // Display Content for each Goal
@@ -138,13 +145,27 @@
           // Add buttons to modify goal or add new objective
           if (get_class($currentUser) === 'Provider') {
   
-              echo "<form action=\"iepProviderGoalForm.php\" method=\"post\">";
+              /* UPDATE GOAL BUTTON */
+              echo "<form action=\"" . htmlspecialchars("iepProviderGoalForm.php") . "\" method=\"post\">";
               // Add hidden fields with data to send to report form. 
-              echo "<input type=\"submit\" name=\"modifyGoal\" value=\"Modify Goal\">";
+              echo "<input type=\"hidden\" id=\"UGstudentId\" name=\"studentId\" value=\"" . $studentId . "\">";
+              echo "<input type=\"hidden\" id=\"UGstudentName\" name=\"studentName\" value=\"" . $studentName . "\">";
+              echo "<input type=\"hidden\" id=\"UGgoalId\" name=\"goalId\" value=\"" . $goalId . "\">";
+              echo "<input type=\"hidden\" id=\"UGgoalLabel\" name=\"goalLabel\" value=\"" . $goalLabel . "\">";
+              echo "<input type=\"hidden\" id=\"UGgoalCategory\" name=\"goalCategory\" value=\"" . $goalCategory . "\">";
+              echo "<input type=\"hidden\" id=\"UGgoalText\" name=\"goalText\" value=\"" . $goalText . "\">";
+              echo "<input type=\"hidden\" id=\"UGgoalActive\" name=\"goalActive\" value=\"" . $goalActive . "\">";
+              // update goal submit button
+              echo "<input type=\"submit\" name=\"updateGoal\" value=\"Update Goal\">";
               echo "</form>";
 
-              echo "<form action=\"iepProviderObjectiveForm.php\" method=\"post\">";
+              /* NEW OBJECTIVE BUTTON */
+              echo "<form action=\"" . htmlspecialchars("iepProviderObjectiveForm.php") . "\" method=\"post\">";
               // Add hidden fields with data to send to report form. 
+              echo "<input type=\"hidden\" id=\"NOGoalId" . $goalId . "\" name=\"goalId\" value=\"" . $goalId . "\">";
+              echo "<input type=\"hidden\" id=\"NOStudentName" . $studentName . "\" name=\"studentName\" value=\"" . $studentName . "\">";
+              echo "<input type=\"hidden\" id=\"NOgoalLabel" . $goalId . "\" name=\"goalLabel\" value=\"" . $goalLabel . "\">";
+              // new objective submit button
               echo "<input type=\"submit\" name=\"newObjective\" value=\"New Objective\">";
               echo "</form>";
               
@@ -167,7 +188,7 @@
               if (get_class($currentUser) === 'Provider') {
 
   
-              // Button to Update this objective
+              /* UPDATE OBJECTIVE BUTTON */
               echo "<form action=\"" . htmlspecialchars("iepProviderObjectiveForm.php") . "\" method=\"post\">";
               // hidden fields with data to send to report form.
               echo "<input type=\"hidden\" id=\"UOobjectiveId" . $objectiveId . "\" name=\"objectiveId\" value=\"" . $objectiveId . "\">";
@@ -183,7 +204,7 @@
               echo "<input type=\"submit\" id=\"updateObjective" . $objectiveId . "\" class=\"updateObjective\" name=\"updateObjective\" value=\"Update Objective\">";
               echo "</form>";
 
-              // Add new Report for this objective
+              /* NEW REPORT BUTTON */
               echo "<form action=\"" . htmlspecialchars("iepProviderReportForm.php") . "\" method=\"post\">";
               // Add hidden fields with data to send to report form.
               echo "<input type=\"hidden\" id=\"objectiveId" . $objectiveId . "\" name=\"objectiveId\" value=\"" . $objectiveId . "\">";

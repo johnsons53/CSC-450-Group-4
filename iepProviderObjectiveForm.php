@@ -53,116 +53,108 @@
         if (array_key_exists("objectiveId", $_POST)) {
             echo "objectiveId found in POST: " . $_POST["objectiveId"];
             echo " :-) <br />";
+            $objectiveId = $_POST["objectiveId"];
         } else {
             echo " Did not find objectiveId in POST :-( <br />";
+            $objectiveId = "";
         }
         if (array_key_exists("goalId", $_POST)) {
             echo "goalId found in POST: " . $_POST["goalId"];
             echo " :-) <br />";
+            $goalId = $_POST["goalId"];
         } else {
             echo " Did not find goalId in POST :-( <br />";
         }
         if (array_key_exists("studentName", $_POST)) {
             echo "studentName found in POST: " . $_POST["studentName"];
             echo " :-) <br />";
+            $studentName = $_POST["studentName"];
         } else {
-        echo " Did not find studentName in POST :-( <br />";
+            echo " Did not find studentName in POST :-( <br />";
         }
         if (array_key_exists("goalLabel", $_POST)) {
             echo "goalLabel found in POST: " . $_POST["goalLabel"];
             echo " :-) <br />";
+            $goalLabel = $_POST["goalLabel"];
         } else {
-        echo " Did not find goalLabel in POST :-( <br />";
+            echo " Did not find goalLabel in POST :-( <br />";
         }
         if (array_key_exists("objectiveLabel", $_POST)) {
             echo "objectiveLabel found in POST: " . $_POST["objectiveLabel"];
             echo " :-) <br />";
+            $objectiveLabel = $_POST["objectiveLabel"];
         } else {
-        echo " Did not find objectiveLabel in POST :-( <br />";
+            echo " Did not find objectiveLabel in POST :-( <br />";
+            $objectiveLabel = "";
         } 
         if (array_key_exists("objectiveText", $_POST)) {
             echo "objectiveText found in POST: " . $_POST["objectiveText"];
             echo " :-) <br />";
+            $objectiveText = $_POST["objectiveText"];
         } else {
-        echo " Did not find objectiveText in POST :-( <br />";
+            echo " Did not find objectiveText in POST :-( <br />";
+            $objectiveText = "";
         }
         if (array_key_exists("objectiveAttempts", $_POST)) {
             echo "objectiveAttempts found in POST: " . $_POST["objectiveAttempts"];
             echo " :-) <br />";
+            $objectiveAttempts = $_POST["objectiveAttempts"];
         } else {
-        echo " Did not find objectiveAttempts in POST :-( <br />";
+            echo " Did not find objectiveAttempts in POST :-( <br />";
+            $objectiveAttempts = "";
         }
         if (array_key_exists("objectiveTarget", $_POST)) {
             echo "objectiveTarget found in POST: " . $_POST["objectiveTarget"];
             echo " :-) <br />";
+            $objectiveTarget = $_POST["objectiveTarget"];
         } else {
-        echo " Did not find objectiveTarget in POST :-( <br />";
+            echo " Did not find objectiveTarget in POST :-( <br />";
+            $objectiveTarget = "";
         }
         if (array_key_exists("objectiveStatus", $_POST)) {
             echo "objectiveStatus found in POST: " . $_POST["objectiveStatus"];
             echo " :-) <br />";
+            $objectiveStatus = $_POST["objectiveStatus"];
         } else {
-        echo " Did not find objectiveStatus in POST :-( <br />";
+            echo " Did not find objectiveStatus in POST :-( <br />";
+            $objectiveStatus = "";
         }
-        
-        
-      // define variables and set them to empty for now
-
-      // if creating new objective
-      //  objectiveId is blank
-      // goalId, student_name come from calling page
-      // all other fields blank
-
-
-      // if modifying existing objective:
-        // objectiveId, goalId, student_name from calling page
-        // objectiveLabel, objectiveText, objectiveAttempts, objectiveTarget, objectiveStatus 
-        // populated with database query using objectiveId
-      $objectiveId = $_POST["objectiveId"];
-      $goalId = $_POST["goalId"];
-      $studentName = $_POST["studentName"];
-      $goalLabel = $_POST["goalLabel"];
-      $objectiveLabel = $_POST["objectiveLabel"];
-      $objectiveText = $_POST["objectiveText"];
-      $objectiveAttempts = $_POST["objectiveAttempts"];
-      $objectiveTarget = $_POST["objectiveTarget"];
-      $objectiveStatus = $_POST["objectiveStatus"];
 
       // error variables for incomplete or unacceptable data entry
-      $objective_label_err =
-      $objective_text_err =
-      $objective_attempts_err =
-      $objective_target_err =
-      $objective_status_err = "";
+      $objectiveLabelErr =
+      $objectiveTextErr =
+      $objectiveAttemptsErr =
+      $objectiveTargetErr =
+      $objectiveStatusErr = "";
 
       if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (empty($_POST["objectiveLabel"])) {
-            $objective_label_err = "Objective Label is required";
+            $objectiveLabelErr = "Objective Label is required";
         } else {
             $objectiveLabel = test_input($_POST["objectiveLabel"]);
         }
 
         if (empty($_POST["objectiveText"])) {
-            $objective_text_err = "Objective Description is required";
+            $objectiveTextErr = "Objective Description is required";
         } else {
             $objectiveText = test_input($_POST["objectiveText"]);
         }
 
         if (empty($_POST["objectiveAttempts"])) {
-            $objective_attempts_err = "Objective Attempts is required";
+            $objectiveAttemptsErr = "Objective Attempts is required";
         } else {
             $objectiveAttempts = test_input($_POST["objectiveAttempts"]);
         }
 
         if (empty($_POST["objectiveTarget"])) {
-            $objective_target_err = "Objective Target is required";
+            $objectiveTargetErr = "Objective Target is required";
         } else {
             $objectiveTarget = test_input($_POST["objectiveTarget"]);
         }
 
         if (empty($_POST["objectiveStatus"])) {
-            $objective_status_err = "Objective Status is required";
+            $objectiveStatusErr = "Objective Status is required";
         } else {
             $objectiveStatus = test_input($_POST["objectiveStatus"]);
         }          
@@ -209,39 +201,42 @@
             <div>
                 <label for="objectiveLabel">Objective Label</label>
                 <input type="text" id="objectiveLabel" name="objectiveLabel" value="<?php echo $objectiveLabel; ?>">
-                <span class="error">* <?php echo $objective_label_err;?></span>
+                <span class="error">* <?php echo $objectiveLabelErr;?></span>
             </div>
             <!-- Text field for objectiveText -->
             <div>
                 <label for="objectiveText">Objective Desctiption</label>
                 <textarea id="objectiveText" name="objectiveText" rows="6" cols="40"><?php echo $objectiveText; ?></textarea>
-                <span class="error">* <?php echo $objective_text_err;?></span>
+                <span class="error">* <?php echo $objectiveTextErr;?></span>
             </div>
 
             <!-- Number picker for objectiveAttempts -->
             <div>
                 <label for="objectiveAttempts">Objective Attempts</label>
                 <input type="number" id="objectiveAttempts" name="objectiveAttempts" value="<?php echo $objectiveAttempts; ?>">
-                <span class="error">* <?php echo $objective_attempts_err;?></span>
+                <span class="error">* <?php echo $objectiveAttemptsErr;?></span>
             </div>
 
             <!-- Number picker for objectiveTarget -->
             <div>
                 <label for="objectiveTarget">Objective Target</label>
                 <input type="number" id="objectiveTarget" name="objectiveTarget" value="<?php echo $objectiveTarget; ?>">
-                <span class="error">* <?php echo $objective_target_err;?></span>
+                <span class="error">* <?php echo $objectiveTargetErr;?></span>
             </div>
 
             <!-- Radio buttons to set objectiveStatus -->
             <div>
                 <label for="objectiveStatus">Objective Status</label>
                 <label><input type="radio" name="objectiveStatus" 
-                <?php if(isset($objectiveStatus) && $objectiveStatus == "0") echo "checked";?> 
+                <?php 
+                if($objectiveStatus === "") echo "checked";
+                if(isset($objectiveStatus) && $objectiveStatus == "0") echo "checked";
+                ?> 
                 value="0">Active</label>
                 <label><input type="radio" name="objectiveStatus" 
                 <?php if(isset($objectiveStatus) && $objectiveStatus == "1") echo "checked";?>
                 value="1">Complete</label>
-                <span class="error">* <?php echo $objective_status_err;?></span>
+                <span class="error">* <?php echo $objectiveStatusErr;?></span>
             </div>
             <!--Submit button to Update Objective-->
             <div>

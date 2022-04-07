@@ -171,12 +171,46 @@ error_reporting(E_ALL|E_STRICT);
     if(isset($_POST["insertReport"])) {
       if (insertReport($conn, $_POST["objectiveId"], $_POST["reportDate"], $_POST["reportObserved"])) {
         // Alert Report added successfully
-        echo "<script>>alert(\"Report saved\");</script>";
+        echo "New Report: ". $_POST["reportDate"] ." saved :-) <br />";
       } else {
         // Alert report not added
-        echo "<script>>alert(\"Unable to save report\");</script>";
+        echo "New Report: ". $_POST["reportDate"] ." NOT saved :-( <br />";;
       }
-    } 
+    }
+    
+    if(isset($_POST["saveGoal"])) {
+      echo "_POST['saveGoal'] is set <br />";
+      echo "POST studentId: " . $_POST["studentId"] . "<br />";
+      echo "POST goalId: " . $_POST["goalId"] . "<br />";
+      echo "POST goalLabel: " . $_POST["goalLabel"] . "<br />";
+      echo "POST goalCategory: " . $_POST["goalCategory"] . "<br />";
+      echo "POST goalText: " . $_POST["goalText"] . "<br />";
+      echo "POST goalActive: " . $_POST["goalActive"] . "<br />";
+      // Insert new goal or update existing goal?
+      if($_POST["goalId"] == "") {
+        // Insert goal
+        if (insertGoal($conn, $_POST["studentId"], $_POST["goalLabel"], $_POST["goalCategory"], $_POST["goalText"], $_POST["goalActive"])) {
+          // Alert Report added successfully
+          echo "New Goal: ". $_POST["goalLabel"] ." saved :-) <br />";
+        } else {
+          // Alert report not added
+          echo "New Goal: ". $_POST["goalLabel"] ." NOT saved :-( <br />";
+        }
+      } else {
+        // Update goal
+        if (updateGoal($conn, $_POST["studentId"], $_POST["goalLabel"], $_POST["goalCategory"], $_POST["goalText"], $_POST["goalActive"], $_POST["goalId"])) {
+          // Alert Goal updated successfully
+          echo "Existing Goal: ". $_POST["goalLabel"] ." updated :-) <br />";
+        } else {
+          // Alert Goal not added
+          echo "Existing Goal: ". $_POST["goalLabel"] ." NOT updated :-( <br />";
+        }
+
+      }
+    } else {
+      echo "_POST['saveGoal'] is NOT set <br />";
+    }
+    
 
     if(isset($_POST["saveObjective"])) {
       echo "_POST['saveObjective'] is set <br />";
@@ -189,8 +223,18 @@ error_reporting(E_ALL|E_STRICT);
       echo "POST objectiveStatus: " . $_POST["objectiveStatus"] . "<br />";
       // Insert new objective or update existing objective?
       if($_POST["objectiveId"] == "") {
-        // Insert objective
+          // Insert objective
+          if (insertObjective($conn, $_POST["goalId"], $_POST["objectiveLabel"], 
+          $_POST["objectiveText"], $_POST["objectiveAttempts"], $_POST["objectiveTarget"], 
+          $_POST["objectiveStatus"])) {
+            // Alert Objective added successfully
+            echo "New Objective: ". $_POST["objectiveLabel"] ." saved :-) <br />";
+          } else {
+            // Alert report not added
+            echo "New Objective: ". $_POST["objectiveLabel"] ." NOT saved :-( <br />";
+          }
       } else {
+        // CHANGE to match function call above
         updateObjective($conn, $_POST["objectiveId"], $_POST["goalId"], $_POST["objectiveLabel"], 
         $_POST["objectiveText"], $_POST["objectiveAttempts"], $_POST["objectiveTarget"], 
         $_POST["objectiveStatus"]);
