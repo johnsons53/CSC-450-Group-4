@@ -12,22 +12,87 @@ function test() {
 /*
 Goal functions: deleteGoal, insertGoal, updateGoal 
 */
-function deleteGoal() {
+function deleteGoal($conn, $goalId) {
+    // Delete selected goal in the database
+    $stmt = $conn->prepare("DELETE 
+                            FROM goal
+                            WHERE goal_id=?");
+
+    // prepare statement, bind parameters
+    $stmt->bind_param("i", $goalId);
+
+    // execute prepared statement
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    return true;
 
 }
-function insertGoal() {
+function insertGoal($conn, $studentId, $goalLabel, $goalCategory, $goalText, $goalActive) {
+    //Insert form data into database using prepared statement and bound parameters
+    $stmt = $conn->prepare("INSERT INTO goal (student_id, goal_label, goal_category, goal_text, goal_active) 
+                        VALUES (?,?,?,?,?)");
 
+    // prepare statement, bind parameters
+    $stmt->bind_param("isssi", $studentId, $goalLabel, $goalCategory, $goalText, $goalActive);
+
+    // execute prepared statement
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    return true; 
 }
-function updateGoal() {
+function updateGoal($conn, $studentId, $goalLabel, $goalCategory, $goalText, $goalActive, $goalId) {
+    // Update selected goal in the database
+    $stmt = $conn->prepare("UPDATE objective
+                            SET student_id=?,
+                                goal_label=?,
+                                goal_category=?,
+                                goal_text=?,
+                                goal_active=?
+                            WHERE goal_id=?");
 
+    // prepare statement, bind parameters
+    $stmt->bind_param("isssii", $studentId, $goalLabel, $goalCategory, $goalText, $goalActive, $goalId);
+
+    // execute prepared statement
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    return true;
 }
 /*
 Objective functions: deleteObjective, insertObjective, updateObjective 
 */
-function deleteObjective() {
+function deleteObjective($conn, $objectiveId) {
+    // Delete selected objective in the database
+    $stmt = $conn->prepare("DELETE 
+                            FROM objective
+                            WHERE objective_id=?");
+
+    // prepare statement, bind parameters
+    $stmt->bind_param("i", $objectiveId);
+
+    // execute prepared statement
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    return true;
 
 }
-function insertObjective() {
+function insertObjective($conn, $objectiveId, $goalId, $objectiveLabel, $objectiveText, $objectiveAttempts, $objectiveTarget, $objectiveStatus) {
+    //Insert form data into database using prepared statement and bound parameters
+    $stmt = $conn->prepare("INSERT INTO objective (goal_id, objective_label, objective_text, objective_attempts, objective_target, objective_status) 
+                        VALUES (?,?,?,?,?,?)");
+
+    // prepare statement, bind parameters
+    $stmt->bind_param("issiii", $goalId, $objectiveLabel, $objectiveText, $objectiveAttempts, $objectiveTarget, $objectiveStatus);
+
+    // execute prepared statement
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    return true; 
 
 }
 function updateObjective ($conn, $objectiveId, $goalId, $objectiveLabel, $objectiveText, $objectiveAttempts, $objectiveTarget, $objectiveStatus) {
