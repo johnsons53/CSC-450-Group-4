@@ -34,6 +34,24 @@ error_reporting(E_ALL|E_STRICT);
           document.getElementById("defaultOpen").click();
       });
 
+      $(document).ready(function() {
+        
+        $(document).on("change", ".reportSelect", function() {
+          
+          var selectedValue = $(this).find(":selected").val();
+          var selectedObjective = $(this).attr("data-objectiveId");
+          alert("Objective Id:" + selectedObjective + " , Report value: " + selectedValue + ", max: " + $(this).attr("data-max") +
+           ", high: " + $(this).attr("data-high") + ", low: " + $(this).attr("data-low"));
+          $("#reportMeter" + selectedObjective).load("reportMeter.php", {
+            value: selectedValue,
+            max: $(this).attr("data-max"),
+            high: $(this).attr("data-high"),
+            low: $(this).attr("data-low")
+          });
+        });
+
+      });
+
 
       function openTab(evt, tabName) {
         // Declare all variables
@@ -166,10 +184,12 @@ error_reporting(E_ALL|E_STRICT);
     $_SESSION['currentStudent'] = serialize($students[0]);
     if(array_key_exists('currentStudent', $_SESSION)) {
       echo "SESSION contains currentStudent value <br />";
+      $currentStudent = unserialize($_SESSION["currentStudent"]);
+      echo "currentStudent value: " . $currentStudent->get_full_name() ." <br />";
     }
 
     if(isset($_POST["insertReport"])) {
-      if (insertReport($conn, $_POST["objectiveId"], $_POST["reportDate"], $_POST["reportObserved"])) {
+      if (insertReport($conn, $_POST["objectiveId"], $_POST["reportDate"], $_POST["reportObserved"], $currentStudent)) {
         // Alert Report added successfully
         echo "New Report: ". $_POST["reportDate"] ." saved :-) <br />";
       } else {
@@ -234,10 +254,18 @@ error_reporting(E_ALL|E_STRICT);
             echo "New Objective: ". $_POST["objectiveLabel"] ." NOT saved :-( <br />";
           }
       } else {
-        // CHANGE to match function call above
-        updateObjective($conn, $_POST["objectiveId"], $_POST["goalId"], $_POST["objectiveLabel"], 
+        // Update objective
+        if (updateObjective($conn, $_POST["objectiveId"], $_POST["goalId"], $_POST["objectiveLabel"], 
         $_POST["objectiveText"], $_POST["objectiveAttempts"], $_POST["objectiveTarget"], 
-        $_POST["objectiveStatus"]);
+        $_POST["objectiveStatus"])) {
+          // Alert Objective updated successfully
+          echo "Existing Objective: ". $_POST["objectiveLabel"] ." updated :-) <br />";
+        } else {
+          // Alert report not added
+          echo "Existing Objective: ". $_POST["objectiveLabel"] ." NOT updated :-( <br />";
+          }
+        
+        
       }
     } else {
       echo "_POST['saveObjective'] is NOT set <br />";

@@ -61,6 +61,10 @@ function updateGoal($conn, $studentId, $goalLabel, $goalCategory, $goalText, $go
 
     return true;
 }
+
+function refreshGoals() {
+
+}
 /*
 Objective functions: deleteObjective, insertObjective, updateObjective 
 */
@@ -115,10 +119,18 @@ function updateObjective ($conn, $objectiveId, $goalId, $objectiveLabel, $object
 
     return true;
 }
+function refreshObjectives($conn, $student) {
+
+    foreach ($student->goals as $value) {
+        // clear existing reports
+        $value->$objectives = [];
+        $value->store_objectives($conn, $value->get_goal_id());
+    }
+}
 /*
 Report functions: deleteReport, insertReport, updateReport 
 */
-function deleteReport($conn, $reportId) {
+function deleteReport($conn, $reportId, $student) {
     // Delete selected report in the database
     $stmt = $conn->prepare("DELETE 
                             FROM report
@@ -131,9 +143,12 @@ function deleteReport($conn, $reportId) {
     $stmt->execute();
     $result = $stmt->get_result();
 
+    //refresh reports for this student
+    refreshReports($student);
+
     return true;
 }
-function insertReport($conn, $objectiveId, $reportDate, $reportObserved) {
+function insertReport($conn, $objectiveId, $reportDate, $reportObserved, $student) {
     //Insert form data into database using prepared statement and bound parameters
     $stmt = $conn->prepare("INSERT INTO report (objective_id, report_date, report_observed) VALUES (?,?,?)");
 
@@ -144,10 +159,13 @@ function insertReport($conn, $objectiveId, $reportDate, $reportObserved) {
     $stmt->execute();
     $result = $stmt->get_result();
 
+    //refresh reports for this student
+    refreshReports($student);
+
     return true;
 }
 
-function updateReport($conn, $objectiveId, $reportDate, $reportObserved, $reportId) {
+function updateReport($conn, $objectiveId, $reportDate, $reportObserved, $reportId, $student) {
     // Update selected report in the database
     $stmt = $conn->prepare("UPDATE report
                             SET objective_id=?,
@@ -162,7 +180,23 @@ function updateReport($conn, $objectiveId, $reportDate, $reportObserved, $report
     $stmt->execute();
     $result = $stmt->get_result();
 
+    //refresh reports for this student
+    refreshReports($student);
+
     return true;
+}
+function refreshReports($student) {
+
+    foreach ($student->goals as $g) {
+        foreach ($g->objectives as $o) {
+            // clear existing reports
+            $o->reports = [];
+            $o->store_reports($o->get_objective_id());
+        }
+       
+    }
+    echo "reports refreshed :-) <br/ >";
+
 }
 
 ?>

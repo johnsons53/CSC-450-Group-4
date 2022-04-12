@@ -53,7 +53,7 @@ class Goal {
 
     // Fill objectives array with any available objectives matching the passed goal_id
     function store_objectives($id) {
-        // connection to database
+         // connection to database
         $filepath = realpath('login.php');
         $config = require($filepath);
         $db_hostname = $config['DB_HOSTNAME'];
@@ -67,7 +67,7 @@ class Goal {
         // Check connection
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
-        }
+        } 
         // run query to select all objectives where goal_id matches
 
         $sql = "SELECT objective_id, objective_label, objective_text, objective_attempts, objective_target, objective_status
@@ -88,7 +88,7 @@ class Goal {
             //echo "0 Objective results <br />";
         } 
         // close connection to database
-        $conn->close();
+        //$conn->close();
 
         //echo "Connection closed.<br />";
     }

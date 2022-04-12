@@ -108,6 +108,19 @@
     echo "</ul>";
     echo "</div>"; // end of Schedule div
 
+    // Documents Page Link
+    echo "<div class='documents contentCard'>";
+      echo "<h3>Documents</h3>";
+      /* DOCUMENTS page button */
+      echo "<form action=\"" . htmlspecialchars("iepDocumentView.php") . "\" method=\"post\">";
+      echo "<input type=\"hidden\" id=\"DstudentId\" name=\"studentId\" value=\"" . $studentId . "\">";
+      echo "<input type=\"hidden\" id=\"DstudentName\" name=\"studentName\" value=\"" . $studentName . "\">";
+      // New Goal button
+      echo "<input type=\"submit\" name=\"documents\" value=\"Documents\">";
+      echo "</form>";
+
+    echo "</div>"; // end of Documents div
+
     // Goals
     echo "<h3>Current Goals</h3>";
     // Display each student goal in a card, with each goal's objectives nested inside
@@ -217,25 +230,55 @@
               echo "</form>";
               
             }
-            // Display meter of latest report if available
-            if (isset($reports) && count($reports) > 0) {
-              // Display latest report information
-              $latest_report = $reports[0];
-              $max = $o->get_objective_attempts();
-              $high = $o->get_objective_target();
-              $low = $o->get_objective_target() /2;
-              $value = $latest_report->get_report_observed();
-              echo "<p>Latest Report: ";
-              echo "<meter min='0' max='" . $max . "' high='" . $high ."' low='" . $low . "' optimum='" . $max . "' value='" . $value . "'>" . $value . "</meter>";
-              echo "</p>";
-            } // end of if
 
+            if (isset($reports) && count($reports) > 0) {
+              // Select Report to display, default to most recent
+              echo "<label for=\"reportSelect\">Select Report Date</label>";
+              echo "<select name=\"reportSelect\" class=\"reportSelect\" id=\"reportSelect\" data-objectiveId=\"" . $objectiveId . "\" data-max=\"" . $objectiveAttempts . "\" data-high=\"" . $objectiveTarget . "\" data-low=\"" . $objectiveTarget/2 . "\">";
+                // Options for reportSelect
+                $reportCount = 0;
+                foreach($reports as $r) {
+                  if ($reportCount === 0) {
+                    echo "<option class=\"reportOption\" value=\"" . $r->get_report_observed() . "\" selected=\"selected\" >" . $r->get_report_date() . "</option>";
+                    $reportCount++;
+                  } else {
+                    echo "<option class=\"reportOption\" value=\"" . $r->get_report_observed() . "\">" . $r->get_report_date() . "</option>";
+                  }
+                }
+              echo "</select>"; // end of select
+
+              $selectedReport = $reports[0];
+              $selectedReportId = $selectedReport->get_report_id();
+              echo "Initial selectedReportId: " . $selectedReportId;
+              echo ", Selected Report Date: ";
+              echo $selectedReport->get_report_date();
+              echo "<br />";
+              // Div to display selected report meter
+              echo "<div class=\"reportMeter\" id=\"reportMeter" . $objectiveId . "\">";
+                  // Display latest report information
+
+                  $max = $objectiveAttempts;
+                  $high = $objectiveTarget;
+                  $low = $objectiveTarget /2;
+                  $value = $selectedReport->get_report_observed();
+                  echo "<p>";
+                  echo "<label for=\"reportMeter\">Report Meter:</label>";
+                  echo "<meter name=\"reportMeter\" min='0' max='" . $max . "' high='" . $high ."' low='" . $low . "' optimum='" . $max . "' value='" . $value . "'>" . $value . "</meter>";
+                  echo "</p>";
+
+              echo "</div>";
+
+              } else {
+                echo "<p>No reports to display.</p>";
+            }// end of if
+            //echo "</div>";
+            
             // Expanded details for Objective
             $objectiveDetailsID = "objective" . $o->get_objective_id();
             echo "objectiveDetailsID: " . $objectiveDetailsID . "<br />";
             echo "<div class='expandedDetails' id=" . $objectiveDetailsID . ">";
               echo "<p>Description: " . $o->get_objective_text() ."</p> ";
-              echo "<p>Latest Report Date: " . $latest_report->get_report_date() . "</p>";
+              echo "<p>Latest Report Date: " . $selectedReport->get_report_date() . "</p>";
               echo "<p>Report Data: Graph of report data to come</p>";
             echo "</div>"; //end of expandedDetails
 

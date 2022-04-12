@@ -12,6 +12,7 @@ require_once realpath('SentMessage.php');
 require_once realpath('ReceivedMessage.php');
 
 class User {
+    protected $conn;
     protected $user_id;
     protected $user_name;
     protected $user_password;
