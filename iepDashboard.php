@@ -36,6 +36,7 @@ error_reporting(E_ALL|E_STRICT);
 
       $(document).ready(function() {
         
+        // Change Report meter display when different report selected
         $(document).on("change", ".reportSelect", function() {
           
           var selectedValue = $(this).find(":selected").val();
@@ -50,6 +51,18 @@ error_reporting(E_ALL|E_STRICT);
           });
         });
 
+        
+        $(document).on("click", ".deleteGoal", function() {
+          //var goalId = $(this).attr("data-goalId");
+          alert("GoalID to be deleted: " + $(this).attr("data-goalId"));
+          alert("#deleteGoalMessage" + $(this).attr("data-goalId"));
+          alert($("#deleteGoalMessage" + $(this).attr("data-goalId")).length);
+          $("#deleteGoalMessage" + $(this).attr("data-goalId")).load("deleteGoal.php", {
+            "goalId": $(this).attr("data-goalId")
+          });
+        });
+
+        
       });
 
 

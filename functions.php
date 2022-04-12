@@ -62,7 +62,11 @@ function updateGoal($conn, $studentId, $goalLabel, $goalCategory, $goalText, $go
     return true;
 }
 
-function refreshGoals() {
+function refreshGoals($student) {
+    // Clear existing goals
+    $student->goals = [];
+    // Store current goals from database
+    $student->store_student_goals($student->get_student_id());
 
 }
 /*
@@ -119,12 +123,17 @@ function updateObjective ($conn, $objectiveId, $goalId, $objectiveLabel, $object
 
     return true;
 }
-function refreshObjectives($conn, $student) {
+function refreshObjectives($student) {
 
-    foreach ($student->goals as $value) {
-        // clear existing reports
-        $value->$objectives = [];
-        $value->store_objectives($conn, $value->get_goal_id());
+    foreach ($student->goals as $g) {
+        // clear existing objectives
+        $g->objectives = [];
+        // Store current objectives
+        $g->store_objectives($g->get_goal_id());
+        // refresh reports for each objective
+        foreach ($g->objectives as $o) {
+            $o->refreshObjectives($student);
+        }
     }
 }
 /*
@@ -189,8 +198,9 @@ function refreshReports($student) {
 
     foreach ($student->goals as $g) {
         foreach ($g->objectives as $o) {
-            // clear existing reports
+            // clear existing reports for this objective
             $o->reports = [];
+            // store reports for this objective
             $o->store_reports($o->get_objective_id());
         }
        

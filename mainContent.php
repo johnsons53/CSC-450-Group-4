@@ -175,12 +175,27 @@
               /* NEW OBJECTIVE BUTTON */
               echo "<form action=\"" . htmlspecialchars("iepProviderObjectiveForm.php") . "\" method=\"post\">";
               // Add hidden fields with data to send to report form. 
-              echo "<input type=\"hidden\" id=\"NOGoalId" . $goalId . "\" name=\"goalId\" value=\"" . $goalId . "\">";
-              echo "<input type=\"hidden\" id=\"NOStudentName" . $studentName . "\" name=\"studentName\" value=\"" . $studentName . "\">";
+              echo "<input type=\"hidden\" id=\"NOgoalId" . $goalId . "\" name=\"goalId\" value=\"" . $goalId . "\">";
+              echo "<input type=\"hidden\" id=\"NOstudentName" . $studentName . "\" name=\"studentName\" value=\"" . $studentName . "\">";
               echo "<input type=\"hidden\" id=\"NOgoalLabel" . $goalId . "\" name=\"goalLabel\" value=\"" . $goalLabel . "\">";
               // new objective submit button
               echo "<input type=\"submit\" name=\"newObjective\" value=\"New Objective\">";
               echo "</form>";
+
+              /* DELETE GOAL BUTTON */
+              //echo "<form action=\"" . htmlspecialchars("iepDashboard.php") . "\" method=\"post\">";
+              // Add hidden fields with data to send to report form. 
+              //echo "<input type=\"hidden\" id=\"DgoalId" . $goalId . "\" name=\"goalId\" value=\"" . $goalId . "\">";
+              // new objective submit button
+              //echo "<input type=\"submit\" class=\"deleteGoal\" name=\"deleteGoal\" data-goalId=\"" . $goalId . "\"value=\"Delete Goal\">";
+              //echo "</form>";
+              echo "<input type=\"submit\" class=\"deleteGoal\" name=\"deleteGoal\" data-goalId=\"" . $goalId . "\"value=\"Delete Goal\">";
+
+              /* Div to confirm goal deletion */
+              echo "<div class=\"deleteGoalMessage\" id=\"deleteGoalMessage" . $goalId . "\">";
+              echo "<p>This Div id: deleteGoalMessage" . $goalId . "</p>";
+              echo "</div>";
+
               
             }
           // Display each Objective in a box
