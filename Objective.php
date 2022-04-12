@@ -60,7 +60,7 @@ class Objective {
 
     // Fill reports array with any available reports matching the passed objective_id
     function store_reports($id) {
-        // connection to database
+         // connection to database
         $filepath = realpath('login.php');
         $config = require($filepath);
         $db_hostname = $config['DB_HOSTNAME'];
@@ -74,14 +74,22 @@ class Objective {
         // Check connection
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
-        }
+        } 
         // run query to select all reports where objective_id matches
 
-        $sql = "SELECT report_id, report_date, report_observed
+/*         $sql = "SELECT report_id, report_date, report_observed
                 FROM report
                 WHERE objective_id=" . $id;
         //run query
-        $result = $conn->query($sql);
+        $result = $conn->query($sql); */
+
+        $stmt = $conn->prepare("SELECT report_id, report_date, report_observed 
+                                FROM report
+                                WHERE objective_id=?
+                                ORDER BY report_date DESC");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
         // save each result row as a Report object in $reports
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {

@@ -1,3 +1,10 @@
+<?php 
+session_start();
+ini_set('display_errors', 1);
+error_reporting(E_ALL|E_STRICT);
+
+
+?>
 <!DOCTYPE html>
 
 <html lang="en">
@@ -16,15 +23,84 @@
 
   <body>
       <?php
+      $config = require realpath("login.php");
+      require_once realpath('User.php');
+      require_once realpath('Admin.php');
+      require_once realpath('Document.php');
+      require_once realpath('Goal.php');
+      require_once realpath('Guardian.php');
+      require_once realpath('Provider.php');
+      require_once realpath('Report.php');
+      require_once realpath('Objective.php');
+      require_once realpath('Student.php');
+          $db_hostname = $config['DB_HOSTNAME'];
+          $db_username = $config['DB_USERNAME'];
+          $db_password = $config['DB_PASSWORD'];
+          $db_database = $config['DB_DATABASE'];
+      
+          // Create connection
+          $conn = new mysqli($db_hostname, $db_username, $db_password, $db_database);
+      
+          // Check connection
+          if ($conn->connect_error) {
+              die("Connection failed: " . $conn->connect_error);
+          }
+      // Check SESSION access
+      if (array_key_exists("activeStudent", $_SESSION)) {
+          echo "activeStudent found in SESSION :-)<br />";
+          $activeStudent = unserialize($_SESSION["activeStudent"]);
+          echo "activeStudent name: " . $activeStudent->get_full_name();
+          echo "<br />";
+      } else {
+        echo " Did not find activeStudent in SESSION :-( <br />";
+      }
+
+      if (array_key_exists("objectiveId", $_POST)) {
+          echo "objectiveId found in POST: " . $_POST["objectiveId"];
+          echo " :-) <br />";
+      } else {
+        echo " Did not find objectiveId in POST :-( <br />";
+      }
+      if (array_key_exists("studentName", $_POST)) {
+        echo "studentName found in POST: " . $_POST["studentName"];
+        echo " :-) <br />";
+    } else {
+      echo " Did not find studentName in POST :-( <br />";
+    }
+    if (array_key_exists("objectiveLabel", $_POST)) {
+        echo "objectiveLabel found in POST: " . $_POST["objectiveLabel"];
+        echo " :-) <br />";
+    } else {
+      echo " Did not find objectiveLabel in POST :-( <br />";
+    }
+    if (array_key_exists("goalId", $_POST)) {
+        echo "goalId found in POST: " . $_POST["goalId"];
+        echo " :-) <br />";
+    } else {
+      echo " Did not find goalId in POST :-( <br />";
+    }
+    if (array_key_exists("goalLabel", $_POST)) {
+        echo "goalLabel found in POST: " . $_POST["goalLabel"];
+        echo " :-) <br />";
+    } else {
+      echo " Did not find goalLabel in POST :-( <br />";
+    }
+
       // define variables
 
-      // report_id will be generated when the report data is added to the database, and is probably unnecessary
+      // reportId will be generated when the report data is added to the database, and is probably unnecessary
       
-      // objective_id, student_name, goal_label, objective_label should be sent from the calling provider page
+      // objectiveId, studentName, goalLabel, objectiveLabel should be sent from the calling provider page
+      $objectiveId = $_POST["objectiveId"];
+      $studentName = $_POST["studentName"];
+      $goalLabel = $_POST["goalLabel"];
+      $objectiveLabel = $_POST["objectiveLabel"];
 
-      // report_date, report_observed are set using this page
-      $report_id = $objective_id = $student_name = $goal_label = 
-      $objective_label = $report_date = $report_observed = "";
+      // reportDate, reportObserved are set using this page
+      $reportId = $reportDate = $reportObserved ="";
+
+      
+      
 
       // error variables for incomplete or unacceptable data
       $report_date_err =
@@ -32,17 +108,21 @@
 
       // test_input if the form has been submitted
       if($_SERVER["REQUEST_METHOD"] == "POST") {
-          if (empty($_POST["report_date"])) {
+          if (empty($_POST["reportDate"])) {
               $report_date_err = "Report Date is required";
           } else {
-            $report_date = test_input($_POST["report_date"]);
+            $reportDate = test_input($_POST["reportDate"]);
           }
 
-          if (empty($_POST["report_observed"])) {
+          if (empty($_POST["reportObserved"])) {
               $report_observed_err = "Report Observed is required";
           } else {
-            $report_observed = test_input($_POST["report_observed"]);
+            $reportObserved = test_input($_POST["reportObserved"]);
           }
+          $objectiveId = test_input($_POST["objectiveId"]);
+          $studentName = test_input($_POST["studentName"]);
+          $goalLabel = test_input($_POST["goalLabel"]);
+          $objectiveLabel = test_input($_POST["objectiveLabel"]);
       }
 
       // test data function for this page
@@ -59,64 +139,64 @@
       <h1>Objective Report</h1>
     </header>
     <div id="providerReportForm">
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+        <form action="<?php echo htmlspecialchars("iepDashboard.php");?>" method="post">
             
-            <!-- Hidden field with report_id-->
+            <!-- Hidden field with reportId-->
             <div>
-                <input type="hidden" id="report_id" name="report_id" value="<?php echo $report_id; ?>">
+                <input type="hidden" id="reportId" name="reportId" value="<?php echo $reportId; ?>">
             </div>
-            <!-- Hidden field with objective_id-->
+            <!-- Hidden field with objectiveId-->
             <div>
-                <input type="hidden" id="objective_id" name="objective_id" value="<?php echo $objective_id; ?>">
+                <input type="hidden" id="objectiveId" name="objectiveId" value="<?php echo $objectiveId; ?>">
             </div>
             
             
 
             <!-- Disabled field to show student name -->
             <div>
-                <label for="student_name">Student Name</label>
-                <input type="text" id="student_name" name="student_name" value="<?php echo $student_name; ?>" disabled>
+                <label for="studentName">Student Name</label>
+                <input type="text" id="studentName" name="studentName" value="<?php echo $studentName; ?>" disabled>
             </div>
             <!-- Disabled field for goal label -->
             <div>
-                <label for="goal_label">Goal Label</label>
-                <input type="text" id="goal_label" name="goal_label" value="<?php echo $goal_label; ?>" disabled>
+                <label for="goalLabel">Goal Label</label>
+                <input type="text" id="goalLabel" name="goalLabel" value="<?php echo $goalLabel; ?>" disabled>
             </div>
-            <!-- Disabled field for objective_label -->
+            <!-- Disabled field for objectiveLabel -->
             <div>
-                <label for="objective_label">Objective Label</label>
-                <input type="text" id="objective_label" name="objective_label" value="<?php echo $objective_label; ?>" disabled>
+                <label for="objectiveLabel">Objective Label</label>
+                <input type="text" id="objectiveLabel" name="objectiveLabel" value="<?php echo $objectiveLabel; ?>" disabled>
             </div>
             
-            <!-- Date field for report_date 
+            <!-- Date field for reportDate 
                  Set default value to current date with JavaScript-->
             <div>
-                <label for="report_date">Report Date</label>
-                <input type="date"id="report_date" name="report_date" value="<?php echo $report_date; ?>"> 
+                <label for="reportDate">Report Date</label>
+                <input type="date"id="reportDate" name="reportDate" value="<?php echo $reportDate; ?>"> 
                 <span class="error">* <?php echo $report_date_err;?></span>       
             </div>
 
-            <!-- Number picker for report_observed -->
+            <!-- Number picker for reportObserved -->
             <div>
-                <label for="report_observed">Observed</label>
-                <input type="number" id="report_observed" name="report_observed" value="<?php echo $report_observed; ?>">
+                <label for="reportObserved">Observed</label>
+                <input type="number" id="reportObserved" name="reportObserved" value="<?php echo $reportObserved; ?>">
                 <span class="error">* <?php echo $report_observed_err;?></span> 
             </div>
 
             <!--Submit button to Save report -->
             <div>
-                <input type="submit" class="submit" value="Save Report">
+                <input type="submit" class="submit" name="insertReport" value="Save Report">
             </div>
 
             <!-- These to remain on hold for now, since there is no way to choose a report to update or delete -->
             <!-- Submit button to Update report -->
             <div>
-                <input type="submit" class="submit" value="Update Report">
+                <input type="submit" class="submit" name ="update" value="Update Report">
             </div>
 
             <!-- Submit button to Delete report -->
             <div>
-                <input type="submit" class="submit" value="Delete Report">
+                <input type="submit" class="submit" name="delete" value="Delete Report">
             </div>
 
 
@@ -124,24 +204,17 @@
     </div>
 
     <?php
+    // function to insertReport report, call if isset(POST[submit])
 
-    // handling for submit button clicks
-        echo "<br>";
-        echo "<h2>Your Input:</h2>";
-        echo "<br>";
-        echo "report_id: ".$report_id;
-        echo "<br>";
-        echo "objective_id: ".$objective_id;
-        echo "<br>";
-        echo "student_name: ".$student_name;
-        echo "<br>";
-        echo "goal_label: ".$goal_label;
-        echo "<br>";
-        echo "objective_label: ".$objective_label;
-        echo "<br>";
-        echo "report_date: ".$report_date;
-        echo "<br>";
-        echo "report_observed: ".$report_observed;
+
+    // Call insertReport if form is submitted with insertReport button
+    if(isset($_POST["insertReport"])) {
+        echo "_POST['insertReport'] is set <br />";
+        //insertReport();
+    } else {
+        echo "_POST['insertReport'] is NOT set <br />";
+    }
+
     ?>
 
     <div id="navigation">
@@ -150,3 +223,4 @@
 
   </body>
 </html>
+<?php $conn->close(); ?>

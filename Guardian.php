@@ -58,7 +58,7 @@ class Guardian extends User {
             // show the data in each row
             while ($row = $result->fetch_assoc()) {
                 // new User object from row data
-                $student = new Student($row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
+                $student = new Student($conn, $row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
                     $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
                     $row['user_city'], $row['user_district'], $row['user_type'], 
                     $row['student_id'], $row['provider_id'], $row['student_school'], $row['student_grade'], 

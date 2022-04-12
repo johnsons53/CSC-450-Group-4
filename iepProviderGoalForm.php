@@ -31,35 +31,73 @@ require_once realpath('Student.php');
   <body>
 
   <?php
-  
+    //Test data in POST
+    if (array_key_exists("studentName", $_POST)) {
+        echo "studentName found in POST: " . $_POST["studentName"];
+        echo " :-) <br />";
+        $studentName = $_POST["studentName"];
+    } else {
+        echo " Did not find studentName in POST :-( <br />";
+    }
+    if (array_key_exists("studentId", $_POST)) {
+        echo "studentId found in POST: " . $_POST["studentId"];
+        echo " :-) <br />";
+        $studentId = $_POST["studentId"];
+    } else {
+        echo " Did not find studentId in POST :-( <br />";
+    }
+    if (array_key_exists("goalId", $_POST)) {
+        echo "goalId found in POST: " . $_POST["goalId"];
+        echo " :-) <br />";
+        $goalId = $_POST["goalId"];
+    } else {
+        echo " Did not find goalId in POST :-( <br />";
+        $goalId = "";
+    }
+    if (array_key_exists("goalLabel", $_POST)) {
+        echo "goalLabel found in POST: " . $_POST["goalLabel"];
+        echo " :-) <br />";
+        $goalLabel = $_POST["goalLabel"];
+    } else {
+        echo " Did not find goalLabel in POST :-( <br />";
+        $goalLabel = "";
+    }
+    if (array_key_exists("goalCategory", $_POST)) {
+        echo "goalCategory found in POST: " . $_POST["goalCategory"];
+        echo " :-) <br />";
+        $goalCategory = $_POST["goalCategory"];
+    } else {
+        echo " Did not find goalCategory in POST :-( <br />";
+        $goalCategory = "";
+    }
+    if (array_key_exists("goalText", $_POST)) {
+        echo "goalText found in POST: " . $_POST["goalText"];
+        echo " :-) <br />";
+        $goalText = $_POST["goalText"];
+    } else {
+        echo " Did not find goalText in POST :-( <br />";
+        $goalText = "";
+    }
+    if (array_key_exists("goalActive", $_POST)) {
+        echo "goalActive found in POST: " . $_POST["goalActive"];
+        echo " :-) <br />";
+        $goalActive = $_POST["goalActive"];
+    } else {
+        echo " Did not find goalActive in POST :-( <br />";
+        $goalActive = "";
+    }
+
 // define variables from form and set to empty values
 // This is not the final version, since some values will be sent when the page
 // loads.
 
-$goal_label_err =
-$goal_category_err =
-$goal_description_err = "";
+$goalLabelErr =
+$goalCategoryErr =
+$goalTextErr = 
+$goalActiveErr = "";
 
 
-// if updating or deleting an existing goal:    
-    // goal_id, student_id, student_name, sent from calling page
-    $goal_id = "0";
-    $student_id = "0";
-    $student_first_name = "First";
-    $student_last_name = "McLast";
 
-    // use goal_id to populate goal_label, goal_catagory, goal_description
-
-
-// if creating a new goal:
-    // no value for goal_id,
-    // student_id, student_name sent from calling page
-
-    // goal_label, goal_category, goal_description will be blank
-
-    $goal_label = 
-    $goal_category = 
-    $goal_description = "";
 
 // Has the form been submitted? If not, can display blank values, if so, 
 // validate form
@@ -70,23 +108,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // These are the fields that are modified by this form. They aren't mandatory in the database,
     // but they are required here.
-    if (empty($_POST["goal_label"])) {
-        $goal_label_err = "Goal Label is required";
+    if (empty($_POST["goalLabel"])) {
+        $goalLabelErr = "Goal Label is required";
     } else {
-        $goal_label = test_input($_POST["goal_label"]);
+        $goalLabel = test_input($_POST["goalLabel"]);
     }
     
-    if (empty($_POST["goal_category"])) {
-        $goal_category_err = "Goal Category is required";
+    if (empty($_POST["goalCategory"])) {
+        $goalCategoryErr = "Goal Category is required";
     } else {
-        $goal_category = test_input($_POST["goal_category"]);
+        $goalCategory = test_input($_POST["goalCategory"]);
     }
     
-    if (empty($_POST["goal_descrip[tion"])) {
-        $goal_description_err = "Goal Description is required";
+    if (empty($_POST["goalText"])) {
+        $goalTextErr = "Goal Description is required";
     } else {
-        $goal_description = test_input($_POST["goal_description"]);
+        $goalText = test_input($_POST["goalText"]);
     }
+    if (empty($_POST["goalActive"])) {
+        $goalActiveErr = "Goal Status is required";
+    } else {
+        $goalActive = test_input($_POST["goalActive"]);
+    }
+
     
 }
 
@@ -108,56 +152,63 @@ function test_input($data) {
       <h1>Goal Detail Form</h1>
     </header>
     <div id="providerGoalForm">
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" 
-        method="post">
+        <?php echo "<form action=\"" . htmlspecialchars("iepDashboard.php") . "\" method=\"post\">"; ?>
             
-            <!-- Hidden field with goal_id-->
+            <!-- Hidden field with goalId-->
             <div>
-                <input type="hidden" id="goal_id" name="goal_id" value="<?php echo $goal_id;?>">
+                <input type="hidden" id="goalId" name="goalId" value="<?php echo $goalId;?>">
                 
             </div>
-            <!-- Hidden field with student_id-->
+            <!-- Hidden field with studentId-->
             <div>
-                <input type="hidden" id="student_id" name="student_id" value="<?php echo $student_id;?>">
+                <input type="hidden" id="studentId" name="studentId" value="<?php echo $studentId;?>">
                 
             </div>
 
             <!-- Disabled field to show student first name -->
             <!-- TODO: Combine student first name and last name into single field, populated with data from user table -->
             <div>
-                <label for="student_first_name">Student First Name</label>
-                <input type="text" id="student_first_name" name="student_first_name" value="<?php echo $student_first_name;?>" disabled>
+                <label for="studentName">Student Name</label>
+                <input type="text" id="studentName" name="studentName" value="<?php echo $studentName;?>" disabled>
                 
+            </div>
+            <!-- Text field for goalLabel-->
+            <div>
+                <label for="goalLabel">Goal Label</label>
+                <input type="text" id="goalLabel" name="goalLabel" value="<?php echo $goalLabel;?>">
+                <span class="error">* <?php echo $goalLabelErr;?></span>
+            </div>
+            <!-- Text field for goalCategory-->
+            <div>
+                <label for="goalCategory--">Goal Category</label>
+                <input type="text" id="goalCategory" name="goalCategory" value="<?php echo $goalCategory;?>">
+                <span class="error">* <?php echo $goalCategoryErr;?></span>
+            </div>
+            <!-- Text field for goalText-->
+            <div>
+                <label for="goalText">Goal Description</label>
+                <textarea id="goalText" name="goalText" rows="6" cols="40"><?php echo $goalText; ?></textarea>
+                <span class="error">* <?php echo $goalTextErr;?></span>
+            </div>
+            <!-- Radio buttons to set goalActive -->
+            <div>
+                <label for="goalActive">Goal Status</label>
+                <label><input type="radio" name="goalActive" 
+                <?php 
+                if($goalActive === "") echo "checked";
+                if(isset($goalActive) && $goalActive == "0") echo "checked";
+                ?> 
+                value="0">Active</label>
+                <label><input type="radio" name="goalActive" 
+                <?php if(isset($goalActive) && $goalActive == "1") echo "checked";?>
+                value="1">Complete</label>
+                <span class="error">* <?php echo $goalActiveErr;?></span>
             </div>
 
-            <!-- Disabled field to show student last name -->
-            <div>
-                <label for="student_last_name">Student Last Name</label>
-                <input type="text" id="student_last_name" name="student_last_name" value="<?php echo $student_last_name;?>" disabled>
-                
-            </div>
-            <!-- Text field for goal_label-->
-            <div>
-                <label for="goal_label">Goal Label</label>
-                <input type="text" id="goal_label" name="goal_label" value="<?php echo $goal_label;?>">
-                <span class="error">* <?php echo $goal_label_err;?></span>
-            </div>
-            <!-- Text field for goal_category-->
-            <div>
-                <label for="goal_category--">Goal Category</label>
-                <input type="text" id="goal_category" name="goal_category" value="<?php echo $goal_category;?>">
-                <span class="error">* <?php echo $goal_category_err;?></span>
-            </div>
-            <!-- Text field for goal_description-->
-            <div>
-                <label for="goal_description">Goal Description</label>
-                <textarea id="goal_description" name="goal_description" rows="6" cols="40"><?php echo $goal_description; ?></textarea>
-                <span class="error">* <?php echo $goal_description_err;?></span>
-            </div>
             <!--Submit button to Save goal-->
             <!-- Go back to provider dashboard and reload on submit? -->
             <div>
-                <input type="submit" class="submit" value="Save Goal">
+                <input type="submit" class="submit" name="saveGoal" value="Save Goal">
             </div>
 
 
@@ -175,19 +226,17 @@ function test_input($data) {
     echo "<br>";
 
     echo "<h2>Your Input:</h2>";
-    echo $goal_id;
+    echo $goalId;
     echo "<br>";
-    echo $student_id;
+    echo $studentId;
     echo "<br>";
-    echo $student_first_name;
+    echo $studentName;
     echo "<br>";
-    echo $student_last_name;
+    echo $goalLabel;
     echo "<br>";
-    echo $goal_label;
+    echo $goalCategory;
     echo "<br>";
-    echo $goal_category;
-    echo "<br>";
-    echo $goal_description;
+    echo $goalText;
     ?>
 
   </body>

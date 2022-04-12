@@ -103,7 +103,7 @@ class Student extends User {
 /*     Methods to store student goals, guardians, documents run queries passing in student id value */
 
      function store_student_goals($id) {
-        // connection to database
+         // connection to database
         $filepath = realpath('login.php');
         $config = require($filepath);
         $db_hostname = $config['DB_HOSTNAME'];
@@ -117,7 +117,7 @@ class Student extends User {
         // Check connection
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
-        }
+        } 
 
         // run query to select all objectives where goal_id matches
         $sql = "SELECT * 
@@ -137,7 +137,7 @@ class Student extends User {
            //echo "0 results <br />";
         } 
         // close connection to database
-        $conn->close();
+        //$conn->close();
 
         //echo "Connection closed.<br />";
     }
