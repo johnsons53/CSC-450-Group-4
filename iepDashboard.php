@@ -1,5 +1,6 @@
 <?php
 session_start();
+echo "session status: " . session_status() . "<br />";
 ini_set('display_errors', 1);
 error_reporting(E_ALL|E_STRICT);
 ?>
@@ -51,7 +52,7 @@ error_reporting(E_ALL|E_STRICT);
           });
         });
 
-        
+        // Delete goal
         $(document).on("click", ".deleteGoal", function() {
           //var goalId = $(this).attr("data-goalId");
           alert("GoalID to be deleted: " + $(this).attr("data-goalId"));
@@ -60,6 +61,10 @@ error_reporting(E_ALL|E_STRICT);
           $("#deleteGoalMessage" + $(this).attr("data-goalId")).load("deleteGoal.php", {
             "goalId": $(this).attr("data-goalId")
           });
+        });
+
+        $(document).on("click", ".confirmDelete", function() {
+          
         });
 
         
@@ -95,10 +100,6 @@ error_reporting(E_ALL|E_STRICT);
   <body>
     <!-- TODO Add PHP here to manage variables and queries to database -->
     <?php 
-    // display errors for testing
-    ini_set('display_errors', 1);
-    error_reporting(E_ALL|E_STRICT);
-
     // connect to other files
     $filepath = realpath('login.php');
     $config = require($filepath);
@@ -114,6 +115,12 @@ error_reporting(E_ALL|E_STRICT);
     require_once realpath('Student.php');
     require_once realpath('functions.php');
 
+    // variables
+    $students = [];
+    $currentUser;
+    $currentUserType;
+    $currentStudent;
+
 
     
     $db_hostname = $config['DB_HOSTNAME'];
@@ -128,9 +135,69 @@ error_reporting(E_ALL|E_STRICT);
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
-    test();
+    
+    // See if currentUser exists in Session
+    if(array_key_exists('currentUser', $_SESSION)) {
+      echo "SESSION contains currentUser value <br />";
+      //print_r($_SESSION["currentUser"]);
+    }
+    // Unserialize and set as currentUser value
+    $currentUser = unserialize($_SESSION["currentUser"]);
+    echo "Current User Name: " . $currentUser->get_full_name() . "<br />";
+    $currentUserType = $currentUser->get_user_type();
+    echo "Current User Type: " . $currentUserType . "<br />";
+    //print_r($currentUser);
 
-    $currentUser;
+    // Handle differing content for user types
+    // Provider: call get students to set value of students
+    // User (guardian): call get students to set value of students
+    // Student: Only one student, set students to currentUser
+    echo "Compare currentUserType to provider<br />";
+    echo strcmp($currentUserType, "provider");
+    echo "<br />";
+
+    echo "Compare currentUserType to user<br />";
+    echo strcmp($currentUserType, "user");
+    echo "<br />";
+
+
+    if (strcmp($currentUserType, "provider") === 0) {
+      $students = $currentUser->get_provider_students();
+
+    } elseif (strcmp($currentUserType, "user") === 0) {
+      // Provider or Guardian user type
+      // extract student values for these users and use to populate the page
+      // Save array of students on page and in SESSION
+      $students = $currentUser->get_guardian_students();
+
+      //$_SESSION["currentStudents"] = serialize($students);
+
+      // Set default current student to first student in the list
+     
+    } elseif (strcmp($currentUserType, "student")) {
+      // Student User--only one value for students, same as current user
+      $students[] = $currentUser;
+    } else {
+      echo "incompatible user type";
+      echo "<br />";
+
+    }
+    foreach($students as $s) {
+      echo "Student found: ";
+      echo $s->get_full_name();
+      echo "<br />";
+
+    }
+
+    $_SESSION["currentStudents"] = serialize($students);
+
+
+    $_SESSION['currentStudent'] = serialize($students[0]);
+    if(array_key_exists('currentStudent', $_SESSION)) {
+      echo "SESSION contains currentStudent value <br />";
+      $currentStudent = unserialize($_SESSION["currentStudent"]);
+      echo "currentStudent value: " . $currentStudent->get_full_name() ." <br />";
+    }
     // Select a guardian from the database for demonstration purposes
 /*     $sql = "SELECT * 
             FROM user
@@ -159,7 +226,7 @@ error_reporting(E_ALL|E_STRICT);
     $students = $_SESSION['currentUser']->get_guardian_students(); */
 
     // Select a Provider 
-    $sql = "SELECT * 
+  /*   $sql = "SELECT * 
     FROM user
     INNER JOIN provider USING (user_id)
     WHERE user_id='15'";
@@ -184,11 +251,9 @@ error_reporting(E_ALL|E_STRICT);
     } 
     } else {
     echo "0 results <br />";
-    }
-    if(array_key_exists('currentUser', $_SESSION)) {
-      echo "SESSION contains currentUser value <br />";
-    }
+    } */
 
+/* 
     // Save array of students on page and in SESSION
     $students = $currentUser->get_provider_students();
     $_SESSION["currentStudents"] = serialize($students);
@@ -199,7 +264,7 @@ error_reporting(E_ALL|E_STRICT);
       echo "SESSION contains currentStudent value <br />";
       $currentStudent = unserialize($_SESSION["currentStudent"]);
       echo "currentStudent value: " . $currentStudent->get_full_name() ." <br />";
-    }
+    } */
 
     if(isset($_POST["insertReport"])) {
       if (insertReport($conn, $_POST["objectiveId"], $_POST["reportDate"], $_POST["reportObserved"], $currentStudent)) {

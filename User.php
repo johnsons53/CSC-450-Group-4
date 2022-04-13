@@ -12,7 +12,7 @@ require_once realpath('SentMessage.php');
 require_once realpath('ReceivedMessage.php');
 
 class User {
-    protected $conn;
+    //protected $conn;
     protected $user_id;
     protected $user_name;
     protected $user_password;
@@ -111,11 +111,19 @@ class User {
         }
         // run query to select all messages where objective_id matches
 
-        $sql = "SELECT message_id, message_text, message_date
+        $stmt = $conn->prepare("SELECT message_id, message_text, message_date
+                                FROM message
+                                WHERE user_id=?");
+
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+/*         $sql = "SELECT message_id, message_text, message_date
                 FROM message
                 WHERE user_id=" . $id;
         //run query
-        $result = $conn->query($sql);
+        $result = $conn->query($sql); */
         // save each result row as a message object in $received_messages
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -151,12 +159,20 @@ class User {
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
+
+        $stmt = $conn->prepare("SELECT message_id, message_read
+        FROM message_recipient
+        WHERE user_id=?");
+
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
         // run query to select all received messages for this user
-        $sql = "SELECT message_id, message_read
+ /*        $sql = "SELECT message_id, message_read
                 FROM message_recipient
                 WHERE user_id=" . $id;
         //run query
-        $result = $conn->query($sql);   
+        $result = $conn->query($sql);   */ 
         // save each result row as a message object in $received_messages
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {

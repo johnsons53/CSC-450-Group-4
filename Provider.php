@@ -60,13 +60,20 @@ class Provider extends User {
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
+        $stmt = $conn->prepare("SELECT *
+                                FROM user
+                                INNER JOIN student USING (user_id)
+                                WHERE student.provider_id=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        // Select students for the sepecified provider_id
+/*         // Select students for the sepecified provider_id
         $sql = "SELECT user.*, student.*
                 FROM user
                 INNER JOIN student USING (user_id)
                 WHERE student.provider_id=" . $id;
-        $result = $conn->query($sql);
+        $result = $conn->query($sql); */
         if ($result->num_rows > 0) {
             // students found, store in students array
             while ($row =$result->fetch_assoc()) {
