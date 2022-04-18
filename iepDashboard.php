@@ -207,7 +207,7 @@ include_once realpath("initialization.php");
 
       $students = $currentUser->get_guardian_students();
      
-    } elseif (strcmp($currentUserType, "student")) {
+    } elseif (strcmp($currentUserType, "student") === 0) {
       // Student User--only one value for students, same as current user
       $students[] = $currentUser;
     } else {
