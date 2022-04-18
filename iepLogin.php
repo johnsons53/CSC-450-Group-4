@@ -11,7 +11,8 @@
     <?php
 
     // Initialize the session
-    session_start();
+    //session_start();
+    include_once realpath("initialization.php");
     echo "session status: " . session_status() . "<br />";
 
     /* Will test feature when fully functional
@@ -22,6 +23,7 @@
     }
     */
 
+    /*
     // Taken from login.php
     $filepath = realpath('login.php');
     $config = require $filepath;
@@ -56,6 +58,8 @@
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
+    */
+    global $conn;
 
     // Username and password sent from form
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -180,8 +184,14 @@
             } else {
                 echo "You have entered incorrect information";
             }
-            /* Rearranged Switch 
-            If match is found for username and password, retrieve the appropriate data for the user type matching the saved user id*/
+
+            // Put userId and userType into SESSION
+            $_SESSION["currentUserId"] = $userId;
+            $_SESSION["currentUserType"] = $userType;
+
+            /*
+            /* Reconfiguring to only put userId and userType into SESSION, had trouble with data on Dashboard page. Rearranged Switch 
+            If match is found for username and password, retrieve the appropriate data for the user type matching the saved user id
             switch ($userType) {
                 case "admin":
                     // New call to database for Admin user data
@@ -283,7 +293,7 @@
                                 $row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
                                 $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
                                 $row['user_city'], $row['user_district'], $row['user_type'],
-                                $row['student_id'], $row['provider_title'], $row['student_school'],
+                                $row['student_id'], $row['provider_id'], $row['student_school'],
                                 $row['student_grade'], $row['student_homeroom'], $row['student_dob'],
                                 $row['student_eval_date'], $row['student_next_evaluation'], $row['student_iep_date'],
                                 $row['student_next_iep'], $row['student_eval_status'], $row['student_iep_status']
@@ -298,7 +308,8 @@
                     //echo "This is a Student account"; //Used to check account type
                     break;
             }
-            $conn->close();
+            //$conn->close();
+            */
             header("Location: iepDashboard.php");
             exit();
         }

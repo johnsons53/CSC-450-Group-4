@@ -5,11 +5,13 @@
       Date Written: 03/21/2022
       Revised:
       03/29/2022: Removed old code and testing alerts 
+      04/15/2022: Streamlined database connection code 
       */
-ini_set('display_errors', 1);
-error_reporting(E_ALL|E_STRICT);      
-require_once realpath('SentMessage.php');
-require_once realpath('ReceivedMessage.php');
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL|E_STRICT);    
+
+//include_once realpath("initialization.php");
+
 
 class User {
     //protected $conn;
@@ -94,6 +96,8 @@ class User {
 
     // Method to collect and store sent messages
     function store_sent_messages($id) {
+        //include_once realpath("initialization.php");
+        /*
         // connection to database
         $filepath = realpath('login.php');
         $config = require($filepath);
@@ -109,8 +113,9 @@ class User {
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
+        */
         // run query to select all messages where objective_id matches
-
+        global $conn;
         $stmt = $conn->prepare("SELECT message_id, message_text, message_date
                                 FROM message
                                 WHERE user_id=?");
@@ -137,13 +142,15 @@ class User {
             //echo "0 sent message results <br />";
         }
         // close connection to database
-        $conn->close();
+        //$conn->close();
 
         //echo "Connection closed.<br />";
     }
 
     // Method to collect and store received messages
     function store_received_messages($id) {
+        //include_once realpath("initialization.php");
+        /*
         // connection to database
         $filepath = realpath('login.php');
         $config = require($filepath);
@@ -159,6 +166,8 @@ class User {
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
+        */
+        global $conn;
 
         $stmt = $conn->prepare("SELECT message_id, message_read
         FROM message_recipient
@@ -184,7 +193,7 @@ class User {
             //echo "0 received message results <br />";
         }
         // close connection to database
-        $conn->close();
+        //$conn->close();
 
         //echo "Connection closed.<br />";
     }

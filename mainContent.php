@@ -1,93 +1,62 @@
 <?php 
- session_start();
- ini_set('display_errors', 1);
- error_reporting(E_ALL|E_STRICT);
- //$sessionStudent = unserialize($_SESSION['currentStudent']);
- //echo $sessionStudent->get_full_name();
- 
-
-    $filepath = realpath('login.php');
-    $config = require($filepath);
-
-    require_once realpath('User.php');
-    require_once realpath('Admin.php');
-    require_once realpath('Document.php');
-    require_once realpath('Goal.php');
-    require_once realpath('Guardian.php');
-    require_once realpath('Provider.php');
-    require_once realpath('Report.php');
-    require_once realpath('Objective.php');
-    require_once realpath('Student.php');
-
- 
- ?>
+/*
+mainContent.php - Main Content of Dashboard page
+      Spring 100 CSC 450 Capstone, Group 4
+      Author: Lisa Ahnell
+      Date Written: 04/10/2022
+      Revised: 
+      04/15/2022: Converted Provider access to report forms from links to separate pages to content loaded
+      into div on same page. Added jQuery/AJAX handling of forms and data.
+      04/17/2022: Modified use of SESSION data;
+      cleanup of unnecessary testing code;
+      Completed data updating on changes to database for Report
+*/
+include_once realpath("initialization.php");
+?>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
  <!DOCTYPE html>
  <html>
 
  <?php
-    // Is the currentUser info in the SESSION array?
-    if (array_key_exists('currentUser', $_SESSION)) {
-        // Access currentUser
-        $currentUser = unserialize($_SESSION['currentUser']);
-        echo "User Name: ";
-        echo $currentUser->get_full_name();
-        echo "<br />";
 
+    global $conn;
+
+
+    $currentUserId;
+    $currentUserType;
+    $activeStudent;
+    $activeStudentName;
+    $activeStudentId;
+
+
+    // Did mainContent.php load as the result of a tab click? 
+    // Check for POST["activeStudentId"]
+    if(array_key_exists("activeStudentId", $_POST)) {
+      // update the value in SESSION
+      $_SESSION["activeStudentId"] = $_POST["activeStudentId"];
     }
 
-    if(array_key_exists('activeStudentId', $_POST)) {
-        echo "activeStudentId: " . $_POST['activeStudentId'];
+    // Look for activeStudentId, currentUserId and type in SESSION
+    try {
+      $currentUserId = $_SESSION["currentUserId"];
+      $currentUserType = $_SESSION["currentUserType"];
+      $activeStudentId = $_SESSION["activeStudentId"];
+    } catch (Exception $e) {
+      echo "Message: " . $e->getMessage();
     }
 
-    echo "Student Name: ";
-    echo $_POST['activeStudentName'];
-    echo "<br />";
-    echo "Student ID: ";
-    echo $_POST['activeStudentId'];
-    echo "<br />";
-    
-    // Are the currentStudents in the SESSION array?
-    if(array_key_exists('currentStudents', $_SESSION)) {
-        echo "Found currentStudents in SESSION. <br />";
-        // access currentStudents
-        $myStudents = unserialize($_SESSION['currentStudents']);
-        foreach($myStudents as $value) {
-            // Look for match
-            echo $value->get_full_name();
-            echo "<br />";
-            if($_POST['activeStudentId'] == $value->get_student_id()) {
-                // modify activeStudent in SESSION
-                echo "Found match for student ID. <br />";
-                $_SESSION['activeStudent'] = serialize($value);
-                echo "Saved activeStudent in SESSION array. <br />";
-            } 
-        }
-
-    } else {
-        echo "Did not find currentStudents in SESSION. <br />";
-    }
-
-    // Access activeStudent from SESSION
-    $activeStudent = unserialize($_SESSION['activeStudent']);
-    echo "Active Student Name: ";
-    echo $activeStudent->get_full_name();
-    $studentName = $activeStudent->get_full_name();
-    $studentId = $activeStudent->get_student_id();
-    echo "<br />";
-
-    // Using activeStudent, access content
-
-   
-
-    if (get_class($currentUser) === 'Guardian') {
-      echo "This user is a Guardian. <br />";
+    // Use $activeStudentId to create $currentStudent
+    try {
+      $activeStudent = createStudent($activeStudentId, $conn);
+      $activeStudentName = $activeStudent->get_full_name();
+    } catch (Exception $e) {
+      echo "Message: " . $e->getMessage();
     }
 
     // Student Name
     echo "<div class='currentStudentName'>";
-    echo "<h3>" . $studentName . "</h3>";
+    echo "<h3>" . $activeStudentName . "</h3>";
     echo "</div>"; // end of student name div
 
     // Calendar
@@ -113,8 +82,8 @@
       echo "<h3>Documents</h3>";
       /* DOCUMENTS page button */
       echo "<form action=\"" . htmlspecialchars("iepDocumentView.php") . "\" method=\"post\">";
-      echo "<input type=\"hidden\" id=\"DstudentId\" name=\"studentId\" value=\"" . $studentId . "\">";
-      echo "<input type=\"hidden\" id=\"DstudentName\" name=\"studentName\" value=\"" . $studentName . "\">";
+      echo "<input type=\"hidden\" id=\"DstudentId\" name=\"activeStudentId\" value=\"" . $activeStudentId . "\">";
+      echo "<input type=\"hidden\" id=\"DstudentName\" name=\"activeStudentName\" value=\"" . $activeStudentName . "\">";
       // New Goal button
       echo "<input type=\"submit\" name=\"documents\" value=\"Documents\">";
       echo "</form>";
@@ -126,14 +95,14 @@
     // Display each student goal in a card, with each goal's objectives nested inside
      // New Goal button for Provider users
 
-    if (get_class($currentUser) === 'Provider') {
+    if (strcmp($currentUserType, "provider") === 0) {
        
       /* NEW GOAL BUTTON */
       echo "<form action=\"" . htmlspecialchars("iepProviderGoalForm.php") . "\" method=\"post\">";
       // Add hidden fields with data to send to report form. 
       //echo "<input type=\"hidden\" id=\"NGgoalId\" name=\"goalId\" value=\"\">";
-      echo "<input type=\"hidden\" id=\"NGstudentId\" name=\"studentId\" value=\"" . $studentId . "\">";
-      echo "<input type=\"hidden\" id=\"NGstudentName\" name=\"studentName\" value=\"" . $studentName . "\">";
+      echo "<input type=\"hidden\" id=\"NGstudentId\" name=\"activeStudentId\" value=\"" . $activeStudentId . "\">";
+      echo "<input type=\"hidden\" id=\"NGstudentName\" name=\"activeStudentName\" value=\"" . $activeStudentName . "\">";
       // New Goal button
       echo "<input type=\"submit\" name=\"newGoal\" value=\"New Goal\">";
       echo "</form>";
@@ -156,13 +125,13 @@
           echo "<p>Goal Description: " . $g->get_goal_text() . "</p>";
 
           // Add buttons to modify goal or add new objective
-          if (get_class($currentUser) === 'Provider') {
+          if (strcmp($currentUserType, "provider") === 0) {
   
               /* UPDATE GOAL BUTTON */
               echo "<form action=\"" . htmlspecialchars("iepProviderGoalForm.php") . "\" method=\"post\">";
               // Add hidden fields with data to send to report form. 
-              echo "<input type=\"hidden\" id=\"UGstudentId\" name=\"studentId\" value=\"" . $studentId . "\">";
-              echo "<input type=\"hidden\" id=\"UGstudentName\" name=\"studentName\" value=\"" . $studentName . "\">";
+              echo "<input type=\"hidden\" id=\"UGstudentId\" name=\"activeStudentId\" value=\"" . $activeStudentId . "\">";
+              echo "<input type=\"hidden\" id=\"UGstudentName\" name=\"activeStudentName\" value=\"" . $activeStudentName . "\">";
               echo "<input type=\"hidden\" id=\"UGgoalId\" name=\"goalId\" value=\"" . $goalId . "\">";
               echo "<input type=\"hidden\" id=\"UGgoalLabel\" name=\"goalLabel\" value=\"" . $goalLabel . "\">";
               echo "<input type=\"hidden\" id=\"UGgoalCategory\" name=\"goalCategory\" value=\"" . $goalCategory . "\">";
@@ -176,19 +145,13 @@
               echo "<form action=\"" . htmlspecialchars("iepProviderObjectiveForm.php") . "\" method=\"post\">";
               // Add hidden fields with data to send to report form. 
               echo "<input type=\"hidden\" id=\"NOgoalId" . $goalId . "\" name=\"goalId\" value=\"" . $goalId . "\">";
-              echo "<input type=\"hidden\" id=\"NOstudentName" . $studentName . "\" name=\"studentName\" value=\"" . $studentName . "\">";
+              echo "<input type=\"hidden\" id=\"NOstudentName" . $activeStudentName . "\" name=\"activeStudentName\" value=\"" . $activeStudentName . "\">";
               echo "<input type=\"hidden\" id=\"NOgoalLabel" . $goalId . "\" name=\"goalLabel\" value=\"" . $goalLabel . "\">";
               // new objective submit button
               echo "<input type=\"submit\" name=\"newObjective\" value=\"New Objective\">";
               echo "</form>";
 
-              /* DELETE GOAL BUTTON */
-              //echo "<form action=\"" . htmlspecialchars("iepDashboard.php") . "\" method=\"post\">";
-              // Add hidden fields with data to send to report form. 
-              //echo "<input type=\"hidden\" id=\"DgoalId" . $goalId . "\" name=\"goalId\" value=\"" . $goalId . "\">";
-              // new objective submit button
-              //echo "<input type=\"submit\" class=\"deleteGoal\" name=\"deleteGoal\" data-goalId=\"" . $goalId . "\"value=\"Delete Goal\">";
-              //echo "</form>";
+              /* DELETE GOAL BUTTON change to regular button*/
               echo "<input type=\"submit\" class=\"deleteGoal\" name=\"deleteGoal\" data-goalId=\"" . $goalId . "\"value=\"Delete Goal\">";
 
               /* Div to confirm goal deletion */
@@ -213,7 +176,7 @@
             echo "<h5>Objective: " . $objectiveLabel . "</h5>";
 
               // Add buttons to modify objective or add new report
-              if (get_class($currentUser) === 'Provider') {
+              if (strcmp($currentUserType, "provider") === 0) {
 
   
               /* UPDATE OBJECTIVE BUTTON */
@@ -221,7 +184,7 @@
               // hidden fields with data to send to report form.
               echo "<input type=\"hidden\" id=\"UOobjectiveId" . $objectiveId . "\" name=\"objectiveId\" value=\"" . $objectiveId . "\">";
               echo "<input type=\"hidden\" id=\"UOGoalId" . $goalId . "\" name=\"goalId\" value=\"" . $goalId . "\">";
-              echo "<input type=\"hidden\" id=\"UOStudentName" . $studentName . "\" name=\"studentName\" value=\"" . $studentName . "\">";
+              echo "<input type=\"hidden\" id=\"UOStudentName" . $activeStudentName . "\" name=\"activeStudentName\" value=\"" . $activeStudentName . "\">";
               echo "<input type=\"hidden\" id=\"UOgoalLabel" . $goalId . "\" name=\"goalLabel\" value=\"" . $goalLabel . "\">";
               echo "<input type=\"hidden\" id=\"UOobjectiveLabel" . $objectiveId . "\" name=\"objectiveLabel\" value=\"" . $objectiveLabel . "\">";
               echo "<input type=\"hidden\" id=\"UOobjectiveText" . $objectiveId . "\" name=\"objectiveText\" value=\"" . $objectiveText . "\">";
@@ -231,36 +194,49 @@
               //Update Objective button
               echo "<input type=\"submit\" id=\"updateObjective" . $objectiveId . "\" class=\"updateObjective\" name=\"updateObjective\" value=\"Update Objective\">";
               echo "</form>";
-
-              /* NEW REPORT BUTTON */
-              echo "<form action=\"" . htmlspecialchars("iepProviderReportForm.php") . "\" method=\"post\">";
-              // Add hidden fields with data to send to report form.
-              echo "<input type=\"hidden\" id=\"objectiveId" . $objectiveId . "\" name=\"objectiveId\" value=\"" . $objectiveId . "\">";
-              echo "<input type=\"hidden\" id=\"objectiveLabel" . $objectiveId . "\" name=\"objectiveLabel\" value=\"" . $objectiveLabel . "\">";
-              echo "<input type=\"hidden\" id=\"goalId" . $goalId . "\" name=\"goalId\" value=\"" . $goalId . "\">";
-              echo "<input type=\"hidden\" id=\"goalLabel" . $goalId . "\" name=\"goalLabel\" value=\"" . $goalLabel . "\">";
-              echo "<input type=\"hidden\" id=\"studentName" . $studentName . "\" name=\"studentName\" value=\"" . $studentName . "\">";
-              // New Report button
-              echo "<input type=\"submit\" id=\"newReport" . $objectiveId . "\" class=\"newReport\" name=\"newReport\" value=\"New Report\">";
-              echo "</form>";
               
             }
 
             if (isset($reports) && count($reports) > 0) {
               // Select Report to display, default to most recent
+              //echo "<form action=\"\" method=\"post\">";
+
               echo "<label for=\"reportSelect\">Select Report Date</label>";
-              echo "<select name=\"reportSelect\" class=\"reportSelect\" id=\"reportSelect\" data-objectiveId=\"" . $objectiveId . "\" data-max=\"" . $objectiveAttempts . "\" data-high=\"" . $objectiveTarget . "\" data-low=\"" . $objectiveTarget/2 . "\">";
+              echo "<select name=\"reportSelect\" class=\"reportSelect\" id=\"reportSelect" . $objectiveId . "\" data-objectiveId=\"" . $objectiveId . "\" data-max=\"" . $objectiveAttempts . "\" data-high=\"" . $objectiveTarget . "\" data-low=\"" . $objectiveTarget/2 . "\">";
                 // Options for reportSelect
                 $reportCount = 0;
                 foreach($reports as $r) {
                   if ($reportCount === 0) {
-                    echo "<option class=\"reportOption\" value=\"" . $r->get_report_observed() . "\" selected=\"selected\" >" . $r->get_report_date() . "</option>";
+                    echo "<option class=\"reportOption\" data-reportdate=\"" . $r->get_report_date() . "\" data-reportid=\"" . $r->get_report_id() . "\" value=\"" . $r->get_report_observed() . "\" selected=\"selected\">" . $r->get_report_date() . "</option>";
                     $reportCount++;
                   } else {
-                    echo "<option class=\"reportOption\" value=\"" . $r->get_report_observed() . "\">" . $r->get_report_date() . "</option>";
+                    echo "<option class=\"reportOption\" data-reportdate=\"" . $r->get_report_date() . "\" data-reportid=\"" . $r->get_report_id() . "\" value=\"" . $r->get_report_observed() . "\">" . $r->get_report_date() . "</option>";
                   }
                 }
               echo "</select>"; // end of select
+
+              // Report buttons for Provider Users
+              if (strcmp($currentUserType, "provider") === 0) {
+                echo "<div>";
+                // Modify selected report button
+                // Open form with values of selected report
+                echo "<input type=\"submit\" data-objectiveid=\"" . $objectiveId . "\"id=\"modifyReport" . $objectiveId . "\" class=\"reportFormButton\" name=\"modifyReport\" value=\"Modify Selected Report\">";
+
+                // Add new report button
+                // Open form with only objectiveId value
+                echo "<input type=\"submit\" data-objectiveid=\"" . $objectiveId . "\" data-reportDate=\"\" data-reportId=\"\" data-reportObserved=\"\" id=\"addReport" . $objectiveId . "\" class=\"reportFormButton\" name=\"addReport\" value=\"New Report\">";
+
+                //echo "</form>";
+
+                // Div for Report Form, do not display unless Report buttons clicked
+                echo "<div class=\"reportForm\" id=\"reportForm" . $objectiveId . "\" display=\"block\">";
+
+                echo "</div>"; // end of Report Form Div
+
+                echo "</div>";
+
+              }
+
 
               $selectedReport = $reports[0];
               $selectedReportId = $selectedReport->get_report_id();
@@ -270,23 +246,13 @@
               echo "<br />";
               // Div to display selected report meter
               echo "<div class=\"reportMeter\" id=\"reportMeter" . $objectiveId . "\">";
-                  // Display latest report information
 
-                  $max = $objectiveAttempts;
-                  $high = $objectiveTarget;
-                  $low = $objectiveTarget /2;
-                  $value = $selectedReport->get_report_observed();
-                  echo "<p>";
-                  echo "<label for=\"reportMeter\">Report Meter:</label>";
-                  echo "<meter name=\"reportMeter\" min='0' max='" . $max . "' high='" . $high ."' low='" . $low . "' optimum='" . $max . "' value='" . $value . "'>" . $value . "</meter>";
-                  echo "</p>";
-
-              echo "</div>";
+              echo "</div>"; //end of reportMeter div
 
               } else {
                 echo "<p>No reports to display.</p>";
             }// end of if
-            //echo "</div>";
+
             
             // Expanded details for Objective
             $objectiveDetailsID = "objective" . $o->get_objective_id();

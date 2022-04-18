@@ -5,11 +5,21 @@
 </head>
 <body>
     <?php 
-    ini_set('display_errors', 1);
-    error_reporting(E_ALL|E_STRICT);
-    $filepath = realpath('login.php');
-    $config = require($filepath);
+    include_once realpath("initialization.php");
+    //ini_set('display_errors', 1);
+    //error_reporting(E_ALL|E_STRICT);
+    //$filepath = realpath('login.php');
+    //$config = require($filepath);
+    echo "hostname: " . DB_HOSTNAME;
+    echo "<br />";
+    echo "hostname: " . DB_USERNAME;
+    echo "<br />";
+    echo "hostname: " . DB_PASSWORD;
+    echo "<br />";
+    echo "hostname: " . DB_DATABASE;
+    echo "<br />";
 
+    /*
     require_once realpath('User.php');
     require_once realpath('Admin.php');
     require_once realpath('Document.php');
@@ -19,8 +29,9 @@
     require_once realpath('Report.php');
     require_once realpath('Objective.php');
     require_once realpath('Student.php');
+    */
 
-    
+    /*
     $db_hostname = $config['DB_HOSTNAME'];
     $db_username = $config['DB_USERNAME'];
     $db_password = $config['DB_PASSWORD'];
@@ -107,7 +118,7 @@
         // show the data in each row
         while ($row = $result->fetch_assoc()) {
             // new User object from row data
-            $student = new Student($conn, $row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
+            $student = new Student($row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
                 $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
                 $row['user_city'], $row['user_district'], $row['user_type'], 
                 $row['student_id'], $row['provider_id'], $row['student_school'], $row['student_grade'], 

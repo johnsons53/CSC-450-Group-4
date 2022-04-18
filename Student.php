@@ -5,11 +5,9 @@
     Date Written: 03/22/2022
     Revised: 
     29/03/2022: Removed old versions of code, alerts used for testing
+    04/15/2022: Streamlined database connection code 
+    04/17/2022: Removed old database connection code
 */
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL|E_STRICT);      
-require_once realpath('User.php');
 
 class Student extends User {
     protected $student_id;
@@ -103,21 +101,8 @@ class Student extends User {
 /*     Methods to store student goals, guardians, documents run queries passing in student id value */
 
      function store_student_goals($id) {
-         // connection to database
-        $filepath = realpath('login.php');
-        $config = require($filepath);
-        $db_hostname = $config['DB_HOSTNAME'];
-        $db_username = $config['DB_USERNAME'];
-        $db_password = $config['DB_PASSWORD'];
-        $db_database = $config['DB_DATABASE'];
-    
-        // Create connection
-        $conn = new mysqli($db_hostname, $db_username, $db_password, $db_database);
-    
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        } 
+
+        global $conn;
 
         // run query to select all objectives where goal_id matches
         $sql = "SELECT * 
@@ -136,28 +121,12 @@ class Student extends User {
         } else {
            //echo "0 results <br />";
         } 
-        // close connection to database
-        //$conn->close();
 
-        //echo "Connection closed.<br />";
     }
 
     function store_student_documents($id) {
-        // connection to database
-        $filepath = realpath('login.php');
-        $config = require($filepath);
-        $db_hostname = $config['DB_HOSTNAME'];
-        $db_username = $config['DB_USERNAME'];
-        $db_password = $config['DB_PASSWORD'];
-        $db_database = $config['DB_DATABASE'];
-            
-        // Create connection
-        $conn = new mysqli($db_hostname, $db_username, $db_password, $db_database);
-            
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+
+        global $conn;
         // Query for documents wtih matching student id        
         $sql = "SELECT * 
                 FROM document
@@ -175,9 +144,7 @@ class Student extends User {
         } else {
             //echo "0 results <br />";
         } 
-        // close connection to database
-        $conn->close();
-        //echo "Connection closed.<br />";
+
     }
     
 }

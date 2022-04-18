@@ -5,11 +5,12 @@
     Date Written: 03/23/2022
     Revised: 
     03/29/2022: Removed testing alerts
+    04/15/2022: Streamlined database connection code 
 */
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL|E_STRICT);      
-require_once realpath('Objective.php');
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL|E_STRICT);      
+//require_once realpath('Objective.php');
 
 class Goal {
     // change these to public
@@ -54,6 +55,7 @@ class Goal {
     // Fill objectives array with any available objectives matching the passed goal_id
     function store_objectives($id) {
          // connection to database
+         /*
         $filepath = realpath('login.php');
         $config = require($filepath);
         $db_hostname = $config['DB_HOSTNAME'];
@@ -68,6 +70,8 @@ class Goal {
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         } 
+        */
+        global $conn;
         // run query to select all objectives where goal_id matches
 
         $sql = "SELECT objective_id, objective_label, objective_text, objective_attempts, objective_target, objective_status
