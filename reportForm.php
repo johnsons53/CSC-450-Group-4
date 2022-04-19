@@ -7,6 +7,8 @@ reportForm.php - Provider Report Form
       Revised: 04/17/2022 Modified use of SESSION data;
       cleanup of unnecessary testing code
 */
+include_once realpath("initialization.php");
+
 if(array_key_exists("objectiveId", $_POST)) {
     $objectiveId = $_POST['objectiveId'];
 } else {

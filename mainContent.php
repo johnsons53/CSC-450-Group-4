@@ -10,6 +10,8 @@ mainContent.php - Main Content of Dashboard page
       04/17/2022: Modified use of SESSION data;
       cleanup of unnecessary testing code;
       Completed data updating on changes to database for Report
+      04/18/2022: Converted provider objective froms to open in divs on dashboard page;
+      Completed form handling for objective changes
 */
 include_once realpath("initialization.php");
 ?>
@@ -84,7 +86,6 @@ include_once realpath("initialization.php");
       echo "<form action=\"" . htmlspecialchars("iepDocumentView.php") . "\" method=\"post\">";
       echo "<input type=\"hidden\" id=\"DstudentId\" name=\"activeStudentId\" value=\"" . $activeStudentId . "\">";
       echo "<input type=\"hidden\" id=\"DstudentName\" name=\"activeStudentName\" value=\"" . $activeStudentName . "\">";
-      // New Goal button
       echo "<input type=\"submit\" name=\"documents\" value=\"Documents\">";
       echo "</form>";
 
@@ -98,6 +99,15 @@ include_once realpath("initialization.php");
     if (strcmp($currentUserType, "provider") === 0) {
        
       /* NEW GOAL BUTTON */
+      echo "<input type=\"button\" id=\"newGoal" . $activeStudentId . "\" " . 
+      "data-studentId=\"" . $activeStudentId . "\" " .
+      "class=\"newGoalFormButton\" name=\"newGoal\" value=\"New Goal\">";
+
+      // Div for new goal form
+      echo "<div class=\"newGoalForm\" id=\"newGoalForm" . $activeStudentId . "\" display=\"block\">";
+
+      echo "</div>";
+      /*
       echo "<form action=\"" . htmlspecialchars("iepProviderGoalForm.php") . "\" method=\"post\">";
       // Add hidden fields with data to send to report form. 
       //echo "<input type=\"hidden\" id=\"NGgoalId\" name=\"goalId\" value=\"\">";
@@ -106,6 +116,8 @@ include_once realpath("initialization.php");
       // New Goal button
       echo "<input type=\"submit\" name=\"newGoal\" value=\"New Goal\">";
       echo "</form>";
+
+      */
       
     }
 
@@ -124,10 +136,34 @@ include_once realpath("initialization.php");
           echo "<h4>Goal:" . $g->get_goal_label() . "</h4>";
           echo "<p>Goal Description: " . $g->get_goal_text() . "</p>";
 
-          // Add buttons to modify goal or add new objective
+          // Provider Modify and Delete Goal Buttons and form
           if (strcmp($currentUserType, "provider") === 0) {
+
+            echo "<div class=\"goalChanges\">";
+            // Modify current objective--load goalForm.php below with activeStudentId, goalId, goalLabel, goalCategory
+            // goalText, goalActive
+            echo "<input type=\"button\" id=\"modifyGoal" . $goalId . "\" " . 
+                "data-studentId=\"" . $activeStudentId . "\" " .
+                "data-goalId=\"" . $goalId . "\" " .
+                "data-goalLabel=\"" . $goalLabel . "\" " . 
+                "data-goalCategory=\"" . $goalCategory . "\" " .
+                "data-goalText=\"" . $goalText . "\" " . 
+                "data-goalActive=\"" . $goalActive . "\" " .  
+                "class=\"modifyGoalFormButton\" name=\"modifyGoal\" value=\"Modify Goal\">";
+            // Delete current objective
+            echo "<input type=\"button\" data-goalId=\"" . $goalId . "\"id=\"deleteGoal" . $goalId . "\"" . 
+                " class=\"deleteGoalButton\" name=\"deleteGoal\" value=\"Delete Goal\">";
+
+            // Div for modify objective form
+            echo "<div class=\"modifyGoalForm\" id=\"modifyGoalForm" . $goalId . "\" display=\"block\">";
+
+            echo "</div>";
+
+
+          echo "</div>"; // end of objectiveChanges
   
               /* UPDATE GOAL BUTTON */
+              /*
               echo "<form action=\"" . htmlspecialchars("iepProviderGoalForm.php") . "\" method=\"post\">";
               // Add hidden fields with data to send to report form. 
               echo "<input type=\"hidden\" id=\"UGstudentId\" name=\"activeStudentId\" value=\"" . $activeStudentId . "\">";
@@ -140,27 +176,32 @@ include_once realpath("initialization.php");
               // update goal submit button
               echo "<input type=\"submit\" name=\"updateGoal\" value=\"Update Goal\">";
               echo "</form>";
-
-              /* NEW OBJECTIVE BUTTON */
-              echo "<form action=\"" . htmlspecialchars("iepProviderObjectiveForm.php") . "\" method=\"post\">";
-              // Add hidden fields with data to send to report form. 
-              echo "<input type=\"hidden\" id=\"NOgoalId" . $goalId . "\" name=\"goalId\" value=\"" . $goalId . "\">";
-              echo "<input type=\"hidden\" id=\"NOstudentName" . $activeStudentName . "\" name=\"activeStudentName\" value=\"" . $activeStudentName . "\">";
-              echo "<input type=\"hidden\" id=\"NOgoalLabel" . $goalId . "\" name=\"goalLabel\" value=\"" . $goalLabel . "\">";
-              // new objective submit button
-              echo "<input type=\"submit\" name=\"newObjective\" value=\"New Objective\">";
-              echo "</form>";
-
+*/
               /* DELETE GOAL BUTTON change to regular button*/
-              echo "<input type=\"submit\" class=\"deleteGoal\" name=\"deleteGoal\" data-goalId=\"" . $goalId . "\"value=\"Delete Goal\">";
+             // echo "<input type=\"submit\" class=\"deleteGoal\" name=\"deleteGoal\" data-goalId=\"" . $goalId . "\"value=\"Delete Goal\">";
 
               /* Div to confirm goal deletion */
+              /*
               echo "<div class=\"deleteGoalMessage\" id=\"deleteGoalMessage" . $goalId . "\">";
               echo "<p>This Div id: deleteGoalMessage" . $goalId . "</p>";
               echo "</div>";
+              */
+
+            /* NEW OBJECTIVE BUTTON */
+
+            echo "<input type=\"button\" id=\"newObjective" . $goalId . "\" " . 
+              "data-goalId=\"" . $goalId . "\" " .
+              "class=\"newObjectiveFormButton\" name=\"newObjective\" value=\"New Objective\">";
+
+            // Div for new ojbective form
+            echo "<div class=\"newObjectiveForm\" id=\"newObjectiveForm" . $goalId . "\" display=\"block\">";
+
+            echo "</div>";
 
               
-            }
+
+              
+          } // end of if userType === provider
           // Display each Objective in a box
           foreach ($objectives as $o) {
             // Collect Reports for this Objective
@@ -175,27 +216,32 @@ include_once realpath("initialization.php");
             echo "<div class='contentCard'>";
             echo "<h5>Objective: " . $objectiveLabel . "</h5>";
 
-              // Add buttons to modify objective or add new report
-              if (strcmp($currentUserType, "provider") === 0) {
+            /* PROVIDER OBJECTIVE BUTTONS */
+            if (strcmp($currentUserType, "provider") === 0) {
+              echo "<div class=\"objectiveChanges\">";
+                // Modify current objective--load objectiveForm.php below with objectiveId, goalId, objectiveLabel, objectiveText
+                // objectiveAttempts, objectiveTarget, objectiveStatus
+                echo "<input type=\"button\" id=\"modifyObjective" . $objectiveId . "\" " . 
+                    "data-objectiveid=\"" . $objectiveId . "\" " .
+                    "data-goalId=\"" . $goalId . "\" " .
+                    "data-objectiveLabel=\"" . $objectiveLabel . "\" " . 
+                    "data-objectiveText=\"" . $objectiveText . "\" " .
+                    "data-objectiveAttempts=\"" . $objectiveAttempts . "\" " . 
+                    "data-objectiveTarget=\"" . $objectiveTarget . "\" " .  
+                    "data-objectiveStatus=\"" . $objectiveStatus . "\" " . 
+                    "class=\"modifyObjectiveFormButton\" name=\"modifyObjective\" value=\"Modify Objective\">";
+                // Delete current objective
+                echo "<input type=\"button\" data-objectiveid=\"" . $objectiveId . "\"id=\"deleteObjective" . $objectiveId . "\"" . 
+                    " class=\"deleteObjectiveButton\" name=\"deleteObjective\" value=\"Delete Objective\">";
 
-  
-              /* UPDATE OBJECTIVE BUTTON */
-              echo "<form action=\"" . htmlspecialchars("iepProviderObjectiveForm.php") . "\" method=\"post\">";
-              // hidden fields with data to send to report form.
-              echo "<input type=\"hidden\" id=\"UOobjectiveId" . $objectiveId . "\" name=\"objectiveId\" value=\"" . $objectiveId . "\">";
-              echo "<input type=\"hidden\" id=\"UOGoalId" . $goalId . "\" name=\"goalId\" value=\"" . $goalId . "\">";
-              echo "<input type=\"hidden\" id=\"UOStudentName" . $activeStudentName . "\" name=\"activeStudentName\" value=\"" . $activeStudentName . "\">";
-              echo "<input type=\"hidden\" id=\"UOgoalLabel" . $goalId . "\" name=\"goalLabel\" value=\"" . $goalLabel . "\">";
-              echo "<input type=\"hidden\" id=\"UOobjectiveLabel" . $objectiveId . "\" name=\"objectiveLabel\" value=\"" . $objectiveLabel . "\">";
-              echo "<input type=\"hidden\" id=\"UOobjectiveText" . $objectiveId . "\" name=\"objectiveText\" value=\"" . $objectiveText . "\">";
-              echo "<input type=\"hidden\" id=\"UOobjectiveAttempts" . $objectiveId . "\" name=\"objectiveAttempts\" value=\"" . $objectiveAttempts . "\">";
-              echo "<input type=\"hidden\" id=\"UOobjectiveTarget" . $objectiveId . "\" name=\"objectiveTarget\" value=\"" . $objectiveTarget . "\">";
-              echo "<input type=\"hidden\" id=\"UOobjectiveStatus" . $objectiveId . "\" name=\"objectiveStatus\" value=\"" . $objectiveStatus . "\">";
-              //Update Objective button
-              echo "<input type=\"submit\" id=\"updateObjective" . $objectiveId . "\" class=\"updateObjective\" name=\"updateObjective\" value=\"Update Objective\">";
-              echo "</form>";
-              
-            }
+                // Div for modify objective form
+                echo "<div class=\"modifyObjectiveForm\" id=\"modifyObjectiveForm" . $objectiveId . "\" display=\"block\">";
+
+                echo "</div>";
+
+
+              echo "</div>"; // end of objectiveChanges
+            } // end of if userType === provider
 
             if (isset($reports) && count($reports) > 0) {
               // Select Report to display, default to most recent
@@ -215,9 +261,9 @@ include_once realpath("initialization.php");
                 }
               echo "</select>"; // end of select
 
-              // Report buttons for Provider Users
+              /* PROVIDER REPORT BUTTONS */
               if (strcmp($currentUserType, "provider") === 0) {
-                echo "<div>";
+                echo "<div class\"reportChanges>";
                 // Modify selected report button
                 // Open form with values of selected report
                 echo "<input type=\"submit\" data-objectiveid=\"" . $objectiveId . "\"id=\"modifyReport" . $objectiveId . "\" class=\"reportFormButton\" name=\"modifyReport\" value=\"Modify Selected Report\">";
@@ -240,10 +286,7 @@ include_once realpath("initialization.php");
 
               $selectedReport = $reports[0];
               $selectedReportId = $selectedReport->get_report_id();
-              echo "Initial selectedReportId: " . $selectedReportId;
-              echo ", Selected Report Date: ";
-              echo $selectedReport->get_report_date();
-              echo "<br />";
+
               // Div to display selected report meter
               echo "<div class=\"reportMeter\" id=\"reportMeter" . $objectiveId . "\">";
 
@@ -256,15 +299,16 @@ include_once realpath("initialization.php");
             
             // Expanded details for Objective
             $objectiveDetailsID = "objective" . $o->get_objective_id();
-            echo "objectiveDetailsID: " . $objectiveDetailsID . "<br />";
-            echo "<div class='expandedDetails' id=" . $objectiveDetailsID . ">";
+            echo "<div class='expandedDetails' id=\"" . $objectiveDetailsID . "\" display=\"none\">";
               echo "<p>Description: " . $o->get_objective_text() ."</p> ";
-              echo "<p>Latest Report Date: " . $selectedReport->get_report_date() . "</p>";
-              echo "<p>Report Data: Graph of report data to come</p>";
+              if (isset($reports) && count($reports) > 0) {
+                echo "<p>Latest Report Date: " . $reports[0]->get_report_date() . "</p>";
+                echo "<p>Report Data: Graph of report data to come</p>";
+              }
             echo "</div>"; //end of expandedDetails
 
             // Expand/Hide button
-            echo "<button type='custom' id='objectiveDetails' onclick='showHide(\"" . $objectiveDetailsID . "\");'>+</button>";
+            echo "<button type='custom' class=\"detailViewButton\" data-detailDivId=\"" . $objectiveDetailsID . "\" id='objectiveDetails' onclick='showHide(\"" . $objectiveDetailsID . "\");'>+</button>";
             
             echo "</div>"; // end of Objective Div
 
@@ -272,15 +316,14 @@ include_once realpath("initialization.php");
 
           // Expanded details for Goal
           $goalDetailsID = "goal" . $g->get_goal_id();
-          echo "goalDetailsID: " . $goalDetailsID . "<br />";
-          echo "<div class='expandedDetails' id=" . $goalDetailsID . ">";
+          echo "<div class='expandedDetails' id=\"" . $goalDetailsID . "\" display=\"none\">";
           echo "<p>Category: " . $g->get_goal_category() . "</p>";
           echo "<p>Description: " . $g->get_goal_text() . "</p>";
           echo "<p>Date Range: " . $activeStudent->get_student_iep_date() . " - " . $activeStudent->get_student_next_iep() . "</p>";
           echo "</div>"; // end of expandedDetails
 
           // Expand/Hide button
-          echo "<button type='custom' id='goalDetails' onclick='showHide(\"" . $goalDetailsID . "\");'>+</button>";
+          echo "<button type='custom' class=\"detailViewButton\" data-detailDivId=\"" . $goalDetailsID . "\" id='goalDetails' onclick='showHide(\"" . $goalDetailsID . "\");'>+</button>";
         echo "</div>"; // end of Goal Div
       } // end of foreach(goal)
 

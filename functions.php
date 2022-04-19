@@ -72,7 +72,7 @@ function createUser($userId, $userType, $conn) {
                 }
             }
             return $admin;
-            echo "This is a Admin account"; //Used to check account type
+            //echo "This is a Admin account"; //Used to check account type
             break;
 
         case "provider":
@@ -98,7 +98,7 @@ function createUser($userId, $userType, $conn) {
 
                 }
             }                    
-            echo "This is a Provider account"; //Used to check account type
+            //echo "This is a Provider account"; //Used to check account type
             return $provider;
 
             break;
@@ -121,7 +121,7 @@ function createUser($userId, $userType, $conn) {
                     );
                 }
             }                    
-            echo "This is a Guardian account"; //Used to check account type
+            //echo "This is a Guardian account"; //Used to check account type
             return $guardian;
 
             break;
@@ -151,7 +151,7 @@ function createUser($userId, $userType, $conn) {
                 }
             } 
             
-            echo "This is a Student account"; //Used to check account type
+            //echo "This is a Student account"; //Used to check account type
             return $student;
             break;
         

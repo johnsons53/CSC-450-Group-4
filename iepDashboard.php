@@ -66,6 +66,22 @@ include_once realpath("initialization.php");
         //Identify the defaultOpen element
         $("#defaultOpen").click();
 
+        // Handle detail view toggle with jQuery?
+        $(document).on("click", ".detailViewButton", function() {
+          // detail view button needs to contain the id of its associated detail view div
+          var detailDivId = $(this).attr("data-detailDivId");
+          //alert(detailDivId);
+          // if element with detailDivId has display of block, set to none,
+          // if it has display of none, set to block
+          if ($("#" + detailDivId).attr("display") == "block") {
+            $("#" + detailDivId).attr("display", "none");
+          } else {
+            $("#" + detailDivId).attr("display", "block");
+          }
+        });
+        // Hide the detail views
+        $(".detailViewButton").click();
+
         // Change Report meter display when different report selected
         $(document).on("change", ".reportSelect", function() {
           
@@ -77,6 +93,247 @@ include_once realpath("initialization.php");
             high: $(this).attr("data-high"),
             low: $(this).attr("data-low")
           });
+        });
+
+        // Open Goal Form on page to modify existing goal with button click
+        $(document).on("click", ".modifyGoalFormButton", function() {
+          var studentId = $(this).attr("data-studentId");
+          var goalId = $(this).attr("data-goalId");
+          var goalLabel = $(this).attr("data-goalLabel");
+          var goalText = $(this).attr("data-goalText");
+          var goalCategory = $(this).attr("data-goalCategory");
+          var goalActive = $(this).attr("data-goalActive");
+
+          $("#modifyGoalForm" + goalId).load("goalForm.php", {
+            "studentId" : studentId,
+            "goalId" : goalId,
+            "goalLabel" : goalLabel,
+            "goalCategory" : goalCategory,
+            "goalText" : goalText,
+            "goalActive" : goalActive
+          });
+        });
+
+        // Open Goal Form on page to add new goal
+        $(document).on("click", ".newGoalFormButton", function() {
+          //alert("Goal form for student id: " + $(this).attr("data-studentId"));
+          var studentId = $(this).attr("data-studentId");
+          $("#newGoalForm" + studentId).load("goalForm.php", {
+            "studentId" : studentId,
+          });
+        });
+
+        // Save or Cancel Goal button
+        $(document).on("click", ".goalSubmit", function() {
+          // variables for form data
+          var studentId = $("#studentId").val();
+          var goalId = $("#goalId" + studentId).val();
+          var goalLabel = $("#goalLabel" + studentId).val();
+          var goalText = $("#goalText" + studentId).val();
+          var goalCategory = $("#goalCategory" + studentId).val();
+          var goalActive = $("input[name='goalActive']:checked").val();
+
+          // Is this a new goal or a modified one?
+          if (goalId == "") {
+            // New Goal, load into newGoalForm div
+            // if save, send data to goalFormResponse
+            if ($(this).attr("name") == "saveGoal") {
+              
+              $("#newGoalForm"+ studentId).load("goalFormResponse.php", {
+                "saveGoal" : $("#saveGoal" + studentId).val(),
+                "studentId" : studentId,
+                "goalId" : goalId,
+                "goalLabel" : goalLabel,
+                "goalCategory" : goalCategory,
+                "goalText" : goalText,
+                "goalActive" : goalActive
+              }, function() {
+                
+                // Load mainContent with activeStudent data
+                $(".tablinks.active").click();
+                alert("Goal Saved");
+            
+              });
+
+            }
+            
+            // if cancel, send nothing to goalFormResponse
+            if ($(this).attr("name") == "cancelGoal") {
+              $("#newGoalForm"+ studentId).load("goalFormResponse.php", {
+                "cancelGoal" : $("#cancelGoal" + studentId).val(),
+              }, function() {
+                alert("Goal Cancelled");          
+              });
+
+            }
+
+          } else {
+            // modified goal, load into modifyGoalForm div
+            // if save, send data to goalFormResponse
+            if ($(this).attr("name") == "saveGoal") {
+              $("#modifyGoalForm"+ goalId).load("goalFormResponse.php", {
+                "saveGoal" : $("#saveGoal" + studentId).val(),
+                "studentId" : studentId,
+                "goalId" : goalId,
+                "goalLabel" : goalLabel,
+                "goalCategory" : goalCategory,
+                "goalText" : goalText,
+                "goalActive" : goalActive
+              }, function() {
+                alert("Goal Saved");
+                // Load mainContent with activeStudent data
+                $(".tablinks.active").click();
+                
+            
+              });
+
+            }
+            
+            // if cancel, send nothing to objectiveFormResponse
+            if ($(this).attr("name") == "cancelGoal") {
+              $("#modifyGoalForm"+ goalId).load("goalFormResponse.php", {
+                "cancelGoal" : $("#cancelGoal" + studentId).val(),
+              }, function() {
+                alert("Goal Cancelled");          
+              });
+            }
+          }
+        });
+
+        // Delete Goal button
+        $(document).on("click", ".deleteGoalButton", function() {
+          var goalId = $(this).attr("data-goalId");
+            $("#modifyGoalForm"+ goalId).load("goalFormResponse.php", {
+              "deleteGoal" : "deleteGoal",
+              "goalId" : goalId,
+            }, function() {
+              alert("Goal Deleted");
+              // Load mainContent with activeStudent data
+              $(".tablinks.active").click();
+          
+            });  
+        });
+
+        // Open Objective Form on page to modify existing objective with button click
+        $(document).on("click", ".modifyObjectiveFormButton", function() {
+          //alert("modify objective");
+
+          var objectiveId = $(this).attr("data-objectiveId");
+          var goalId = $(this).attr("data-goalId");
+          var objectiveLabel = $(this).attr("data-objectiveLabel");
+          var objectiveText = $(this).attr("data-objectiveText");
+          var objectiveAttempts = $(this).attr("data-objectiveAttempts");
+          var objectiveTarget = $(this).attr("data-objectiveTarget");
+          var objectiveStatus = $(this).attr("data-objectiveStatus");
+
+          $("#modifyObjectiveForm" + objectiveId).load("objectiveForm.php", {
+            "objectiveId" : objectiveId,
+            "goalId" : goalId,
+            "objectiveLabel" : objectiveLabel,
+            "objectiveText" : objectiveText,
+            "objectiveAttempts" : objectiveAttempts,
+            "objectiveTarget" : objectiveTarget,
+            "objectiveStatus" : objectiveStatus
+          });
+        });
+
+        // Open Objective Form on page to add new Objective with button click
+        $(document).on("click", ".newObjectiveFormButton", function() {
+          var goalId = $(this).attr("data-goalId");
+          $("#newObjectiveForm" + goalId).load("objectiveForm.php", {
+            "goalId" : goalId,
+          });
+        });
+
+        // Save or Cancel Objective
+        $(document).on("click", ".objectiveSubmit", function() {
+          // variables for form data
+          var objectiveId = $("#objectiveId").val();
+          var goalId = $("#goalId").val();
+          var objectiveLabel = $("#objectiveLabel").val();
+          var objectiveText = $("#objectiveText").val();
+          var objectiveAttempts = $("#objectiveAttempts").val();
+          var objectiveTarget = $("#objectiveTarget").val();
+          var objectiveStatus = $("input[name='objectiveStatus']:checked").val();
+
+          // Is this a new objective or a modified one?
+          if (objectiveId == "") {
+            // New Objective, load into newObjectiveForm div
+            // if save, send data to objectiveFormResponse
+            if ($(this).attr("name") == "saveObjective") {
+              $("#newObjectiveForm"+ goalId).load("objectiveFormResponse.php", {
+                "saveObjective" : $("#saveObjective").val(),
+                "objectiveId" : objectiveId,
+                "goalId" : goalId,
+                "objectiveLabel" : objectiveLabel,
+                "objectiveText" : objectiveText,
+                "objectiveAttempts" : objectiveAttempts,
+                "objectiveTarget" : objectiveTarget,
+                "objectiveStatus" : objectiveStatus
+              }, function() {
+                alert("Objective Saved");
+                // Load mainContent with activeStudent data
+                $(".tablinks.active").click();
+            
+              });
+
+            }
+            
+            // if cancel, send nothing to objectiveFormResponse
+            if ($(this).attr("name") == "cancelObjective") {
+              $("#newObjectiveForm"+ goalId).load("objectiveFormResponse.php", {
+                "cancelObjective" : $("#cancelObjective").val(),
+              }, function() {
+                alert("Objective Cancelled");          
+              });
+
+            }
+
+          } else {
+            // modified objective, load into modifyObjectiveForm div
+            // if save, send data to objectiveFormResponse
+            if ($(this).attr("name") == "saveObjective") {
+              $("#modifyObjectiveForm"+ objectiveId).load("objectiveFormResponse.php", {
+                "saveObjective" : $("#saveObjective").val(),
+                "objectiveId" : objectiveId,
+                "goalId" : goalId,
+                "objectiveLabel" : objectiveLabel,
+                "objectiveText" : objectiveText,
+                "objectiveAttempts" : objectiveAttempts,
+                "objectiveTarget" : objectiveTarget,
+                "objectiveStatus" : objectiveStatus
+              }, function() {
+                alert("Objective Saved");
+                // Load mainContent with activeStudent data
+                $(".tablinks.active").click();
+            
+              });
+
+            }
+            
+            // if cancel, send nothing to objectiveFormResponse
+            if ($(this).attr("name") == "cancelObjective") {
+              $("#modifyObjectiveForm"+ objectiveId).load("objectiveFormResponse.php", {
+                "cancelObjective" : $("#cancelObjective").val(),
+              }, function() {
+                alert("Objective Cancelled");          
+              });
+            }
+          }
+        });
+
+        // Delete objective button
+        $(document).on("click", ".deleteObjectiveButton", function() {
+          var objectiveId = $(this).attr("data-objectiveId");
+            $("#modifyObjectiveForm"+ objectiveId).load("objectiveFormResponse.php", {
+              "deleteObjective" : "deleteObjective",
+              "objectiveId" : objectiveId,
+            }, function() {
+              alert("Objective Deleted");
+              // Load mainContent with activeStudent data
+              $(".tablinks.active").click();
+          
+            });  
         });
 
         // Open Report Form on Page with button click
@@ -224,82 +481,6 @@ include_once realpath("initialization.php");
 
     // Save activeStudentId to SESSION
     $_SESSION["activeStudentId"] = $activeStudentId;
-
-
-    /*
-    if(isset($_POST["saveGoal"])) {
-      echo "_POST['saveGoal'] is set <br />";
-      echo "POST studentId: " . $_POST["studentId"] . "<br />";
-      echo "POST goalId: " . $_POST["goalId"] . "<br />";
-      echo "POST goalLabel: " . $_POST["goalLabel"] . "<br />";
-      echo "POST goalCategory: " . $_POST["goalCategory"] . "<br />";
-      echo "POST goalText: " . $_POST["goalText"] . "<br />";
-      echo "POST goalActive: " . $_POST["goalActive"] . "<br />";
-      // Insert new goal or update existing goal?
-      if($_POST["goalId"] == "") {
-        // Insert goal
-        if (insertGoal($conn, $_POST["studentId"], $_POST["goalLabel"], $_POST["goalCategory"], $_POST["goalText"], $_POST["goalActive"])) {
-          // Alert Report added successfully
-          echo "New Goal: ". $_POST["goalLabel"] ." saved :-) <br />";
-        } else {
-          // Alert report not added
-          echo "New Goal: ". $_POST["goalLabel"] ." NOT saved :-( <br />";
-        }
-      } else {
-        // Update goal
-        if (updateGoal($conn, $_POST["studentId"], $_POST["goalLabel"], $_POST["goalCategory"], $_POST["goalText"], $_POST["goalActive"], $_POST["goalId"])) {
-          // Alert Goal updated successfully
-          echo "Existing Goal: ". $_POST["goalLabel"] ." updated :-) <br />";
-        } else {
-          // Alert Goal not added
-          echo "Existing Goal: ". $_POST["goalLabel"] ." NOT updated :-( <br />";
-        }
-
-      }
-    } else {
-      echo "_POST['saveGoal'] is NOT set <br />";
-    }
-    
-
-    if(isset($_POST["saveObjective"])) {
-      echo "_POST['saveObjective'] is set <br />";
-      echo "POST objectiveId: " . $_POST["objectiveId"] . "<br />";
-      echo "POST goalId: " . $_POST["goalId"] . "<br />";
-      echo "POST objectiveLabel: " . $_POST["objectiveLabel"] . "<br />";
-      echo "POST objectiveText: " . $_POST["objectiveText"] . "<br />";
-      echo "POST objectiveAttempts: " . $_POST["objectiveAttempts"] . "<br />";
-      echo "POST objectiveTarget: " . $_POST["objectiveTarget"] . "<br />";
-      echo "POST objectiveStatus: " . $_POST["objectiveStatus"] . "<br />";
-      // Insert new objective or update existing objective?
-      if($_POST["objectiveId"] == "") {
-          // Insert objective
-          if (insertObjective($conn, $_POST["goalId"], $_POST["objectiveLabel"], 
-          $_POST["objectiveText"], $_POST["objectiveAttempts"], $_POST["objectiveTarget"], 
-          $_POST["objectiveStatus"])) {
-            // Alert Objective added successfully
-            echo "New Objective: ". $_POST["objectiveLabel"] ." saved :-) <br />";
-          } else {
-            // Alert report not added
-            echo "New Objective: ". $_POST["objectiveLabel"] ." NOT saved :-( <br />";
-          }
-      } else {
-        // Update objective
-        if (updateObjective($conn, $_POST["objectiveId"], $_POST["goalId"], $_POST["objectiveLabel"], 
-        $_POST["objectiveText"], $_POST["objectiveAttempts"], $_POST["objectiveTarget"], 
-        $_POST["objectiveStatus"])) {
-          // Alert Objective updated successfully
-          echo "Existing Objective: ". $_POST["objectiveLabel"] ." updated :-) <br />";
-        } else {
-          // Alert report not added
-          echo "Existing Objective: ". $_POST["objectiveLabel"] ." NOT updated :-( <br />";
-          }
-        
-        
-      }
-    } else {
-      echo "_POST['saveObjective'] is NOT set <br />";
-    }
-    */
   
     ?>
     <!-- Page is encompassed in grid -->

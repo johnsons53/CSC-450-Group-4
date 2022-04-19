@@ -1,4 +1,11 @@
 <?php
+/*
+goalForm.php - Provider Goal Form
+      Spring 100 CSC 450 Capstone, Group 4
+      Author: Lisa Ahnell
+      Date Written: 04/10/2022
+      Revised: 04/19/2022 : Removed notes from testing
+*/
 // error reporting for web app
 // for testing:
 error_reporting((E_ALL | E_STRICT));
@@ -33,7 +40,7 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
   exit(0);
 } else {
-    echo "Database Connection created \n";
+    //echo "Database Connection created \n";
 }
 
 

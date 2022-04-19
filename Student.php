@@ -7,6 +7,7 @@
     29/03/2022: Removed old versions of code, alerts used for testing
     04/15/2022: Streamlined database connection code 
     04/17/2022: Removed old database connection code
+    04/19/2022: Bug fix, changed store_student_goals() to select active goals instead of complete goals
 */
 
 class Student extends User {
@@ -107,7 +108,7 @@ class Student extends User {
         // run query to select all objectives where goal_id matches
         $sql = "SELECT * 
                 FROM goal
-                WHERE goal_active='1' AND student_id=" . $id;
+                WHERE goal_active='0' AND student_id=" . $id;
     
         $result = $conn->query($sql);
     
