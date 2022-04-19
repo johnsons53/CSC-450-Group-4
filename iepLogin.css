@@ -1,0 +1,38 @@
+/* iepLogin.css - IEP Login stylesheet
+  Spring 100 CSC 450 Capstone, Group 4
+  Author: Andy Yang
+  Written: 04/19/2022, Possibly integrate into style.css in the future
+  Revised: 
+  */
+
+h1 {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', Verdana, sans-serif;
+    grid-area: header-left;
+    margin: 0em;
+    padding: 0.3em 0.5em;
+    text-align: left;
+}
+
+body {
+    background-color: #d8fdf4;
+    padding: 0;
+    margin: 0;
+}
+
+.wrapper {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', Verdana, sans-serif;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 25%;
+    left: 50%;
+    width: 300px;
+}
+
+input {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', Verdana, sans-serif;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px 10px;
+    border-radius: 5px;
+    margin:0 0 10px 0;
+}
