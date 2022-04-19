@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>login</title>
-</head>
-<body>
+
 <?php // login.php
     /* login.php - Database Login information
       Spring 100 CSC 450 Capstone, Group 4
@@ -36,17 +31,22 @@
     */
     /*
     */
+    define('DB_HOSTNAME', 'localhost');
+    define('DB_DATABASE', 'iep_portal');
+    define('DB_USERNAME', 'root');
+    define('DB_PASSWORD', 'root');
     
+    
+    
+    /*
     return [
       "DB_HOSTNAME" => "localhost",
       "DB_DATABASE" => 'iep_portal',
       "DB_USERNAME" => 'root',
       'DB_PASSWORD' => 'root'
 
-    ];    
+    ];  
+    */  
 ?>
-
-</body>
-</html>
 
 

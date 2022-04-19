@@ -5,10 +5,11 @@
     Date Written: 03/22/2022
     Revised: 
     03/29/2022: Removed old code and testing alerts
+    04/15/2022: Streamlined database connection code
 */
-ini_set('display_errors', 1);
-error_reporting(E_ALL|E_STRICT);      
-require_once realpath('User.php');
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL|E_STRICT);      
+//require_once realpath('User.php');
 
 class Provider extends User {
     protected $provider_id;
@@ -46,7 +47,8 @@ class Provider extends User {
     // method to store students for this provider
     function store_provider_students($id) {
         // connection to database
-        $filepath = realpath('login.php');
+        global $conn;
+        /*$filepath = realpath('login.php');
         $config = require($filepath);
         $db_hostname = $config['DB_HOSTNAME'];
         $db_username = $config['DB_USERNAME'];
@@ -60,6 +62,7 @@ class Provider extends User {
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
+        */
         $stmt = $conn->prepare("SELECT *
                                 FROM user
                                 INNER JOIN student USING (user_id)
@@ -93,7 +96,7 @@ class Provider extends User {
             //echo "0 Students found for Provider with provider_id: ". $id . "<br />";
         }       
         // close connection to database
-        $conn->close();
+        //$conn->close();
     }
 
 }

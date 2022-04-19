@@ -1,22 +1,26 @@
 <?php
-session_start();
-echo "session status: " . session_status() . "<br />";
-ini_set('display_errors', 1);
-error_reporting(E_ALL|E_STRICT);
+
+/*
+iepDashboard.php - IEP Parent/Student/Provider Dashboard
+Spring 100 CSC 450 Capstone, Group 4
+Author: Lisa Ahnell, Sienna-Rae Johnson
+Date Written: 02/26/2022
+Revised: 02/28/2022 Added containers for expanded view. Began setting up PHP sections.
+Revised: 04/05/2022 Implemented toggling between student tabs.
+Revised: 04/12/2022 Added report select
+Revised: 04/13/2022 Modified provider forms and buttons to appear on dashboard page.
+Revised: 04/17/2022 Adjustments to data flow from iepLogin to SESSION to dashboard to fix
+issue updating data after changes to database; Cleanup of old code and testing code
+
+*/
+include_once realpath("initialization.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- iepParentHome.php - IEP Parent Dashboard
-      Spring 100 CSC 450 Capstone, Group 4
-      Author: Lisa Ahnell, Sienna-Rae Johnson
-      Date Written: 02/26/2022
-      Revised: 02/28/2022 Added containers for expanded view. Began setting up PHP sections.
-      04/05/2022 Implemented toggling between student tabs.
 
-    -->
     <title>IEP Portal: Parent Home</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="iepDetailView.js"></script>
@@ -24,26 +28,65 @@ error_reporting(E_ALL|E_STRICT);
     <!-- <script> document.getElementById("defaultOpen").click(); </script> -->
     <script>
       //Run when student tab link is clicked
-      $(document).ready(function() {
-          $(".tablinks").click(function() {
-              $(".tabcontent").load("mainContent.php", {
-                  activeStudentId: $(this).attr("data-studentId"),
-                  activeStudentName: $(this).attr("data-studentName")
-              });
-          });
-          //Identify the defaultOpen element
-          document.getElementById("defaultOpen").click();
-      });
 
       $(document).ready(function() {
-        
+
+        $(".tablinks").click(function() {
+          // Declare all variables
+          //var i, tablinks;
+
+          // Get all elements with class="tablinks" and remove the class "active"
+          $('.tablinks').removeClass('active');
+          // Add class "active" to the clicked tablink
+          $(this).addClass("active");
+
+          $(".tabcontent").load("mainContent.php", {
+              activeStudentId: $(this).attr("data-studentId"),
+              activeStudentName: $(this).attr("data-studentName")
+          },
+          function() {
+            $(".reportSelect").each(function() {
+              var objectiveId = $(this).attr("data-objectiveId");
+              var selectedValue = $(this).find(":selected").val();
+              var max = $(this).attr("data-max");
+              var high = $(this).attr("data-high");
+              var low = $(this).attr("data-low");
+
+              $("#reportMeter" + objectiveId).load("reportMeter.php", {
+                "value" : selectedValue,
+                "max": max,
+                "high": high,
+                "low": low
+
+              });
+            });
+          });
+        });
+
+        //Identify the defaultOpen element
+        $("#defaultOpen").click();
+
+        // Handle detail view toggle with jQuery?
+        $(document).on("click", ".detailViewButton", function() {
+          // detail view button needs to contain the id of its associated detail view div
+          var detailDivId = $(this).attr("data-detailDivId");
+          //alert(detailDivId);
+          // if element with detailDivId has display of block, set to none,
+          // if it has display of none, set to block
+          if ($("#" + detailDivId).attr("display") == "block") {
+            $("#" + detailDivId).attr("display", "none");
+          } else {
+            $("#" + detailDivId).attr("display", "block");
+          }
+        });
+        // Hide the detail views
+        $(".detailViewButton").click();
+
         // Change Report meter display when different report selected
         $(document).on("change", ".reportSelect", function() {
           
           var selectedValue = $(this).find(":selected").val();
           var selectedObjective = $(this).attr("data-objectiveId");
-          alert("Objective Id:" + selectedObjective + " , Report value: " + selectedValue + ", max: " + $(this).attr("data-max") +
-           ", high: " + $(this).attr("data-high") + ", low: " + $(this).attr("data-low"));
           $("#reportMeter" + selectedObjective).load("reportMeter.php", {
             value: selectedValue,
             max: $(this).attr("data-max"),
@@ -52,129 +95,376 @@ error_reporting(E_ALL|E_STRICT);
           });
         });
 
-        // Delete goal
-        $(document).on("click", ".deleteGoal", function() {
-          //var goalId = $(this).attr("data-goalId");
-          alert("GoalID to be deleted: " + $(this).attr("data-goalId"));
-          alert("#deleteGoalMessage" + $(this).attr("data-goalId"));
-          alert($("#deleteGoalMessage" + $(this).attr("data-goalId")).length);
-          $("#deleteGoalMessage" + $(this).attr("data-goalId")).load("deleteGoal.php", {
-            "goalId": $(this).attr("data-goalId")
+        // Open Goal Form on page to modify existing goal with button click
+        $(document).on("click", ".modifyGoalFormButton", function() {
+          var studentId = $(this).attr("data-studentId");
+          var goalId = $(this).attr("data-goalId");
+          var goalLabel = $(this).attr("data-goalLabel");
+          var goalText = $(this).attr("data-goalText");
+          var goalCategory = $(this).attr("data-goalCategory");
+          var goalActive = $(this).attr("data-goalActive");
+
+          $("#modifyGoalForm" + goalId).load("goalForm.php", {
+            "studentId" : studentId,
+            "goalId" : goalId,
+            "goalLabel" : goalLabel,
+            "goalCategory" : goalCategory,
+            "goalText" : goalText,
+            "goalActive" : goalActive
           });
         });
 
-        $(document).on("click", ".confirmDelete", function() {
-          
+        // Open Goal Form on page to add new goal
+        $(document).on("click", ".newGoalFormButton", function() {
+          //alert("Goal form for student id: " + $(this).attr("data-studentId"));
+          var studentId = $(this).attr("data-studentId");
+          $("#newGoalForm" + studentId).load("goalForm.php", {
+            "studentId" : studentId,
+          });
         });
 
-        
-      });
+        // Save or Cancel Goal button
+        $(document).on("click", ".goalSubmit", function() {
+          // variables for form data
+          var studentId = $("#studentId").val();
+          var goalId = $("#goalId" + studentId).val();
+          var goalLabel = $("#goalLabel" + studentId).val();
+          var goalText = $("#goalText" + studentId).val();
+          var goalCategory = $("#goalCategory" + studentId).val();
+          var goalActive = $("input[name='goalActive']:checked").val();
 
+          // Is this a new goal or a modified one?
+          if (goalId == "") {
+            // New Goal, load into newGoalForm div
+            // if save, send data to goalFormResponse
+            if ($(this).attr("name") == "saveGoal") {
+              
+              $("#newGoalForm"+ studentId).load("goalFormResponse.php", {
+                "saveGoal" : $("#saveGoal" + studentId).val(),
+                "studentId" : studentId,
+                "goalId" : goalId,
+                "goalLabel" : goalLabel,
+                "goalCategory" : goalCategory,
+                "goalText" : goalText,
+                "goalActive" : goalActive
+              }, function() {
+                
+                // Load mainContent with activeStudent data
+                $(".tablinks.active").click();
+                alert("Goal Saved");
+            
+              });
 
-      function openTab(evt, tabName) {
-        // Declare all variables
-        var i, tabcontent, tablinks;
+            }
+            
+            // if cancel, send nothing to goalFormResponse
+            if ($(this).attr("name") == "cancelGoal") {
+              $("#newGoalForm"+ studentId).load("goalFormResponse.php", {
+                "cancelGoal" : $("#cancelGoal" + studentId).val(),
+              }, function() {
+                alert("Goal Cancelled");          
+              });
 
-        // Get all elements with class="tabcontent" and hide them
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
-        }
+            }
 
-        // Get all elements with class="tablinks" and remove the class "active"
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
+          } else {
+            // modified goal, load into modifyGoalForm div
+            // if save, send data to goalFormResponse
+            if ($(this).attr("name") == "saveGoal") {
+              $("#modifyGoalForm"+ goalId).load("goalFormResponse.php", {
+                "saveGoal" : $("#saveGoal" + studentId).val(),
+                "studentId" : studentId,
+                "goalId" : goalId,
+                "goalLabel" : goalLabel,
+                "goalCategory" : goalCategory,
+                "goalText" : goalText,
+                "goalActive" : goalActive
+              }, function() {
+                alert("Goal Saved");
+                // Load mainContent with activeStudent data
+                $(".tablinks.active").click();
+                
+            
+              });
+
+            }
+            
+            // if cancel, send nothing to objectiveFormResponse
+            if ($(this).attr("name") == "cancelGoal") {
+              $("#modifyGoalForm"+ goalId).load("goalFormResponse.php", {
+                "cancelGoal" : $("#cancelGoal" + studentId).val(),
+              }, function() {
+                alert("Goal Cancelled");          
+              });
+            }
+          }
+        });
+
+        // Delete Goal button
+        $(document).on("click", ".deleteGoalButton", function() {
+          var goalId = $(this).attr("data-goalId");
+            $("#modifyGoalForm"+ goalId).load("goalFormResponse.php", {
+              "deleteGoal" : "deleteGoal",
+              "goalId" : goalId,
+            }, function() {
+              alert("Goal Deleted");
+              // Load mainContent with activeStudent data
+              $(".tablinks.active").click();
           
-        }
+            });  
+        });
 
-        // Show the current tab, and add an "active" class to the button that opened the tab
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
-      }
+        // Open Objective Form on page to modify existing objective with button click
+        $(document).on("click", ".modifyObjectiveFormButton", function() {
+          //alert("modify objective");
+
+          var objectiveId = $(this).attr("data-objectiveId");
+          var goalId = $(this).attr("data-goalId");
+          var objectiveLabel = $(this).attr("data-objectiveLabel");
+          var objectiveText = $(this).attr("data-objectiveText");
+          var objectiveAttempts = $(this).attr("data-objectiveAttempts");
+          var objectiveTarget = $(this).attr("data-objectiveTarget");
+          var objectiveStatus = $(this).attr("data-objectiveStatus");
+
+          $("#modifyObjectiveForm" + objectiveId).load("objectiveForm.php", {
+            "objectiveId" : objectiveId,
+            "goalId" : goalId,
+            "objectiveLabel" : objectiveLabel,
+            "objectiveText" : objectiveText,
+            "objectiveAttempts" : objectiveAttempts,
+            "objectiveTarget" : objectiveTarget,
+            "objectiveStatus" : objectiveStatus
+          });
+        });
+
+        // Open Objective Form on page to add new Objective with button click
+        $(document).on("click", ".newObjectiveFormButton", function() {
+          var goalId = $(this).attr("data-goalId");
+          $("#newObjectiveForm" + goalId).load("objectiveForm.php", {
+            "goalId" : goalId,
+          });
+        });
+
+        // Save or Cancel Objective
+        $(document).on("click", ".objectiveSubmit", function() {
+          // variables for form data
+          var objectiveId = $("#objectiveId").val();
+          var goalId = $("#goalId").val();
+          var objectiveLabel = $("#objectiveLabel").val();
+          var objectiveText = $("#objectiveText").val();
+          var objectiveAttempts = $("#objectiveAttempts").val();
+          var objectiveTarget = $("#objectiveTarget").val();
+          var objectiveStatus = $("input[name='objectiveStatus']:checked").val();
+
+          // Is this a new objective or a modified one?
+          if (objectiveId == "") {
+            // New Objective, load into newObjectiveForm div
+            // if save, send data to objectiveFormResponse
+            if ($(this).attr("name") == "saveObjective") {
+              $("#newObjectiveForm"+ goalId).load("objectiveFormResponse.php", {
+                "saveObjective" : $("#saveObjective").val(),
+                "objectiveId" : objectiveId,
+                "goalId" : goalId,
+                "objectiveLabel" : objectiveLabel,
+                "objectiveText" : objectiveText,
+                "objectiveAttempts" : objectiveAttempts,
+                "objectiveTarget" : objectiveTarget,
+                "objectiveStatus" : objectiveStatus
+              }, function() {
+                alert("Objective Saved");
+                // Load mainContent with activeStudent data
+                $(".tablinks.active").click();
+            
+              });
+
+            }
+            
+            // if cancel, send nothing to objectiveFormResponse
+            if ($(this).attr("name") == "cancelObjective") {
+              $("#newObjectiveForm"+ goalId).load("objectiveFormResponse.php", {
+                "cancelObjective" : $("#cancelObjective").val(),
+              }, function() {
+                alert("Objective Cancelled");          
+              });
+
+            }
+
+          } else {
+            // modified objective, load into modifyObjectiveForm div
+            // if save, send data to objectiveFormResponse
+            if ($(this).attr("name") == "saveObjective") {
+              $("#modifyObjectiveForm"+ objectiveId).load("objectiveFormResponse.php", {
+                "saveObjective" : $("#saveObjective").val(),
+                "objectiveId" : objectiveId,
+                "goalId" : goalId,
+                "objectiveLabel" : objectiveLabel,
+                "objectiveText" : objectiveText,
+                "objectiveAttempts" : objectiveAttempts,
+                "objectiveTarget" : objectiveTarget,
+                "objectiveStatus" : objectiveStatus
+              }, function() {
+                alert("Objective Saved");
+                // Load mainContent with activeStudent data
+                $(".tablinks.active").click();
+            
+              });
+
+            }
+            
+            // if cancel, send nothing to objectiveFormResponse
+            if ($(this).attr("name") == "cancelObjective") {
+              $("#modifyObjectiveForm"+ objectiveId).load("objectiveFormResponse.php", {
+                "cancelObjective" : $("#cancelObjective").val(),
+              }, function() {
+                alert("Objective Cancelled");          
+              });
+            }
+          }
+        });
+
+        // Delete objective button
+        $(document).on("click", ".deleteObjectiveButton", function() {
+          var objectiveId = $(this).attr("data-objectiveId");
+            $("#modifyObjectiveForm"+ objectiveId).load("objectiveFormResponse.php", {
+              "deleteObjective" : "deleteObjective",
+              "objectiveId" : objectiveId,
+            }, function() {
+              alert("Objective Deleted");
+              // Load mainContent with activeStudent data
+              $(".tablinks.active").click();
+          
+            });  
+        });
+
+        // Open Report Form on Page with button click
+        $(document).on("click", ".reportFormButton", function() {
+          // Collect data to add to report form
+          var objectiveId = $(this).attr("data-objectiveid");
+          if ($(this).attr("name") == "modifyReport") {
+            // set variable values to selected
+            var selectedValue = $("#reportSelect" + objectiveId).find(":selected").val();
+            var selectedDate = $("#reportSelect" + objectiveId).find(":selected").attr("data-reportdate");
+            var selectedReportId = $("#reportSelect" + objectiveId).find(":selected").attr("data-reportid");
+          } else {
+            // values should be empty
+            var selectedValue = "";
+            var selectedDate = "";
+            var selectedReportId = "";
+          }
+
+          $("#reportForm"+ objectiveId).load("reportForm.php", {
+            "objectiveId" : objectiveId,
+            "selectedValue" : selectedValue,
+            "selectedDate" : selectedDate,
+            "selectedReportId" : selectedReportId
+          }, function() {
+
+          });
+        });
+
+        // submit buttons from report form
+        $(document).on("click", ".reportSubmit", function() {
+          var objectiveId = $("#objectiveId").val();
+          var reportObserved = $("#reportObserved").val();
+          var reportDate = $("#reportDate").val();
+          var reportId = $("#reportId").val();
+
+          if ($(this).attr("name") == "saveReport") {
+            $("#reportForm"+ objectiveId).load("reportFormResponse.php", {
+            "saveReport" : $("#saveReport").val(),
+            "objectiveId" : objectiveId,
+            "reportObserved" : reportObserved,
+            "reportDate" : reportDate,
+            "reportId" : reportId
+          }, function() {
+            alert("Report Saved");
+            // Load mainContent with activeStudent data
+            $(".tablinks.active").click();
+        
+          });
+
+          }
+
+          if ($(this).attr("name") == "deleteReport") {
+            // Load reportFormResponse with report data to delete
+            $("#reportForm"+ objectiveId).load("reportFormResponse.php", {
+            "deleteReport" : $("#deleteReport").val(),
+            "reportId" : reportId
+            }, function() {
+              alert("Report Deleted " + $(".tablinks.active").length);
+              // Load mainContent with activeStudent data
+              $(".tablinks.active").click();
+            });
+          }
+
+          if ($(this).attr("name") == "cancelReport") {
+            // Load reportFormResponse with report cancelled message
+            $("#reportForm"+ objectiveId).load("reportFormResponse.php", {
+              "cancelReport" : $("#cancelReport").val(),
+              "reportId" : reportId
+            }, function() {
+
+              alert("Report Cancelled");
+            });
+          }
+        });
+ 
+      });
     </script>
 
     
   </head>
 
   <body>
-    <!-- TODO Add PHP here to manage variables and queries to database -->
     <?php 
-    // connect to other files
-    $filepath = realpath('login.php');
-    $config = require($filepath);
 
-    require_once realpath('User.php');
-    require_once realpath('Admin.php');
-    require_once realpath('Document.php');
-    require_once realpath('Goal.php');
-    require_once realpath('Guardian.php');
-    require_once realpath('Provider.php');
-    require_once realpath('Report.php');
-    require_once realpath('Objective.php');
-    require_once realpath('Student.php');
-    require_once realpath('functions.php');
 
     // variables
+    $currentUserId;
+    $currentUserType;
     $students = [];
     $currentUser;
-    $currentUserType;
-    $currentStudent;
+    $currentUserName;
+    $activeStudent;
 
-
-    
-    $db_hostname = $config['DB_HOSTNAME'];
-    $db_username = $config['DB_USERNAME'];
-    $db_password = $config['DB_PASSWORD'];
-    $db_database = $config['DB_DATABASE'];
 
     // Create connection
-    $conn = new mysqli($db_hostname, $db_username, $db_password, $db_database);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+    global $conn;
     
-    // See if currentUser exists in Session
-    if(array_key_exists('currentUser', $_SESSION)) {
-      echo "SESSION contains currentUser value <br />";
-      //print_r($_SESSION["currentUser"]);
+    // See if currentUserId and type exist in Session
+    try {
+      $currentUserId = $_SESSION["currentUserId"];
+    } catch (Exception $e) {
+      echo "Message: " . $e->getMessage();
     }
-    // Unserialize and set as currentUser value
-    $currentUser = unserialize($_SESSION["currentUser"]);
-    echo "Current User Name: " . $currentUser->get_full_name() . "<br />";
-    $currentUserType = $currentUser->get_user_type();
-    echo "Current User Type: " . $currentUserType . "<br />";
-    //print_r($currentUser);
 
-    // Handle differing content for user types
-    // Provider: call get students to set value of students
-    // User (guardian): call get students to set value of students
-    // Student: Only one student, set students to currentUser
-    echo "Compare currentUserType to provider<br />";
-    echo strcmp($currentUserType, "provider");
-    echo "<br />";
-
-    echo "Compare currentUserType to user<br />";
-    echo strcmp($currentUserType, "user");
-    echo "<br />";
+    try {
+      $currentUserType = $_SESSION["currentUserType"];
+    } catch (Exception $e) {
+      echo "Message: " . $e->getMessage();
+    }
 
 
+    // Initialize currentUser as new User of correct type
+    // Pass $currentUserId, $currentUserType, $conn into createUser() function
+    try {
+      $currentUser = createUser($currentUserId, $currentUserType, $conn);
+
+    } catch (Exception $e) {
+      echo "Message: " . $e->getMessage();
+    }
+
+    $currentUserName = $currentUser->get_full_name();
+
+    // Set students array depending on type of user
     if (strcmp($currentUserType, "provider") === 0) {
       $students = $currentUser->get_provider_students();
 
     } elseif (strcmp($currentUserType, "user") === 0) {
-      // Provider or Guardian user type
-      // extract student values for these users and use to populate the page
-      // Save array of students on page and in SESSION
+
       $students = $currentUser->get_guardian_students();
-
-      //$_SESSION["currentStudents"] = serialize($students);
-
-      // Set default current student to first student in the list
      
-    } elseif (strcmp($currentUserType, "student")) {
+    } elseif (strcmp($currentUserType, "student") === 0) {
       // Student User--only one value for students, same as current user
       $students[] = $currentUser;
     } else {
@@ -182,172 +472,15 @@ error_reporting(E_ALL|E_STRICT);
       echo "<br />";
 
     }
-    foreach($students as $s) {
-      echo "Student found: ";
-      echo $s->get_full_name();
-      echo "<br />";
 
-    }
-
-    $_SESSION["currentStudents"] = serialize($students);
+    // Default active student value:
+    $activeStudent = $students[0];
+    $activeStudentId = $activeStudent->get_student_id();
+    $activeStudentName = $activeStudent->get_full_name();
 
 
-    $_SESSION['currentStudent'] = serialize($students[0]);
-    if(array_key_exists('currentStudent', $_SESSION)) {
-      echo "SESSION contains currentStudent value <br />";
-      $currentStudent = unserialize($_SESSION["currentStudent"]);
-      echo "currentStudent value: " . $currentStudent->get_full_name() ." <br />";
-    }
-    // Select a guardian from the database for demonstration purposes
-/*     $sql = "SELECT * 
-            FROM user
-            WHERE user_id='13'";
-
-    $result = $conn->query($sql);
-
-    if ($result->num_rows == 1) {
-        // show the data in each row
-        while ($row = $result->fetch_assoc()) {
-            // new Guardian object from row data
-            $guardian = new Guardian($row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
-                $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
-                $row['user_city'], $row['user_district'], $row['user_type']);
-            // add current user to $_SESSION array
-            $currentUser = $guardian;
-            $_SESSION['currentUser'] = serialize($guardian);
-            
-            echo $guardian->get_full_name() . " created as GUARDIAN <br />";
-            echo "User for this SESSION: " . $_SESSION['currentUser']->get_full_name() . " <br />";
-
-        } 
-    } else {
-        echo "0 results <br />";
-    }
-    $students = $_SESSION['currentUser']->get_guardian_students(); */
-
-    // Select a Provider 
-  /*   $sql = "SELECT * 
-    FROM user
-    INNER JOIN provider USING (user_id)
-    WHERE user_id='15'";
-
-    $result = $conn->query($sql);
-
-    if ($result->num_rows == 1) {
-    // show the data in each row
-    while ($row = $result->fetch_assoc()) {
-        // new Guardian object from row data
-        $provider = new Provider($row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
-            $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
-            $row['user_city'], $row['user_district'], $row['user_type'],
-            $row['provider_id'], $row['provider_title']);
-        // add current user to $_SESSION array
-        $_SESSION['currentUser'] = serialize($provider);
-        $currentUser = $provider;
-        
-        echo $provider->get_full_name() . " created as PROVIDER  LINE 144<br />";
-        //echo "User for this SESSION: " . $_SESSION['currentUser']->get_full_name() . " <br />";
-
-    } 
-    } else {
-    echo "0 results <br />";
-    } */
-
-/* 
-    // Save array of students on page and in SESSION
-    $students = $currentUser->get_provider_students();
-    $_SESSION["currentStudents"] = serialize($students);
-
-    // Set default current student to first student in the list
-    $_SESSION['currentStudent'] = serialize($students[0]);
-    if(array_key_exists('currentStudent', $_SESSION)) {
-      echo "SESSION contains currentStudent value <br />";
-      $currentStudent = unserialize($_SESSION["currentStudent"]);
-      echo "currentStudent value: " . $currentStudent->get_full_name() ." <br />";
-    } */
-
-    if(isset($_POST["insertReport"])) {
-      if (insertReport($conn, $_POST["objectiveId"], $_POST["reportDate"], $_POST["reportObserved"], $currentStudent)) {
-        // Alert Report added successfully
-        echo "New Report: ". $_POST["reportDate"] ." saved :-) <br />";
-      } else {
-        // Alert report not added
-        echo "New Report: ". $_POST["reportDate"] ." NOT saved :-( <br />";;
-      }
-    }
-    
-    if(isset($_POST["saveGoal"])) {
-      echo "_POST['saveGoal'] is set <br />";
-      echo "POST studentId: " . $_POST["studentId"] . "<br />";
-      echo "POST goalId: " . $_POST["goalId"] . "<br />";
-      echo "POST goalLabel: " . $_POST["goalLabel"] . "<br />";
-      echo "POST goalCategory: " . $_POST["goalCategory"] . "<br />";
-      echo "POST goalText: " . $_POST["goalText"] . "<br />";
-      echo "POST goalActive: " . $_POST["goalActive"] . "<br />";
-      // Insert new goal or update existing goal?
-      if($_POST["goalId"] == "") {
-        // Insert goal
-        if (insertGoal($conn, $_POST["studentId"], $_POST["goalLabel"], $_POST["goalCategory"], $_POST["goalText"], $_POST["goalActive"])) {
-          // Alert Report added successfully
-          echo "New Goal: ". $_POST["goalLabel"] ." saved :-) <br />";
-        } else {
-          // Alert report not added
-          echo "New Goal: ". $_POST["goalLabel"] ." NOT saved :-( <br />";
-        }
-      } else {
-        // Update goal
-        if (updateGoal($conn, $_POST["studentId"], $_POST["goalLabel"], $_POST["goalCategory"], $_POST["goalText"], $_POST["goalActive"], $_POST["goalId"])) {
-          // Alert Goal updated successfully
-          echo "Existing Goal: ". $_POST["goalLabel"] ." updated :-) <br />";
-        } else {
-          // Alert Goal not added
-          echo "Existing Goal: ". $_POST["goalLabel"] ." NOT updated :-( <br />";
-        }
-
-      }
-    } else {
-      echo "_POST['saveGoal'] is NOT set <br />";
-    }
-    
-
-    if(isset($_POST["saveObjective"])) {
-      echo "_POST['saveObjective'] is set <br />";
-      echo "POST objectiveId: " . $_POST["objectiveId"] . "<br />";
-      echo "POST goalId: " . $_POST["goalId"] . "<br />";
-      echo "POST objectiveLabel: " . $_POST["objectiveLabel"] . "<br />";
-      echo "POST objectiveText: " . $_POST["objectiveText"] . "<br />";
-      echo "POST objectiveAttempts: " . $_POST["objectiveAttempts"] . "<br />";
-      echo "POST objectiveTarget: " . $_POST["objectiveTarget"] . "<br />";
-      echo "POST objectiveStatus: " . $_POST["objectiveStatus"] . "<br />";
-      // Insert new objective or update existing objective?
-      if($_POST["objectiveId"] == "") {
-          // Insert objective
-          if (insertObjective($conn, $_POST["goalId"], $_POST["objectiveLabel"], 
-          $_POST["objectiveText"], $_POST["objectiveAttempts"], $_POST["objectiveTarget"], 
-          $_POST["objectiveStatus"])) {
-            // Alert Objective added successfully
-            echo "New Objective: ". $_POST["objectiveLabel"] ." saved :-) <br />";
-          } else {
-            // Alert report not added
-            echo "New Objective: ". $_POST["objectiveLabel"] ." NOT saved :-( <br />";
-          }
-      } else {
-        // Update objective
-        if (updateObjective($conn, $_POST["objectiveId"], $_POST["goalId"], $_POST["objectiveLabel"], 
-        $_POST["objectiveText"], $_POST["objectiveAttempts"], $_POST["objectiveTarget"], 
-        $_POST["objectiveStatus"])) {
-          // Alert Objective updated successfully
-          echo "Existing Objective: ". $_POST["objectiveLabel"] ." updated :-) <br />";
-        } else {
-          // Alert report not added
-          echo "Existing Objective: ". $_POST["objectiveLabel"] ." NOT updated :-( <br />";
-          }
-        
-        
-      }
-    } else {
-      echo "_POST['saveObjective'] is NOT set <br />";
-    }
+    // Save activeStudentId to SESSION
+    $_SESSION["activeStudentId"] = $activeStudentId;
   
     ?>
     <!-- Page is encompassed in grid -->
@@ -378,6 +511,7 @@ error_reporting(E_ALL|E_STRICT);
         $studentCount = 0;
         foreach ($students as $value) {
           $studentName = $value->get_full_name();
+          // Needs to be the userId of the chosen student
           $studentId = $value->get_student_id();
 
           // Version from testing
@@ -385,13 +519,13 @@ error_reporting(E_ALL|E_STRICT);
             echo "<div class=\"tab\">";
             //echo "<a class='vNavButton, tablinks' href='' id='defaultOpen' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
 
-            echo "<button class=\"tablinks vNavButton\" onclick=\"openTab(event, '" . $studentName . "')\" id=\"defaultOpen\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\">" . $studentName . "</button>";
+            echo "<button class=\"tablinks vNavButton\" id=\"defaultOpen\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\">" . $studentName . "</button>";
             echo "</div>";
           } else {
             echo "<div class=\"tab\">";
             //echo "<a class='vNavButton, tablinks' href='' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
 
-            echo "<button class=\"tablinks vNavButton\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\" onclick=\"openTab(event, '" . $studentName . "')\">" . $studentName . "</button>";
+            echo "<button class=\"tablinks vNavButton\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\" >" . $studentName . "</button>";
             echo "</div>";
         }
         
@@ -405,23 +539,8 @@ error_reporting(E_ALL|E_STRICT);
       </div>
 
       <!-- Main content of page -->
-      <?php
-
-         foreach ($students as $value) {
-          $current_student = $value;
-          $current_student_name = $value->get_full_name();
-          $current_student_id = $value->get_student_id();
-          // create a mainContent Div for each Student
-          // Only need to create an empty div here for each student with correct name, id and classes
-
-          echo "<div class='middle mainContent tabcontent' id='" . $current_student_name . "' >";
- 
-          echo "</div>";  // end of div id='mainContent'
-        } // end of foreach students as value 
-      ?>
-
-      
-      
+      <div class="middle mainContent tabcontent" id="mainContent"></div>
+    
       <footer>
         <!-- Insert footer info here -->
       </footer>

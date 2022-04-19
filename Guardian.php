@@ -5,11 +5,12 @@
     Date Written: 03/28/2022
     Revised: 
     03/20/2022: Removed old code and testing alerts
+    04/15/2022: Streamlined database connection code 
 */
-ini_set('display_errors', 1);
-error_reporting(E_ALL|E_STRICT);      
-require_once realpath('User.php');
-require_once realpath('Student.php');
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL|E_STRICT);      
+//require_once realpath('User.php');
+//require_once realpath('Student.php');
 
 class Guardian extends User {
     // Array of students
@@ -31,6 +32,7 @@ class Guardian extends User {
     // method to store students for this provider
     function store_guardian_students($id) {
         // connection to database
+        /*
         $filepath = realpath('login.php');
         $config = require($filepath);
         $db_hostname = $config['DB_HOSTNAME'];
@@ -45,6 +47,8 @@ class Guardian extends User {
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
+        */
+        global $conn;
         $stmt = $conn->prepare("SELECT * 
                                 FROM user
                                 INNER JOIN student USING (user_id)
@@ -82,7 +86,7 @@ class Guardian extends User {
 
        
         // close connection to database
-        $conn->close();
+        //$conn->close();
     }
 
 }
