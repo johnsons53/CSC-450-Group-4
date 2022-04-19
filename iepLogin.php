@@ -6,6 +6,7 @@
       Revised: 04/08/2022, Added functional connection to database
       Revised: 04/10/2022, Created switch statement that assigns current session user to user_type of user's login information
       Revised: 04/12/2022, Revised switch statement to ensure correct data present to create Admin, Provider and Student objects. (Lisa Ahnell)
+      Revised: 04/19/2022, Added temporary user interface
     -->
 
     <?php
@@ -13,7 +14,7 @@
     // Initialize the session
     //session_start();
     include_once realpath("initialization.php");
-    echo "session status: " . session_status() . "<br />";
+    //echo "session status: " . session_status() . "<br />";
 
     /* Will test feature when fully functional
     // Check if user is already logged in
@@ -96,23 +97,23 @@
                     $userType = $row["user_type"];
                     $userId = $row["user_id"];
                 }
-            
-            /* Original query and Switch statement
+
+                /* Original query and Switch statement
             Query only retreived data from user table, and was not sufficient to create other types of users
              */
-            //$sql = "SELECT * FROM user WHERE user_name = '$username' and user_password = '$password' limit 1";
+                //$sql = "SELECT * FROM user WHERE user_name = '$username' and user_password = '$password' limit 1";
 
-            //$result = $conn->query($sql);
+                //$result = $conn->query($sql);
 
-            //Places row into an array, all information of user
-            //$row = mysqli_fetch_row($result);
+                //Places row into an array, all information of user
+                //$row = mysqli_fetch_row($result);
 
-            //if (mysqli_num_rows($result) == 1) {
+                //if (mysqli_num_rows($result) == 1) {
 
                 //Switch statement that checks for user type then creates object
                 //of user type, sets session and current user to that newly created object
                 //$row[10] is user_type
-/*                 switch ($row['user_type']) { 
+                /*                 switch ($row['user_type']) { 
                     case "admin":
                         while ($row = $result->fetch_assoc()) {
                             $admin = new Admin(
@@ -310,7 +311,7 @@
             }
             //$conn->close();
             */
-            header("Location: iepDashboard.php");
+            header("Location: iepSettings.php");
             exit();
         }
     }
@@ -324,34 +325,25 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>IEP Login</title>
-        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" type="text/css" href="iepLogin.css">
     </head>
 
     <body>
-    <?php
-    //echo "<form action=\"" . htmlspecialchars("iepDashboard.php") . "\" method=\"post\">";
-    ?>
+        <?php
+        //echo "<form action=\"" . htmlspecialchars("iepDashboard.php") . "\" method=\"post\">";
+        ?>
         <form method="POST" action="#">
-            <header>
-                <!-- Insert logo image here -->
-                <h1>IEP Login</h1>
 
-            </header>
 
             <!-- Text field for username_Login-->
-            <div>
-                <label for="username_Login">Username</label>
+            <div class="wrapper">
+            <h1 style="text-align:center;font-size:40px">IEP Login</h1>
+                <label for="username_Login">Username</label> 
                 <input type="text" placeholder="Enter Username" name="username" required>
-            </div>
 
-            <!-- Text field for password_Login-->
-            <div>
                 <label for="password_Login">Password</label>
                 <input type="password" placeholder="Enter Password" name="password" required>
-            </div>
 
-            <!--Login button to login-->
-            <div>
                 <input type="submit" class="btn btn-primary" value="Login">
             </div>
 
