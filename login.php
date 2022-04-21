@@ -43,7 +43,7 @@
       "DB_HOSTNAME" => "localhost",
       "DB_DATABASE" => 'iep_portal',
       "DB_USERNAME" => 'root',
-      'DB_PASSWORD' => 'root'
+      'DB_PASSWORD' => 'mysql'
 
     ];  
     */  

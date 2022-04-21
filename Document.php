@@ -3,7 +3,7 @@
     Spring 100 CSC 450 Capstone, Group 4
     Author: Lisa Ahnell
     Date Written: 03/26/2022
-    Revised: 
+    Revised: 04/20/2022 : Adjust to match changes to document table in database 
 */
 
 ini_set('display_errors', 1);
@@ -15,14 +15,14 @@ class Document {
     protected $document_name;
     protected $document_date;
     protected $document_creator;
-    protected $document_data;
+    protected $document_path;
 
-    function __construct($id, $name, $date, $creator, $data) {
+    function __construct($id, $name, $date, $creator, $path) {
         $this->document_id = $id;
         $this->document_name = $name;
         $this->document_date = $date;
         $this->document_creator = $creator;
-        $this->document_data = $data;
+        $this->document_path = $path;
     }
 
     // Getter methods
@@ -38,8 +38,8 @@ class Document {
     function get_document_creator() {
         return $this->document_creator;
     }
-    function get_document_data() {
-        return $this->document_data;
+    function get_document_path() {
+        return $this->document_path;
     }
 }
 
