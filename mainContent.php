@@ -12,11 +12,14 @@ mainContent.php - Main Content of Dashboard page
       Completed data updating on changes to database for Report
       04/18/2022: Converted provider objective froms to open in divs on dashboard page;
       Completed form handling for objective changes
+      04/20/2022: Line graph added for report data.
 */
 include_once realpath("initialization.php");
 ?>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+
  <!DOCTYPE html>
  <html>
 
@@ -92,6 +95,9 @@ include_once realpath("initialization.php");
     echo "</div>"; // end of Documents div
 
     // Goals
+    echo "<div class=\"contentCard\">";
+
+    
     echo "<h3>Current Goals</h3>";
     // Display each student goal in a card, with each goal's objectives nested inside
      // New Goal button for Provider users
@@ -107,17 +113,6 @@ include_once realpath("initialization.php");
       echo "<div class=\"newGoalForm\" id=\"newGoalForm" . $activeStudentId . "\" display=\"block\">";
 
       echo "</div>";
-      /*
-      echo "<form action=\"" . htmlspecialchars("iepProviderGoalForm.php") . "\" method=\"post\">";
-      // Add hidden fields with data to send to report form. 
-      //echo "<input type=\"hidden\" id=\"NGgoalId\" name=\"goalId\" value=\"\">";
-      echo "<input type=\"hidden\" id=\"NGstudentId\" name=\"activeStudentId\" value=\"" . $activeStudentId . "\">";
-      echo "<input type=\"hidden\" id=\"NGstudentName\" name=\"activeStudentName\" value=\"" . $activeStudentName . "\">";
-      // New Goal button
-      echo "<input type=\"submit\" name=\"newGoal\" value=\"New Goal\">";
-      echo "</form>";
-
-      */
       
     }
 
@@ -162,31 +157,6 @@ include_once realpath("initialization.php");
 
           echo "</div>"; // end of objectiveChanges
   
-              /* UPDATE GOAL BUTTON */
-              /*
-              echo "<form action=\"" . htmlspecialchars("iepProviderGoalForm.php") . "\" method=\"post\">";
-              // Add hidden fields with data to send to report form. 
-              echo "<input type=\"hidden\" id=\"UGstudentId\" name=\"activeStudentId\" value=\"" . $activeStudentId . "\">";
-              echo "<input type=\"hidden\" id=\"UGstudentName\" name=\"activeStudentName\" value=\"" . $activeStudentName . "\">";
-              echo "<input type=\"hidden\" id=\"UGgoalId\" name=\"goalId\" value=\"" . $goalId . "\">";
-              echo "<input type=\"hidden\" id=\"UGgoalLabel\" name=\"goalLabel\" value=\"" . $goalLabel . "\">";
-              echo "<input type=\"hidden\" id=\"UGgoalCategory\" name=\"goalCategory\" value=\"" . $goalCategory . "\">";
-              echo "<input type=\"hidden\" id=\"UGgoalText\" name=\"goalText\" value=\"" . $goalText . "\">";
-              echo "<input type=\"hidden\" id=\"UGgoalActive\" name=\"goalActive\" value=\"" . $goalActive . "\">";
-              // update goal submit button
-              echo "<input type=\"submit\" name=\"updateGoal\" value=\"Update Goal\">";
-              echo "</form>";
-*/
-              /* DELETE GOAL BUTTON change to regular button*/
-             // echo "<input type=\"submit\" class=\"deleteGoal\" name=\"deleteGoal\" data-goalId=\"" . $goalId . "\"value=\"Delete Goal\">";
-
-              /* Div to confirm goal deletion */
-              /*
-              echo "<div class=\"deleteGoalMessage\" id=\"deleteGoalMessage" . $goalId . "\">";
-              echo "<p>This Div id: deleteGoalMessage" . $goalId . "</p>";
-              echo "</div>";
-              */
-
             /* NEW OBJECTIVE BUTTON */
 
             echo "<input type=\"button\" id=\"newObjective" . $goalId . "\" " . 
@@ -239,72 +209,154 @@ include_once realpath("initialization.php");
 
                 echo "</div>";
 
-
+          
               echo "</div>"; // end of objectiveChanges
             } // end of if userType === provider
 
-            if (isset($reports) && count($reports) > 0) {
-              // Select Report to display, default to most recent
-              //echo "<form action=\"\" method=\"post\">";
 
-              echo "<label for=\"reportSelect\">Select Report Date</label>";
-              echo "<select name=\"reportSelect\" class=\"reportSelect\" id=\"reportSelect" . $objectiveId . "\" data-objectiveId=\"" . $objectiveId . "\" data-max=\"" . $objectiveAttempts . "\" data-high=\"" . $objectiveTarget . "\" data-low=\"" . $objectiveTarget/2 . "\">";
-                // Options for reportSelect
-                $reportCount = 0;
-                foreach($reports as $r) {
-                  if ($reportCount === 0) {
-                    echo "<option class=\"reportOption\" data-reportdate=\"" . $r->get_report_date() . "\" data-reportid=\"" . $r->get_report_id() . "\" value=\"" . $r->get_report_observed() . "\" selected=\"selected\">" . $r->get_report_date() . "</option>";
-                    $reportCount++;
-                  } else {
-                    echo "<option class=\"reportOption\" data-reportdate=\"" . $r->get_report_date() . "\" data-reportid=\"" . $r->get_report_id() . "\" value=\"" . $r->get_report_observed() . "\">" . $r->get_report_date() . "</option>";
-                  }
-                }
-              echo "</select>"; // end of select
+              echo "<div class=\"reports\">";
 
-              /* PROVIDER REPORT BUTTONS */
+              // if user is Provider, tools for modifying report data
               if (strcmp($currentUserType, "provider") === 0) {
-                echo "<div class\"reportChanges>";
-                // Modify selected report button
-                // Open form with values of selected report
-                echo "<input type=\"submit\" data-objectiveid=\"" . $objectiveId . "\"id=\"modifyReport" . $objectiveId . "\" class=\"reportFormButton\" name=\"modifyReport\" value=\"Modify Selected Report\">";
 
+                /* PROVIDER NEW REPORT BUTTON */
                 // Add new report button
                 // Open form with only objectiveId value
                 echo "<input type=\"submit\" data-objectiveid=\"" . $objectiveId . "\" data-reportDate=\"\" data-reportId=\"\" data-reportObserved=\"\" id=\"addReport" . $objectiveId . "\" class=\"reportFormButton\" name=\"addReport\" value=\"New Report\">";
-
-                //echo "</form>";
-
+                    
                 // Div for Report Form, do not display unless Report buttons clicked
                 echo "<div class=\"reportForm\" id=\"reportForm" . $objectiveId . "\" display=\"block\">";
 
                 echo "</div>"; // end of Report Form Div
 
-                echo "</div>";
+                
 
               }
 
+              // if there are existing Reports, display them with selector
+              if (isset($reports) && count($reports) > 0) {
+                // Select Report to display, default to most recent  
+                echo "<label for=\"reportSelect\">Select Report Date</label>";
+                echo "<select name=\"reportSelect\" class=\"reportSelect\" id=\"reportSelect" . $objectiveId . "\" data-objectiveId=\"" . $objectiveId . "\" data-max=\"" . $objectiveAttempts . "\" data-high=\"" . $objectiveTarget . "\" data-low=\"" . $objectiveTarget/2 . "\">";
+                  // Options for reportSelect
+                  $reportCount = 0;
+                  foreach($reports as $r) {
+                    if ($reportCount === 0) {
+                      echo "<option class=\"reportOption\" data-reportdate=\"" . $r->get_report_date() . "\" data-reportid=\"" . $r->get_report_id() . "\" value=\"" . $r->get_report_observed() . "\" selected=\"selected\">" . $r->get_report_date() . "</option>";
+                      $reportCount++;
+                    } else {
+                      echo "<option class=\"reportOption\" data-reportdate=\"" . $r->get_report_date() . "\" data-reportid=\"" . $r->get_report_id() . "\" value=\"" . $r->get_report_observed() . "\">" . $r->get_report_date() . "</option>";
+                    }
+                  }
+                echo "</select>"; // end of select
+  
+                /* PROVIDER REPORT BUTTONS */
+                if (strcmp($currentUserType, "provider") === 0) {
+                  echo "<div class\"reportChanges>";
+                  // Modify selected report button
+                  // Open form with values of selected report
+                  echo "<input type=\"submit\" data-objectiveid=\"" . $objectiveId . "\"id=\"modifyReport" . $objectiveId . "\" class=\"reportFormButton\" name=\"modifyReport\" value=\"Modify Selected Report\">";
+  
+                  // Add new report button
+                  // Open form with only objectiveId value
+                  //echo "<input type=\"submit\" data-objectiveid=\"" . $objectiveId . "\" data-reportDate=\"\" data-reportId=\"\" data-reportObserved=\"\" id=\"addReport" . $objectiveId . "\" class=\"reportFormButton\" name=\"addReport\" value=\"New Report\">";
+  
+                
+  
+                  // Div for Report Form, do not display unless Report buttons clicked
+                  //echo "<div class=\"reportForm\" id=\"reportForm" . $objectiveId . "\" display=\"block\">";
+  
+                  //echo "</div>"; // end of Report Form Div
+  
+                  echo "</div>";
+  
+                } // end of if user is provider
+  
+                //Default selected Report
+                $selectedReport = $reports[0];
+                $selectedReportId = $selectedReport->get_report_id();
+  
+                // Div to display selected report meter
+                echo "<div class=\"reportMeter\" id=\"reportMeter" . $objectiveId . "\">";
+  
+                echo "</div>"; //end of reportMeter div
+  
+                } else {
+                  echo "<p>No reports to display.</p>";
+              }// end of if isset(reports)
 
-              $selectedReport = $reports[0];
-              $selectedReportId = $selectedReport->get_report_id();
 
-              // Div to display selected report meter
-              echo "<div class=\"reportMeter\" id=\"reportMeter" . $objectiveId . "\">";
+              echo "</div>"; // end of Reports div
 
-              echo "</div>"; //end of reportMeter div
-
-              } else {
-                echo "<p>No reports to display.</p>";
-            }// end of if
-
-            
             // Expanded details for Objective
             $objectiveDetailsID = "objective" . $o->get_objective_id();
             echo "<div class='expandedDetails' id=\"" . $objectiveDetailsID . "\" display=\"none\">";
               echo "<p>Description: " . $o->get_objective_text() ."</p> ";
               if (isset($reports) && count($reports) > 0) {
-                echo "<p>Latest Report Date: " . $reports[0]->get_report_date() . "</p>";
-                echo "<p>Report Data: Graph of report data to come</p>";
+                  echo "<p>Latest Report Date: " . $reports[0]->get_report_date() . "</p>";
+                
+
+                //Set up report data for graph
+
+                $graphSource = array_reverse($reports);
+                $labels = [];
+                $data = [];
+                foreach ($graphSource as $value) {
+                  $labels[] = $value->get_report_date();
+                  $data[] = $value->get_report_observed();
+                }
+                $graphLabels = json_encode($labels);
+                $graphData = json_encode($data);
+  ?>              
+                <script>
+                  var objectiveId = <?php echo $objectiveId; ?>;
+
+                var otherLabels = <?php echo $graphLabels; ?>;
+                var otherDataset = <?php echo $graphData; ?>;
+
+                var data = {
+                    labels: otherLabels ,
+                    datasets : [{
+                      label : 'Report Data',
+                      fill : true,
+                      tension : 0.2,
+                      backgroundColor : 'rgb(255, 99, 132)',
+                      borderColor: 'rgb(255, 99, 132)',
+                      borderCapStyle : 'round',
+
+                      data: otherDataset
+                    }]
+                  };
+
+                  var config = {
+                    type: 'line',
+                    data: data,
+                    options: {
+                      layout : {
+                        padding : 20
+                      }
+                    }
+                  };
+                  var chartName = "chart" + objectiveId;
+
+                  var myChart= new Chart(
+                    document.getElementById(chartName),
+                    config
+                  );
+
+                </script>
+              <?php
+                  echo "<div class=\"contentCard graphView\">";
+                  echo "<canvas id=\"chart" . $objectiveId . "\" width=\"400\" height=\"200\" aria-label=\"Report Data line chart\" role=\"img\">
+                  
+                  </canvas>";
+                  echo "</div>";
+
+
               }
+
+
+              // end of graph
             echo "</div>"; //end of expandedDetails
 
             // Expand/Hide button
@@ -327,7 +379,8 @@ include_once realpath("initialization.php");
         echo "</div>"; // end of Goal Div
       } // end of foreach(goal)
 
-        
+      echo "</div>";// end of Goals contentCard   
 ?>
+
   
 </html>

@@ -21,10 +21,11 @@ include_once realpath("initialization.php");
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>IEP Portal: Parent Home</title>
+    <title>IEP Portal: Dashboard</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="iepDetailView.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <!-- <script> document.getElementById("defaultOpen").click(); </script> -->
     <script>
       //Run when student tab link is clicked
@@ -490,21 +491,22 @@ include_once realpath("initialization.php");
         <h1>IEP Portal</h1>
         <div id="accountHolderInfo">
           <!-- Username, messages button, and account settings button here -->
+          <h2>Welcome: <?php echo $currentUserName; ?></h2>
         </div>
         <div id="horizontalNav">
           <!-- Links are inactive: no further pages have been built -->
-          <a class="hNavButton" href=""><h3 class="button">Documents</h3></a>
-          <a class="hNavButton" href=""><h3>Goals</h3></a>
-          <a class="hNavButton" href=""><h3>Events</h3></a>
+          <!-- <a class="hNavButton" href=""><h3 class="button">Documents</h3></a> -->
+          <!-- <a class="hNavButton" href=""><h3>Goals</h3></a> -->
+          <!-- <a class="hNavButton" href=""><h3>Events</h3></a> -->
           <a class="hNavButton" href=""><h3>Messages</h3></a>
-          <a class="hNavButton" href=""><h3>Information</h3></a>
+          <!-- <a class="hNavButton" href=""><h3>Information</h3></a> -->
           <a class="hNavButton" href=""><h3>Settings</h3></a>
         </div>
       </header>
 
       <!-- Vertical navigation bar -->
       <div class="left" id="verticalNav">
-        <h3>Navigation</h3>
+        <h3>Your Student Accounts</h3>
 
         <?php
         // Toggle between different students for this user

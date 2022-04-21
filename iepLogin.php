@@ -13,7 +13,7 @@
     // Initialize the session
     //session_start();
     include_once realpath("initialization.php");
-    echo "session status: " . session_status() . "<br />";
+    //echo "session status: " . session_status() . "<br />";
 
     /* Will test feature when fully functional
     // Check if user is already logged in
