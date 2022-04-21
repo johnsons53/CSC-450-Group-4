@@ -311,7 +311,7 @@
             }
             //$conn->close();
             */
-            header("Location: iepSettings.php");
+            header("Location: iepDashboard.php");
             exit();
         }
     }
