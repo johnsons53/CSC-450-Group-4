@@ -8,6 +8,7 @@
     04/15/2022: Streamlined database connection code 
     04/17/2022: Removed old database connection code
     04/19/2022: Bug fix, changed store_student_goals() to select active goals instead of complete goals
+    04/20/2022: Adjust store_student_documents to match changes to database document table
 */
 
 class Student extends User {
@@ -138,7 +139,7 @@ class Student extends User {
         if ($result->num_rows > 0) {
             while ($row =$result->fetch_assoc()) {
                 // new Document from row data
-                $document = new Document($row['document_id'], $row['document_name'], $row['document_date'], $row['user_id'], $row['document_data']);
+                $document = new Document($row['document_id'], $row['document_name'], $row['document_date'], $row['user_id'], $row['document_path']);
                 // add Document to documents array
                 $this->documents[] = $document;
             }
