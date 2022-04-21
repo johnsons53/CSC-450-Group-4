@@ -7,47 +7,32 @@
 
       <?php
 
-      // Initialize the session
-      session_start();
-      //echo "session status: " . session_status() . "<br />";
+      include_once realpath("initialization.php");
+      global $conn;
 
-      // Taken from login.php
-      $filepath = realpath('login.php');
-      $config = require $filepath;
+      
+    // See if currentUserId and type exist in Session
+    try {
+      $currentUserId = $_SESSION["currentUserId"];
+    } catch (Exception $e) {
+      echo "Message: " . $e->getMessage();
+    }
 
-      //Including other class pages to create user objects
-      require_once realpath('User.php');
-      require_once realpath('Admin.php');
-      require_once realpath('Document.php');
-      require_once realpath('Goal.php');
-      require_once realpath('Guardian.php');
-      require_once realpath('Provider.php');
-      require_once realpath('Report.php');
-      require_once realpath('Objective.php');
-      require_once realpath('Student.php');
+    try {
+      $currentUserType = $_SESSION["currentUserType"];
+    } catch (Exception $e) {
+      echo "Message: " . $e->getMessage();
+    }
 
-      // Variable declaration
-      $username;
-      $userType;
-      $userId;
-      $password;
-      $currentUser;
 
-      $db_hostname = $config['DB_HOSTNAME'];
-      $db_username = $config['DB_USERNAME'];
-      $db_password = $config['DB_PASSWORD'];
-      $db_database = $config['DB_DATABASE'];
+    // Initialize currentUser as new User of correct type
+    // Pass $currentUserId, $currentUserType, $conn into createUser() function
+    try {
+      $currentUser = createUser($currentUserId, $currentUserType, $conn);
 
-      // Create connection
-      $conn = new mysqli($db_hostname, $db_username, $db_password, $db_database);
-
-      // Check connection
-      if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-      }
-
-      // Unserialize and set as currentUser value
-      $currentUser = unserialize($_SESSION["currentUser"]);
+    } catch (Exception $e) {
+      echo "Message: " . $e->getMessage();
+    }
 
       // Save user information to be displayed
       $currentUserFullName = $currentUser->get_full_name();
