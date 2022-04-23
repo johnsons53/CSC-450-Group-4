@@ -26,7 +26,31 @@
     // report data for creating graph
     //  
 
-      //include_once realpath("initialization.php");
+    //include_once realpath("initialization.php");
+
+/*
+// Confirmed $activeStudentId and $activeStudentName values sent via $_POST
+      try {
+        echo $_POST["activeStudentId"];
+        echo "<br />";
+        echo $_POST["activeStudentName"];
+        echo "<br />";
+      } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+
+      }
+
+*/ 
+/* 
+// Confirmed $activeStudentId value available via $_SESSION 
+try {
+  echo $_SESSION["activeStudentId"];
+  echo "<br />";
+} catch (Exception $e) {
+  echo "Message: " . $e->getMessage();
+
+} 
+*/  
 
       // Connection constants for use with AMPPS
       define("SERVER_NAME", "localhost");

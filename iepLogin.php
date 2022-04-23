@@ -184,6 +184,10 @@
                 //exit();
             } else {
                 echo "You have entered incorrect information";
+                $_POST["username"] = "Unable to Login with this username";
+                $_POST["password"] = "";
+                header("Location: iepLogin.php");
+                exit();
             }
 
             // Put userId and userType into SESSION
