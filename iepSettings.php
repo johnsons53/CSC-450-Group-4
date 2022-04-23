@@ -16,7 +16,8 @@
       if (array_key_exists("selectedUserId", $_POST)) {
         $selectedUserId = $_POST["selectedUserId"];
       } else {
-        $selectedUserId = "";
+        //$selectedUserId = "";
+        echo "No user selected to edit <br />";
       }
     } catch (Exception $e) {
       echo "Message: " . $e->getMessage();
@@ -37,9 +38,12 @@
 
     Values correspond to the currently selected user in accountSelect in left nav bar section
     */
-    $selectedUserInfo = getUserInfo($conn, $selectedUserId);
-    //print_r($selectedUserInfo);
-    //echo "<br />";
+    if (isset($selectedUserId)) {
+      $selectedUserInfo = getUserInfo($conn, $selectedUserId);
+      //print_r($selectedUserInfo);
+      //echo "<br />";
+    }
+
 
       
     // See if currentUserId and type exist in Session

@@ -24,6 +24,7 @@ include_once realpath("initialization.php");
 
     <title>IEP Portal: Dashboard</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="iepDetailView.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
@@ -100,11 +101,19 @@ include_once realpath("initialization.php");
         // Load Settings page for selected user when selected by admin
         $(document).on("change", "#accountSelect", function() {
           var selectedUserId = $(this).find(":selected").val();
-          alert(selectedUserId);
+          //alert(selectedUserId);
           // Load admin content into accountContent div
           $("#accountContent").load("iepSettings.php", {
             "selectedUserId": selectedUserId
           });
+        });
+
+        // Load Settings content for currentUser when userSettingsLink clicked
+        // User data accessed from SESSION variables
+        $(document).on("click", "#userSettingsLink", function() {
+          alert("userSettingsLink clicked");
+          // Load iepSettings content into accountContent div with user info
+          $("#accountContent").load("iepSettings.php");
         });
 
         // Open Goal Form on page to modify existing goal with button click
@@ -506,33 +515,7 @@ include_once realpath("initialization.php");
       // User is an admin
 
     }
-    /*
-    // Set students array depending on type of user
-    if (strcmp($currentUserType, "provider") === 0) {
-      $students = $currentUser->get_provider_students();
 
-    } elseif (strcmp($currentUserType, "user") === 0) {
-
-      $students = $currentUser->get_guardian_students();
-     
-    } elseif (strcmp($currentUserType, "student") === 0) {
-      // Student User--only one value for students, same as current user
-      $students[] = $currentUser;
-    } else {
-      echo "incompatible user type";
-      echo "<br />";
-
-    }
-
-    // Default active student value:
-    $activeStudent = $students[0];
-    $activeStudentId = $activeStudent->get_student_id();
-    $activeStudentName = $activeStudent->get_full_name();
-
-
-    // Save activeStudentId to SESSION
-    $_SESSION["activeStudentId"] = $activeStudentId;
-  */
   ?>
     <!-- Page is encompassed in grid -->
     <div class="gridContainer">
@@ -541,12 +524,14 @@ include_once realpath("initialization.php");
         <h1>IEP Portal</h1>
         <div id="accountHolderInfo">
           <!-- Username, messages button, and account settings button here -->
-          <h2>Welcome: <?php echo $currentUserName; ?></h2>
+          
+          <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
+          <!-- Add Logout button here -->
         </div>
         <div id="horizontalNav">
 
-          <a class="hNavButton" href=""><h3>Messages</h3></a>
-          <a class="hNavButton" href=""><h3>Settings</h3></a>
+          <a class="hNavButton" href="iepMessage.html"><i class="fa fa-fw fa-envelope"></i><h3>Messages</h3></a>
+          <a class="hNavButton " id="userSettingsLink" href="javascript:void(0)"><i class="fa fa-gear"></i><h3>Settings</h3></a>
         </div>
       </header>
 
@@ -557,7 +542,7 @@ include_once realpath("initialization.php");
         <?php
         // For Admin User, this section to contain select input with each available user account
         if (strcmp($currentUserType, "admin") === 0) {
-          echo "<h3>Available Accounts</h3>";
+          echo "<h3><i class=\"fa fa-users\"></i> Available Accounts</h3>";
 
           // function returning Lastname, Firstname and user_id of each user from db
           $accounts = getUserList($conn);
@@ -572,13 +557,13 @@ include_once realpath("initialization.php");
             echo "<select name=\"accountSelect\" class=\"accountSelect\" id=\"accountSelect\">";
               // Options for accountSelect
               foreach($accounts as $a => $a_value) {
-                  echo "<option class=\"accountOption\" value=\"" . $a . "\">" . $a_value . "</option>";
+                  echo "<option class=\"accountOption\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
               }
             echo "</select>"; // end of select
           } // end of if accounts set and has values  
         } else {
           // For other users, this section to contain tab links to available student data
-          echo "<h3>Your Student Accounts</h3>";
+          echo "<h3><i class=\"fa fa-users\"></i> Your Student Accounts</h3>";
           // Toggle between different students for this user
           $studentCount = 0;
           foreach ($students as $value) {
@@ -608,38 +593,11 @@ include_once realpath("initialization.php");
 
 
         } // end of if user is of type admin
-
-/*
-        // Toggle between different students for this user
-        $studentCount = 0;
-        foreach ($students as $value) {
-          $studentName = $value->get_full_name();
-          // Needs to be the userId of the chosen student
-          $studentId = $value->get_student_id();
-
-          // Version from testing
-          if ($studentCount == 0) {
-            echo "<div class=\"tab\">";
-            //echo "<a class='vNavButton, tablinks' href='' id='defaultOpen' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
-
-            echo "<button class=\"tablinks vNavButton\" id=\"defaultOpen\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\">" . $studentName . "</button>";
-            echo "</div>";
-          } else {
-            echo "<div class=\"tab\">";
-            //echo "<a class='vNavButton, tablinks' href='' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
-
-            echo "<button class=\"tablinks vNavButton\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\" >" . $studentName . "</button>";
-            echo "</div>";
-        }
-        
-
-        $studentCount++;
-          
-      }
-  */       
+       
       ?>
 
       </div>
+
       <!-- Account content area -->
       <div class="middle mainContent accountContent" id="accountContent"></div>
 
