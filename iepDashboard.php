@@ -47,7 +47,7 @@ include_once realpath("initialization.php");
               activeStudentName: $(this).attr("data-studentName")
           },
           function() {
-            $(".accountSelect").each(function() {
+            $(".reportSelect").each(function() {
               var objectiveId = $(this).attr("data-objectiveId");
               var selectedValue = $(this).find(":selected").val();
               var max = $(this).attr("data-max");
@@ -544,12 +544,8 @@ include_once realpath("initialization.php");
           <h2>Welcome: <?php echo $currentUserName; ?></h2>
         </div>
         <div id="horizontalNav">
-          <!-- Links are inactive: no further pages have been built -->
-          <!-- <a class="hNavButton" href=""><h3 class="button">Documents</h3></a> -->
-          <!-- <a class="hNavButton" href=""><h3>Goals</h3></a> -->
-          <!-- <a class="hNavButton" href=""><h3>Events</h3></a> -->
+
           <a class="hNavButton" href=""><h3>Messages</h3></a>
-          <!-- <a class="hNavButton" href=""><h3>Information</h3></a> -->
           <a class="hNavButton" href=""><h3>Settings</h3></a>
         </div>
       </header>
