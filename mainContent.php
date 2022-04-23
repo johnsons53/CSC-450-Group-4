@@ -61,7 +61,7 @@ include_once realpath("initialization.php");
 
     // Student Name
     echo "<div class='currentStudentName'>";
-    echo "<h3>" . $activeStudentName . "</h3>";
+      echo "<h3><i class=\"fa fa-star\"></i> " . $activeStudentName . "</h3>";
     echo "</div>"; // end of student name div
 
     // Calendar
@@ -83,15 +83,19 @@ include_once realpath("initialization.php");
     echo "</div>"; // end of Schedule div
 
     // Documents Page Link
-    echo "<div class='documents contentCard'>";
+    echo "<div class='documents contentCard' name=\"documentDiv\" id=\"documentLink\">";
       echo "<h3>Documents</h3>";
+
+      //echo "<input type=\"button\" name=\"documents\" id=\"documentButton\" value=\"Documents\">";
+
       /* DOCUMENTS page button */
+      /*
       echo "<form action=\"iepDocument.php\" method=\"post\">";
       echo "<input type=\"hidden\" id=\"DstudentId\" name=\"activeStudentId\" value=\"" . $activeStudentId . "\">";
       echo "<input type=\"hidden\" id=\"DstudentName\" name=\"activeStudentName\" value=\"" . $activeStudentName . "\">";
       echo "<input type=\"submit\" name=\"documents\" value=\"Documents\">";
       echo "</form>";
-
+*/
     echo "</div>"; // end of Documents div
 
     // Goals

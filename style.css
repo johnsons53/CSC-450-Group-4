@@ -153,6 +153,22 @@ header {
   padding: 0.4em;
 }
 
+.accountContent {
+  display: flex;
+  flex-flow: column wrap;
+  grid-area: middle;
+  justify-content: space-around;
+  padding: 0.3em;
+}
+
+#accountContent {
+  display: flex;
+  flex-flow: column wrap;
+  grid-area: middle;
+  justify-content: space-around;
+  padding: 0.3em;
+}
+
 /* ********** Message settings ********** */
 #messageContent {
   display: flex;

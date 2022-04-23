@@ -17,7 +17,7 @@
         $selectedUserId = $_POST["selectedUserId"];
       } else {
         //$selectedUserId = "";
-        echo "No user selected to edit <br />";
+        //echo "No user selected to edit <br />";
       }
     } catch (Exception $e) {
       echo "Message: " . $e->getMessage();

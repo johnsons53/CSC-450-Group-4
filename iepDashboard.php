@@ -98,12 +98,17 @@ include_once realpath("initialization.php");
           });
         });
 
+        // Load Messages page for currentUser
+        $(document).on("click", "#userMessagesLink", function() {
+          // Load iepSettings content into accountContent div with user info
+          $("#mainContent").load("iepMessage.html");
+        });
+
         // Load Settings page for selected user when selected by admin
         $(document).on("change", "#accountSelect", function() {
           var selectedUserId = $(this).find(":selected").val();
-          //alert(selectedUserId);
           // Load admin content into accountContent div
-          $("#accountContent").load("iepSettings.php", {
+          $("#mainContent").load("iepSettings.php", {
             "selectedUserId": selectedUserId
           });
         });
@@ -111,10 +116,18 @@ include_once realpath("initialization.php");
         // Load Settings content for currentUser when userSettingsLink clicked
         // User data accessed from SESSION variables
         $(document).on("click", "#userSettingsLink", function() {
-          alert("userSettingsLink clicked");
           // Load iepSettings content into accountContent div with user info
-          $("#accountContent").load("iepSettings.php");
+          $("#mainContent").load("iepSettings.php");
         });
+
+        // Open Documents Page in main content when Documents button clicked
+        // Active Student data accessed from SESSION
+        $(document).on("click", "#documentLink", function() {
+          // Load iepSettings content into accountContent div with user info
+          $("#mainContent").load("iepDocument.php");
+        });
+
+        // Include function to reload click activeStudent tab when naviagting away from Documents, User Settings or Messages content
 
         // Open Goal Form on page to modify existing goal with button click
         $(document).on("click", ".modifyGoalFormButton", function() {
@@ -529,10 +542,13 @@ include_once realpath("initialization.php");
           <!-- Add Logout button here -->
         </div>
         <div id="horizontalNav">
+          <a class="hNavButton active" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
+          <a class="hNavButton" id="userMessagesLink" href="javascript:void(0)"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
+          <a class="hNavButton" id="userSettingsLink" href="javascript:void(0)"><h3><i class="fa fa-gear"></i> Settings</h3></a>
+          <a class="hNavButton" id="userLogout" href="#"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
 
-          <a class="hNavButton" href="iepMessage.html"><i class="fa fa-fw fa-envelope"></i><h3>Messages</h3></a>
-          <a class="hNavButton " id="userSettingsLink" href="javascript:void(0)"><i class="fa fa-gear"></i><h3>Settings</h3></a>
         </div>
+
       </header>
 
       <!-- Vertical navigation bar -->
@@ -574,15 +590,15 @@ include_once realpath("initialization.php");
             // Version from testing
             if ($studentCount == 0) {
               echo "<div class=\"tab\">";
-              //echo "<a class='vNavButton, tablinks' href='' id='defaultOpen' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
+              echo "<a class='vNavButton tablinks' href='javascript:void(0)' id='defaultOpen' data-studentName=\"" . $studentName . "\" data-studentId='" . $studentId . "'><h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3></a>";
 
-              echo "<button class=\"tablinks vNavButton\" id=\"defaultOpen\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\">" . $studentName . "</button>";
+              //echo "<button class=\"tablinks vNavButton\" id=\"defaultOpen\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\">" . $studentName . "</button>";
               echo "</div>";
             } else {
               echo "<div class=\"tab\">";
-              //echo "<a class='vNavButton, tablinks' href='' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
+              echo "<a class='vNavButton tablinks' href='javascript:void(0)' data-studentName=\"" . $studentName . "\" data-studentId='" . $studentId . "'><h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3></a>";
 
-              echo "<button class=\"tablinks vNavButton\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\" >" . $studentName . "</button>";
+              //echo "<button class=\"tablinks vNavButton\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\" >" . $studentName . "</button>";
               echo "</div>";
             }
           
@@ -599,7 +615,7 @@ include_once realpath("initialization.php");
       </div>
 
       <!-- Account content area -->
-      <div class="middle mainContent accountContent" id="accountContent"></div>
+      <div class="middle accountContent" id="accountContent" display="block"></div>
 
       <!-- Main content of page -->
       <div class="middle mainContent tabcontent" id="mainContent"></div>
