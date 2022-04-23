@@ -6,6 +6,7 @@ functions.php - library of functions for iepPortal
       Date Created: 04/06/2022
       Revised: 04/17/2022 Removed refreshReports() function
       Added createStudent(), createUser()
+      Revised: 04/22/2022 Added Admin specific functions for loading admin dashboard
 */
 function test() {
     echo "Function test() called from functions.php.<br />";
@@ -343,5 +344,65 @@ function test_input($data) {
     $data = htmlspecialchars($data);
     return $data;
 }
+
+/*
+Admin Dashboard Functions
+*/
+
+/*
+Get all user_id, last and first names from database and return an associative array 
+of user_ids and "Lastname, Firstname" pairs
+*/
+function getUserList($conn) {
+    $userList = array();
+    // Get user_id, last name, first name for all users
+    $stmt = $conn->prepare("SELECT user_last_name, user_first_name, user_id
+                            FROM user
+                            ORDER By user_last_name");
+    // execute prepared statement
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            // Add values from $row to userList
+            $userList[$row["user_id"]] = $row["user_last_name"] . ", " . $row["user_first_name"];
+        }
+    }
+
+    return $userList;
+
+}
+
+/*
+Get contact and account information for given userId
+*/
+function getUserInfo($conn, $userId) {
+    $userInfo = array();
+
+    $stmt = $conn->prepare("SELECT user_first_name, user_last_name, user_type,
+                            user_name, user_password, user_email, user_address, user_phone
+                            FROM user
+                            WHERE user_id=?");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+        while ($row = $result->fetch_assoc()) {
+            // Add values from $row to userInfo
+            $userInfo["userFullName"] = $row["user_first_name"] . " " . $row["user_last_name"];
+            $userInfo["userType"] = $row["user_type"];
+            $userInfo["userPassword"] = $row["user_password"];
+            $userInfo["userName"] = $row["user_name"];
+            $userInfo["userEmail"] = $row["user_email"];
+            $userInfo["userAddress"] = $row["user_address"];
+            $userInfo["userPhone"] = $row["user_phone"];
+        }
+    }
+
+    return $userInfo;
+}
+
 
 ?>

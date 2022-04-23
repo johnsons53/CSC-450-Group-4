@@ -3,12 +3,43 @@
       Author: Andy Yang
       Date Written: 03/2/2022
       Revised: 04/18/2022, Intergrated user interface and now displays user information
+      Revised: 04/22/2022 Added selectedUserId and selectedUserInfo to access user data sent on Admin accountSelect change
     -->
 
       <?php
 
       include_once realpath("initialization.php");
       global $conn;
+
+    // See if selectedUserId exists in POST
+    try {
+      if (array_key_exists("selectedUserId", $_POST)) {
+        $selectedUserId = $_POST["selectedUserId"];
+      } else {
+        $selectedUserId = "";
+      }
+    } catch (Exception $e) {
+      echo "Message: " . $e->getMessage();
+    }
+    //echo "Selected User Id: ";
+    //echo $selectedUserId;
+    //echo "<br />";
+
+    /*
+    $selectedUserInfo is an associative array containing keys: 
+    userFullName, 
+    userType, 
+    userPassword, 
+    userName, 
+    userEmail, 
+    userAddress, 
+    userPhone
+
+    Values correspond to the currently selected user in accountSelect in left nav bar section
+    */
+    $selectedUserInfo = getUserInfo($conn, $selectedUserId);
+    //print_r($selectedUserInfo);
+    //echo "<br />";
 
       
     // See if currentUserId and type exist in Session

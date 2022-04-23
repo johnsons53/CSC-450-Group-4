@@ -11,6 +11,7 @@ Revised: 04/12/2022 Added report select
 Revised: 04/13/2022 Modified provider forms and buttons to appear on dashboard page.
 Revised: 04/17/2022 Adjustments to data flow from iepLogin to SESSION to dashboard to fix
 issue updating data after changes to database; Cleanup of old code and testing code
+Revised: 04/22/2022 Added handling for Admin user
 
 */
 include_once realpath("initialization.php");
@@ -46,7 +47,7 @@ include_once realpath("initialization.php");
               activeStudentName: $(this).attr("data-studentName")
           },
           function() {
-            $(".reportSelect").each(function() {
+            $(".accountSelect").each(function() {
               var objectiveId = $(this).attr("data-objectiveId");
               var selectedValue = $(this).find(":selected").val();
               var max = $(this).attr("data-max");
@@ -93,6 +94,16 @@ include_once realpath("initialization.php");
             max: $(this).attr("data-max"),
             high: $(this).attr("data-high"),
             low: $(this).attr("data-low")
+          });
+        });
+
+        // Load Settings page for selected user when selected by admin
+        $(document).on("change", "#accountSelect", function() {
+          var selectedUserId = $(this).find(":selected").val();
+          alert(selectedUserId);
+          // Load admin content into accountContent div
+          $("#accountContent").load("iepSettings.php", {
+            "selectedUserId": selectedUserId
           });
         });
 
@@ -343,9 +354,9 @@ include_once realpath("initialization.php");
           var objectiveId = $(this).attr("data-objectiveid");
           if ($(this).attr("name") == "modifyReport") {
             // set variable values to selected
-            var selectedValue = $("#reportSelect" + objectiveId).find(":selected").val();
-            var selectedDate = $("#reportSelect" + objectiveId).find(":selected").attr("data-reportdate");
-            var selectedReportId = $("#reportSelect" + objectiveId).find(":selected").attr("data-reportid");
+            var selectedValue = $("#accountSelect" + objectiveId).find(":selected").val();
+            var selectedDate = $("#accountSelect" + objectiveId).find(":selected").attr("data-reportdate");
+            var selectedReportId = $("#accountSelect" + objectiveId).find(":selected").attr("data-reportid");
           } else {
             // values should be empty
             var selectedValue = "";
@@ -427,6 +438,8 @@ include_once realpath("initialization.php");
     $currentUser;
     $currentUserName;
     $activeStudent;
+    $accounts;
+    $activeAccount;
 
 
     // Create connection
@@ -457,6 +470,43 @@ include_once realpath("initialization.php");
 
     $currentUserName = $currentUser->get_full_name();
 
+    // Provider, Guardian and Student users will view student IEP data
+    // Admin users will view and modify general user account data for any other user
+
+    if (strcmp($currentUserType, "admin") != 0) {
+      // For users other than admin, find students to display
+      // Set students array depending on type of user
+      if (strcmp($currentUserType, "provider") === 0) {
+        $students = $currentUser->get_provider_students();
+
+      } elseif (strcmp($currentUserType, "user") === 0) {
+
+        $students = $currentUser->get_guardian_students();
+      
+      } elseif (strcmp($currentUserType, "student") === 0) {
+        // Student User--only one value for students, same as current user
+        $students[] = $currentUser;
+      } else {
+        echo "incompatible user type";
+        echo "<br />";
+
+      }
+
+      // Default active student value:
+      $activeStudent = $students[0];
+      $activeStudentId = $activeStudent->get_student_id();
+      $activeStudentName = $activeStudent->get_full_name();
+
+
+      // Save activeStudentId to SESSION
+      $_SESSION["activeStudentId"] = $activeStudentId;
+
+
+    } else {
+      // User is an admin
+
+    }
+    /*
     // Set students array depending on type of user
     if (strcmp($currentUserType, "provider") === 0) {
       $students = $currentUser->get_provider_students();
@@ -482,8 +532,8 @@ include_once realpath("initialization.php");
 
     // Save activeStudentId to SESSION
     $_SESSION["activeStudentId"] = $activeStudentId;
-  
-    ?>
+  */
+  ?>
     <!-- Page is encompassed in grid -->
     <div class="gridContainer">
       <header>
@@ -506,9 +556,64 @@ include_once realpath("initialization.php");
 
       <!-- Vertical navigation bar -->
       <div class="left" id="verticalNav">
-        <h3>Your Student Accounts</h3>
+        
 
         <?php
+        // For Admin User, this section to contain select input with each available user account
+        if (strcmp($currentUserType, "admin") === 0) {
+          echo "<h3>Available Accounts</h3>";
+
+          // function returning Lastname, Firstname and user_id of each user from db
+          $accounts = getUserList($conn);
+          //print_r($accounts);
+
+          // Select input for each available account
+          // Would refine further by enabling search, or selecting by school and grade
+
+          if (isset($accounts) && count($accounts) > 0) {
+            // select input for accounts  
+            echo "<label for=\"accountSelect\">Select User Account</label>";
+            echo "<select name=\"accountSelect\" class=\"accountSelect\" id=\"accountSelect\">";
+              // Options for accountSelect
+              foreach($accounts as $a => $a_value) {
+                  echo "<option class=\"accountOption\" value=\"" . $a . "\">" . $a_value . "</option>";
+              }
+            echo "</select>"; // end of select
+          } // end of if accounts set and has values  
+        } else {
+          // For other users, this section to contain tab links to available student data
+          echo "<h3>Your Student Accounts</h3>";
+          // Toggle between different students for this user
+          $studentCount = 0;
+          foreach ($students as $value) {
+            $studentName = $value->get_full_name();
+            // Needs to be the userId of the chosen student
+            $studentId = $value->get_student_id();
+
+            // Version from testing
+            if ($studentCount == 0) {
+              echo "<div class=\"tab\">";
+              //echo "<a class='vNavButton, tablinks' href='' id='defaultOpen' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
+
+              echo "<button class=\"tablinks vNavButton\" id=\"defaultOpen\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\">" . $studentName . "</button>";
+              echo "</div>";
+            } else {
+              echo "<div class=\"tab\">";
+              //echo "<a class='vNavButton, tablinks' href='' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
+
+              echo "<button class=\"tablinks vNavButton\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\" >" . $studentName . "</button>";
+              echo "</div>";
+            }
+          
+
+            $studentCount++;
+            
+          } // end of foreach students as value
+
+
+        } // end of if user is of type admin
+
+/*
         // Toggle between different students for this user
         $studentCount = 0;
         foreach ($students as $value) {
@@ -535,10 +640,12 @@ include_once realpath("initialization.php");
         $studentCount++;
           
       }
-         
-        ?>
+  */       
+      ?>
 
       </div>
+      <!-- Account content area -->
+      <div class="middle mainContent accountContent" id="accountContent"></div>
 
       <!-- Main content of page -->
       <div class="middle mainContent tabcontent" id="mainContent"></div>
@@ -547,7 +654,7 @@ include_once realpath("initialization.php");
         <!-- Insert footer info here -->
       </footer>
 
-    </div>
+    </div> 
   </body>
 
 

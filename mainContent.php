@@ -86,7 +86,7 @@ include_once realpath("initialization.php");
     echo "<div class='documents contentCard'>";
       echo "<h3>Documents</h3>";
       /* DOCUMENTS page button */
-      echo "<form action=\"" . htmlspecialchars("iepDocumentView.php") . "\" method=\"post\">";
+      echo "<form action=\"iepDocument.php\" method=\"post\">";
       echo "<input type=\"hidden\" id=\"DstudentId\" name=\"activeStudentId\" value=\"" . $activeStudentId . "\">";
       echo "<input type=\"hidden\" id=\"DstudentName\" name=\"activeStudentName\" value=\"" . $activeStudentName . "\">";
       echo "<input type=\"submit\" name=\"documents\" value=\"Documents\">";
@@ -320,8 +320,8 @@ include_once realpath("initialization.php");
                       label : 'Report Data',
                       fill : true,
                       tension : 0.2,
-                      backgroundColor : 'rgb(255, 99, 132)',
-                      borderColor: 'rgb(255, 99, 132)',
+                      backgroundColor : 'rgb(247, 146, 86, 1)',
+                      borderColor: 'rgb(247, 146, 86, 1)',
                       borderCapStyle : 'round',
 
                       data: otherDataset
@@ -381,6 +381,9 @@ include_once realpath("initialization.php");
 
       echo "</div>";// end of Goals contentCard   
 ?>
+
+
+
 
   
 </html>
