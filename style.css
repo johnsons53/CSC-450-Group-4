@@ -4,11 +4,16 @@
   Written: 02/11/2022
   Revised: 
   02/21/2022 by Lisa Ahnell : added .navigation for navigation links
+  04/25/2022 by Lisa Ahnell : Color changes, updates to dashboard
   */
 
 
 
 /* ********** Page settings ********** */
+* {
+  box-sizing: border-box;
+}
+
 body {
   color: black;
   font-family: 'Segoe UI', Tahoma, 'Geneva', Verdana, sans-serif;
@@ -74,7 +79,8 @@ h4 {
 }
 
 header {
-  background-color: #d8fdf4;
+  background-color: rgba(29, 78, 137, 1);
+  color: #ffffff;
   display: grid;
   grid-template-areas: 
     'header-left header-left header-mid header-mid header-right header-right'
@@ -86,46 +92,63 @@ header {
 
 /* ********** Horizontal navigation settings ********** */
 #horizontalNav {
-  display: flex;
-  flex-flow: row wrap;
+  /*display: flex;
+  flex-flow: row wrap;*/
   grid-area: header-bottom;
   justify-content: space-around;
+  width: 100%;
+  overflow: auto;
 }
 
 .hNavButton {
-  background-color: #d8fdf4;
+  background-color: rgba(29, 78, 137, 1);
+  color: #ffffff;
   min-width: 16.66%;
+  float: left;
+  text-align: center;
+  padding: 1em;
+  font-size: medium;
 }
 
 .hNavButton:hover {
-  background-color: #ebfffa; 
+  background-color: rgba(251, 209, 162, 1);
+  color: #212121;
 }
 
 .hNavButton:active {
-  background-color: #c2f0e4;
+  background-color: rgba(251, 209, 162, 1);
+  color: #212121;
+}
+
+@media screen and (max-width: 500px) {
+  .hNavButton {
+    float: none;
+    display: block;
+  }
 }
 
 
 /* ********** Left side settings ********** */
 #verticalNav {
-  background-color: #fff9e9;
+  background-color: rgba(125, 207, 182, 1);
   display: flex;
   flex-flow: column wrap;
   grid-area: left;
   padding: 0em;
+
 }
 
 .vNavButton {
-  background-color: #fff9e9;
+  background-color: rgba(125, 207, 182, 1);
   text-align: left;
 }
 
 .vNavButton:hover {
-  background-color: #fffdf6;
+  background-color: rgba(251, 209, 162, 1);
 }
 
 .vNavButton:active {
-  background-color: #fcf3d9;
+  background-color: rgba(251, 209, 162, 1);
 }
 
 
@@ -135,7 +158,8 @@ header {
   flex-flow: column wrap;
   grid-area: middle;
   justify-content: space-around;
-  padding: 0.3em;
+  padding: 0.5em;
+  margin: 0.3em;
 }
 
 #mainContent {
@@ -147,27 +171,68 @@ header {
 }
 
 .contentCard {
-  border: solid black 1px;
+  border: solid black 2px;
   border-radius: 5px;
+  margin: 0.3em;
+  padding: 1em;
+}
+
+.providerForm {
   margin: 0.2em;
-  padding: 0.4em;
+  padding: 0.2em;
+  border-color: rgba(0, 178, 202, 1);
 }
 
-.accountContent {
-  display: flex;
-  flex-flow: column wrap;
-  grid-area: middle;
-  justify-content: space-around;
-  padding: 0.3em;
+.contentCard.goal {
+  border-color: rgba(29, 78, 137, 1);
+}
+.contentCard.objective {
+  border-color: rgba(125, 207, 182, 1);
+
+}
+.contentCard.graphView {
+  border-color: rgba(247, 146, 86, 1);
 }
 
-#accountContent {
-  display: flex;
-  flex-flow: column wrap;
-  grid-area: middle;
-  justify-content: space-around;
-  padding: 0.3em;
+
+/* ********** Form, button, input settings ********** */
+input {
+  width : 15em;
 }
+
+input[type=button], input[type=submit] {
+  margin : 0.3em;
+  padding : 1em 2em;
+  border: none;
+  border-radius: 0%;
+  background-color: rgba(29, 78, 137, 1);
+  color : #ffffff;
+  font-size: medium;
+}
+
+input[type=button]:hover, input[type=submit]:hover {
+  font-weight: bold;
+  background-color: rgba(0, 178, 202, 1);
+  color : #ffffff;
+}
+
+input[type=text]:focus {
+  border :rgba(0, 178, 202, 1)
+}
+#documentLink {
+  border: none;
+  border-radius: 0%;
+  background-color: rgba(29, 78, 137, 1);
+  color : #ffffff;
+}
+
+#documentLink:hover {
+  border: none;
+  border-radius: 0%;
+  background-color: rgba(0, 178, 202, 1);
+  color : #ffffff;
+}
+
 
 /* ********** Message settings ********** */
 #messageContent {
@@ -200,7 +265,7 @@ header {
 @media (max-width: 600px) {
   #horizontalNav {
     flex-flow: column wrap;
-    justify-content: center;
+    justify-content: left;
   }
 }
 
@@ -212,7 +277,7 @@ header {
 }
 
 /* Style the buttons that are used to open the tab content */
- .tab button {
+ .tab {
   background-color: inherit;
   float: left;
   border: none;
@@ -223,19 +288,20 @@ header {
 }
 
 /* Change background color of buttons on hover */
- .tab button:hover {
-  background-color: #ddd;
+ .tab:hover {
+  background-color: rgba(251, 209, 162, 1);
 } 
 
 /* Create an active/current tablink class */
- .tab button.active {
-  background-color: #ccc;
+ .tab.active {
+  background-color: rgba(251, 209, 162, 1);
 } 
 
 /* Style the tab content */
+/*
  .tabcontent {
   display: none;
   padding: 6px 12px;
   border: 1px solid #ccc;
   border-top: none;
-}  
+} */

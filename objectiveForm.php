@@ -4,7 +4,7 @@ objectiveForm.php - Provider Objective Form
       Spring 100 CSC 450 Capstone, Group 4
       Author: Lisa Ahnell
       Date Written: 04/18/2022
-      Revised: 
+      Revised: 04/25/2022: Removed testing code
 */
 include_once realpath("initialization.php");
 
@@ -12,54 +12,35 @@ include_once realpath("initialization.php");
 if (array_key_exists("objectiveId", $_POST)) {
     $objectiveId = $_POST["objectiveId"];
 } else {
-    echo " Did not find objectiveId in POST :-( <br />";
     $objectiveId = "";
 }
 if (array_key_exists("goalId", $_POST)) {
-    echo "goalId found in POST: " . $_POST["goalId"];
-    echo " :-) <br />";
     $goalId = $_POST["goalId"];
 } else {
-    echo " Did not find goalId in POST :-( <br />";
 }
 if (array_key_exists("objectiveLabel", $_POST)) {
-    echo "objectiveLabel found in POST: " . $_POST["objectiveLabel"];
-    echo " :-) <br />";
     $objectiveLabel = $_POST["objectiveLabel"];
 } else {
-    echo " Did not find objectiveLabel in POST :-( <br />";
     $objectiveLabel = "";
 } 
 if (array_key_exists("objectiveText", $_POST)) {
-    echo "objectiveText found in POST: " . $_POST["objectiveText"];
-    echo " :-) <br />";
     $objectiveText = $_POST["objectiveText"];
 } else {
-    echo " Did not find objectiveText in POST :-( <br />";
     $objectiveText = "";
 }
 if (array_key_exists("objectiveAttempts", $_POST)) {
-    echo "objectiveAttempts found in POST: " . $_POST["objectiveAttempts"];
-    echo " :-) <br />";
     $objectiveAttempts = $_POST["objectiveAttempts"];
 } else {
-    echo " Did not find objectiveAttempts in POST :-( <br />";
     $objectiveAttempts = "";
 }
 if (array_key_exists("objectiveTarget", $_POST)) {
-    echo "objectiveTarget found in POST: " . $_POST["objectiveTarget"];
-    echo " :-) <br />";
     $objectiveTarget = $_POST["objectiveTarget"];
 } else {
-    echo " Did not find objectiveTarget in POST :-( <br />";
     $objectiveTarget = "";
 }
 if (array_key_exists("objectiveStatus", $_POST)) {
-    echo "objectiveStatus found in POST: " . $_POST["objectiveStatus"];
-    echo " :-) <br />";
     $objectiveStatus = $_POST["objectiveStatus"];
 } else {
-    echo " Did not find objectiveStatus in POST :-( <br />";
     $objectiveStatus = "";
 }
 

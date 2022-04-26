@@ -4,7 +4,7 @@ goalForm.php - Provider Goal Form
       Spring 100 CSC 450 Capstone, Group 4
       Author: Lisa Ahnell
       Date Written: 04/19/2022
-      Revised: 
+      Revised: 04/25/2022 : Removed testing code
 */
 include_once realpath("initialization.php");
 
@@ -18,51 +18,32 @@ include_once realpath("initialization.php");
   <?php
     //Test data in POST
     if (array_key_exists("studentId", $_POST)) {
-        echo "studentId found in POST: " . $_POST["studentId"];
-        echo " :-) <br />";
         $studentId = $_POST["studentId"];
     } else {
-        echo " Did not find studentId in POST :-( <br />";
-        
     }
     if (array_key_exists("goalId", $_POST)) {
-        echo "goalId found in POST: " . $_POST["goalId"];
-        echo " :-) <br />";
         $goalId = $_POST["goalId"];
     } else {
-        echo " Did not find goalId in POST :-( <br />";
         $goalId = "";
     }
     if (array_key_exists("goalLabel", $_POST)) {
-        echo "goalLabel found in POST: " . $_POST["goalLabel"];
-        echo " :-) <br />";
         $goalLabel = $_POST["goalLabel"];
     } else {
-        echo " Did not find goalLabel in POST :-( <br />";
         $goalLabel = "";
     }
     if (array_key_exists("goalCategory", $_POST)) {
-        echo "goalCategory found in POST: " . $_POST["goalCategory"];
-        echo " :-) <br />";
         $goalCategory = $_POST["goalCategory"];
     } else {
-        echo " Did not find goalCategory in POST :-( <br />";
         $goalCategory = "";
     }
     if (array_key_exists("goalText", $_POST)) {
-        echo "goalText found in POST: " . $_POST["goalText"];
-        echo " :-) <br />";
         $goalText = $_POST["goalText"];
     } else {
-        echo " Did not find goalText in POST :-( <br />";
         $goalText = "";
     }
     if (array_key_exists("goalActive", $_POST)) {
-        echo "goalActive found in POST: " . $_POST["goalActive"];
-        echo " :-) <br />";
         $goalActive = $_POST["goalActive"];
     } else {
-        echo " Did not find goalActive in POST :-( <br />";
         $goalActive = "";
     }
 

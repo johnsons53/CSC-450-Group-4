@@ -20,7 +20,7 @@ include_once realpath("initialization.php");
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>IEP Portal: Dashboard</title>
     <link rel="stylesheet" type="text/css" href="style.css">
@@ -573,7 +573,7 @@ include_once realpath("initialization.php");
             echo "<select name=\"accountSelect\" class=\"accountSelect\" id=\"accountSelect\">";
               // Options for accountSelect
               foreach($accounts as $a => $a_value) {
-                  echo "<option class=\"accountOption\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
+                  echo "<option class=\"accountOption vNavButton\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
               }
             echo "</select>"; // end of select
           } // end of if accounts set and has values  
