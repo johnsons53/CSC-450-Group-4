@@ -139,10 +139,10 @@ header {
 }
 
 .vNavButton {
-  background-color: rgba(125, 207, 182, 1);
+  background-color: inherit;
   text-align: left;
 }
-
+/*
 .vNavButton:hover {
   background-color: rgba(251, 209, 162, 1);
 }
@@ -150,6 +150,38 @@ header {
 .vNavButton:active {
   background-color: rgba(251, 209, 162, 1);
 }
+*/
+/* ********** Vertical Navigation Tab settings ********** */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+ .tab {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+ .tab:hover {
+  background-color: rgba(251, 209, 162, 1);
+  font-weight: bolder;
+  font-style: oblique;
+} 
+
+/* Create an active/current tablink class */
+ .tab.active {
+  background-color: rgba(251, 209, 162, 1);
+  font-weight: bolder;
+  font-variant-caps: small-caps;
+} 
 
 
 /* ********** Middle area settings ********** */
@@ -296,33 +328,7 @@ input[type=button]:hover, input[type=submit]:hover {
   }
 }
 
-/* ********** Vertical Navigation Tab settings ********** */
-.tab {
-  overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
-}
 
-/* Style the buttons that are used to open the tab content */
- .tab {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
-}
-
-/* Change background color of buttons on hover */
- .tab:hover {
-  background-color: rgba(251, 209, 162, 1);
-} 
-
-/* Create an active/current tablink class */
- .tab.active {
-  background-color: rgba(251, 209, 162, 1);
-} 
 
 /* Style the tab content */
 /*

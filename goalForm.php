@@ -87,8 +87,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?> 
     <div id="providerGoalForm">
-        <?php echo "<form action=\"" . htmlspecialchars("iepDashboard.php") . "\" method=\"post\">"; ?>
-        <h4>Goal Detail Form</h4>
         <form action="" method="post" class="providerForm">
             <!-- Hidden field with goalId-->
             <div>
