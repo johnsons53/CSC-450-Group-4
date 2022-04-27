@@ -177,12 +177,6 @@ header {
   padding: 1em;
 }
 
-.providerForm {
-  margin: 0.2em;
-  padding: 0.2em;
-  border-color: rgba(0, 178, 202, 1);
-}
-
 .contentCard.goal {
   border-color: rgba(29, 78, 137, 1);
 }
@@ -191,17 +185,53 @@ header {
 
 }
 .contentCard.graphView {
+  width: 90%;
+  min-width: 400px;
   border-color: rgba(247, 146, 86, 1);
 }
 
 
 /* ********** Form, button, input settings ********** */
+.flex-formContainer {
+  min-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content:flex-start;
+  align-items: baseline;
+  align-content: stretch;
+}
+
+.flex-formContainer>div {
+  min-width: 12em;
+  padding-right: 0.2em;
+  padding-bottom: 0.2em;
+}
+/* Responsive layout for forms */
+@media (max-width: 800px) {
+  .flex-formContainer {
+    flex-direction: column;
+  }
+}
+
+form.providerForm {
+  margin: 0.2em;
+  padding: 0.2em;
+  border: solid rgba(0, 178, 202, 1) 2px;
+  border-radius: 5px;
+}
+
+label {
+  width: 10em;
+  padding: 0.5em;
+}
+
 input {
-  width : 15em;
+  width : 14em;
 }
 
 input[type=button], input[type=submit] {
-  margin : 0.3em;
+  margin : 0.2em;
   padding : 1em 2em;
   border: none;
   border-radius: 0%;
@@ -216,9 +246,6 @@ input[type=button]:hover, input[type=submit]:hover {
   color : #ffffff;
 }
 
-input[type=text]:focus {
-  border :rgba(0, 178, 202, 1)
-}
 #documentLink {
   border: none;
   border-radius: 0%;

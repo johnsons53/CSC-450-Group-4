@@ -51,7 +51,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 ?>
-    <form action="" method="post">
+    <form action="" method="post" class="providerForm">
         
         <!-- Hidden field with reportId-->
         <div>
@@ -64,34 +64,47 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                     
         <!-- Date field for reportDate 
                 Set default value to current date with JavaScript-->
-        <div>
-            <label for="reportDate">Report Date</label>
-            <input type="date"id="reportDate" name="reportDate" value="<?php echo $reportDate; ?>"> 
-            <span class="error">* <?php echo $report_date_err;?></span>       
+
+        <div class="flex-formContainer">
+            <div class="formElement formLabel">
+                <label for="reportDate">Report Date</label>
+            </div>
+            <div class="formElement">
+                <input type="date"id="reportDate" name="reportDate" value="<?php echo $reportDate; ?>"> 
+            </div>
+            <div>
+                <span class="error"><?php echo $report_date_err;?></span>       
+            </div>
         </div>
 
         <!-- Number picker for reportObserved -->
-        <div>
+        <div class="flex-formContainer">
+            <div class="formElement formLabel">
             <label for="reportObserved">Observed</label>
+            </div>
+            <div class="formElement">
             <input type="number" id="reportObserved" name="reportObserved" value="<?php echo $reportObserved; ?>">
-            <span class="error">* <?php echo $report_observed_err;?></span> 
+            </div>
+            <div>
+            <span class="error"><?php echo $report_observed_err;?></span> 
+            </div>
         </div>
 
-        <!-- Button to Save report -->
-        <div>
+        <div class="flex-formContainer">
+                                <!-- Button to Save report -->
+
+            <div class="formButton">
             <input type="button" id="saveReport" class="save refresh reportSubmit" name="saveReport" value="Save Report">
-        </div>
+            </div>
+                                <!-- Button to Delete report -->
 
-
-        <!-- Button to Delete report -->
-        <div>
+            <div class="formButton">
             <input type="button" id="deleteReport" class="delete refresh reportSubmit" name="deleteReport" value="Delete Report">
-        </div>
+            </div>
+                                <!-- Button to Cancel action -->    
 
-        <!-- Button to Cancel action -->
-        <div>
+            <div class="formButton">
             <input type="button" id="cancelReport" class="cancel reportSubmit" name="cancelReport" value="Cancel">
+            </div>
         </div>
-
-
     </form>

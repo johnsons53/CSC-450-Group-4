@@ -590,13 +590,14 @@ include_once realpath("initialization.php");
             // Version from testing
             if ($studentCount == 0) {
               echo "<div class=\"tab\">";
-              echo "<a class='vNavButton tablinks' href='javascript:void(0)' id='defaultOpen' data-studentName=\"" . $studentName . "\" data-studentId='" . $studentId . "'><h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3></a>";
-
+              //echo "<a class=\"vNavButton tablinks\" href='javascript:void(0)' id='defaultOpen' data-studentName=\"" . $studentName . "\" data-studentId='" . $studentId . "'><h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3></a>";
+              echo "<h3 class=\"vNavButton tablinks\" id=\"defaultOpen\" data-studentName=\"" . $studentName . "\" data-studentId=\"" . $studentId . "\"><i class=\"fa fa-star\"></i> " . $studentName . "</h3>";
               //echo "<button class=\"tablinks vNavButton\" id=\"defaultOpen\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\">" . $studentName . "</button>";
               echo "</div>";
             } else {
               echo "<div class=\"tab\">";
-              echo "<a class='vNavButton tablinks' href='javascript:void(0)' data-studentName=\"" . $studentName . "\" data-studentId='" . $studentId . "'><h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3></a>";
+              //echo "<a class=\"vNavButton tablinks\" href='javascript:void(0)' data-studentName=\"" . $studentName . "\" data-studentId='" . $studentId . "'><h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3></a>";
+              echo "<h3 class=\"vNavButton tablinks\" data-studentName=\"" . $studentName . "\" data-studentId=\"" . $studentId . "\"><i class=\"fa fa-star\"></i> " . $studentName . "</h3>";
 
               //echo "<button class=\"tablinks vNavButton\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\" >" . $studentName . "</button>";
               echo "</div>";

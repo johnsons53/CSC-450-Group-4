@@ -5,6 +5,8 @@ objectiveForm.php - Provider Objective Form
       Author: Lisa Ahnell
       Date Written: 04/18/2022
       Revised: 04/25/2022: Removed testing code
+            04/26/2022 : Added table to display form elements neatly
+
 */
 include_once realpath("initialization.php");
 
@@ -87,7 +89,7 @@ $objectiveStatusErr = "";
 ?>
 
     <div id="providerObjectiveForm">
-    <form action="" method="post">
+    <form action="" method="post" class="providerForm">
         <!-- Hidden field with objectiveId: if accessed by "Edit Objective" button, send objectiveId value
         "New Objective" will leave this blank-->
         <div>
@@ -99,56 +101,89 @@ $objectiveStatusErr = "";
         </div>
 
         <!-- Text field for objectiveLabel -->
-        <div>
+        <div class="flex-formContainer">
+            <div class="formElement formLabel">
             <label for="objectiveLabel">Objective Label</label>
+            </div>
+            <div class="formElement">
             <input type="text" id="objectiveLabel" name="objectiveLabel" value="<?php echo $objectiveLabel; ?>">
-            <span class="error">* <?php echo $objectiveLabelErr;?></span>
+            </div>
+            <div>
+            <span class="error"><?php echo $objectiveLabelErr;?></span>
+            </div>
         </div>
+
         <!-- Text field for objectiveText -->
-        <div>
+        <div class="flex-formContainer">
+            <div class="formElement formLabel">
             <label for="objectiveText">Objective Desctiption</label>
+            </div>
+            <div class="formElement">
             <textarea id="objectiveText" name="objectiveText" rows="6" cols="40"><?php echo $objectiveText; ?></textarea>
-            <span class="error">* <?php echo $objectiveTextErr;?></span>
+            </div>
+            <div>
+            <span class="error"><?php echo $objectiveTextErr;?></span>
+            </div>
         </div>
 
         <!-- Number picker for objectiveAttempts -->
-        <div>
+        <div class="flex-formContainer">
+            <div class="formElement formLabel">
             <label for="objectiveAttempts">Objective Attempts</label>
-            <input type="number" id="objectiveAttempts" name="objectiveAttempts" value="<?php echo $objectiveAttempts; ?>">
-            <span class="error">* <?php echo $objectiveAttemptsErr;?></span>
+            </div>
+            <div class="formElement">
+            <input type="number" id="objectiveAttempts" name="objectiveAttempts" value="<?php echo $objectiveAttempts; ?>"> 
+            </div>
+            <div>
+            <span class="error"><?php echo $objectiveAttemptsErr;?></span>
+            </div>
         </div>
 
         <!-- Number picker for objectiveTarget -->
-        <div>
+        <div class="flex-formContainer">
+            <div class="formElement formLabel">
             <label for="objectiveTarget">Objective Target</label>
-            <input type="number" id="objectiveTarget" name="objectiveTarget" value="<?php echo $objectiveTarget; ?>">
-            <span class="error">* <?php echo $objectiveTargetErr;?></span>
+            </div>
+            <div class="formElement">
+            <input type="number" id="objectiveTarget" name="objectiveTarget" value="<?php echo $objectiveTarget; ?>"> 
+            </div>
+            <div>
+            <span class="error"><?php echo $objectiveTargetErr;?></span>
+            </div>
         </div>
 
         <!-- Radio buttons to set objectiveStatus -->
-        <div>
+        <div class="flex-formContainer">
+            <div class="formElement formLabel">
             <label for="objectiveStatus">Objective Status</label>
+            </div>
+            <div class="formElement">
             <label><input type="radio" name="objectiveStatus" 
-            <?php 
-            if($objectiveStatus === "") echo "checked";
-            if(isset($objectiveStatus) && $objectiveStatus == "0") echo "checked";
-            ?> 
-            value="0">Active</label>
+                <?php 
+                if($objectiveStatus === "") echo "checked";
+                if(isset($objectiveStatus) && $objectiveStatus == "0") echo "checked";
+                ?> 
+                value="0">Active</label>            
+            </div>
+            <div class="formElement">
             <label><input type="radio" name="objectiveStatus" 
-            <?php if(isset($objectiveStatus) && $objectiveStatus == "1") echo "checked";?>
-            value="1">Complete</label>
-            <span class="error">* <?php echo $objectiveStatusErr;?></span>
+                <?php if(isset($objectiveStatus) && $objectiveStatus == "1") echo "checked";?>
+                value="1">Complete</label>           
+            </div>
+            <div>
+            <span class="error"><?php echo $objectiveStatusErr;?></span>
+            </div>
         </div>
 
-         <!-- Button to Save Objective -->
-        <div>
+        <div class="flex-formContainer">
+            <div class="formButton">
             <input type="button" id="saveObjective" class="save refresh objectiveSubmit" name="saveObjective" value="Save Objective">
+            </div>
+            <div class="formButton">
+            <input type="button" id="cancelObjective" class="cancel objectiveSubmit" name="cancelObjective" value="Cancel"> 
+            </div>
         </div>
 
-        <!-- Button to Cancel Objective -->
-        <div>
-            <input type="button" id="cancelObjective" class="cancel objectiveSubmit" name="cancelObjective" value="Cancel">
-        </div>
 
         </form>
     </div>

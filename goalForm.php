@@ -5,6 +5,7 @@ goalForm.php - Provider Goal Form
       Author: Lisa Ahnell
       Date Written: 04/19/2022
       Revised: 04/25/2022 : Removed testing code
+      04/26/2022 : Added table to display form elements neatly
 */
 include_once realpath("initialization.php");
 
@@ -88,6 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div id="providerGoalForm">
         <?php echo "<form action=\"" . htmlspecialchars("iepDashboard.php") . "\" method=\"post\">"; ?>
         <h4>Goal Detail Form</h4>
+        <form action="" method="post" class="providerForm">
             <!-- Hidden field with goalId-->
             <div>
                 <input type="hidden" id="goalId<?php echo $studentId ?>" name="goalId" value="<?php echo $goalId;?>">
@@ -99,49 +101,78 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
             </div>
             <!-- Text field for goalLabel-->
-            <div>
+            <div class="flex-formContainer">
+                <div class="formElement formLabel">
                 <label for="goalLabel">Goal Label</label>
-                <input type="text" id="goalLabel<?php echo $studentId ?>" name="goalLabel" value="<?php echo $goalLabel;?>">
-                <span class="error">* <?php echo $goalLabelErr;?></span>
+                </div>
+                <div class="formElement">
+                <input type="text" id="goalLabel<?php echo $studentId ?>" name="goalLabel" value="<?php echo $goalLabel;?>"> 
+                </div>
+                <div>
+                <span class="error"><?php echo $goalLabelErr;?></span>
+                </div>
             </div>
+
             <!-- Text field for goalCategory-->
-            <div>
+            <div class="flex-formContainer">
+                <div class="formElement formLabel">
                 <label for="goalCategory--">Goal Category</label>
+                </div>
+                <div class="formElement">
                 <input type="text" id="goalCategory<?php echo $studentId ?>" name="goalCategory" value="<?php echo $goalCategory;?>">
-                <span class="error">* <?php echo $goalCategoryErr;?></span>
+                </div>
+                <div>
+                <span class="error"><?php echo $goalCategoryErr;?></span>
+                </div>
             </div>
+
             <!-- Text field for goalText-->
-            <div>
+            <div class="flex-formContainer">
+                <div class="formElement formLabel">
                 <label for="goalText">Goal Description</label>
+                </div>
+                <div class="formElement">
                 <textarea id="goalText<?php echo $studentId ?>" name="goalText" rows="6" cols="40"><?php echo $goalText; ?></textarea>
-                <span class="error">* <?php echo $goalTextErr;?></span>
+                </div>
+                <div>
+                <span class="error"><?php echo $goalTextErr;?></span>
+                </div>
             </div>
+        
             <!-- Radio buttons to set goalActive -->
-            <div>
+            <div class="flex-formContainer">
+                <div class="formElement formLabel">
                 <label for="goalActive">Goal Status</label>
+                </div>
+                <div class="formElement">
                 <label><input type="radio" name="goalActive" 
-                <?php 
-                if($goalActive === "") echo "checked";
-                if(isset($goalActive) && $goalActive == "0") echo "checked";
-                ?> 
-                value="0">Active</label>
+                        <?php 
+                        if($goalActive === "") echo "checked";
+                        if(isset($goalActive) && $goalActive == "0") echo "checked";
+                        ?> 
+                        value="0">Active</label>         
+                </div>
+                <div class="formElement">
                 <label><input type="radio" name="goalActive" 
-                <?php if(isset($goalActive) && $goalActive == "1") echo "checked";?>
-                value="1">Complete</label>
-                <span class="error">* <?php echo $goalActiveErr;?></span>
+                        <?php if(isset($goalActive) && $goalActive == "1") echo "checked";?>
+                        value="1">Complete</label>         
+                </div>
+                <div>
+                <span class="error"><?php echo $goalActiveErr;?></span>
+                </div>
             </div>
 
-            <!--Submit button to Save goal-->
-            <!-- Go back to provider dashboard and reload on submit? -->
-            <div>
+
+            <div class="flex-formContainer">
+                <!--Button to Save goal-->
+                <div class="formButton">
                 <input type="button" id="saveGoal<?php echo $studentId ?>" class="save goalSubmit" name="saveGoal" value="Save Goal">
-            </div>
-                    <!-- Button to Cancel Objective -->
-            <div>
+                </div>
+                <!-- Button to Cancel Objective -->
+                <div class="formButton">
                 <input type="button" id="cancelGoal<?php echo $studentId ?>" class="cancel goalSubmit" name="cancelGoal" value="Cancel">
+                </div>
             </div>
-
-
 
         </form>
     </div>
