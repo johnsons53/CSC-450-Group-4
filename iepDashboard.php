@@ -12,6 +12,7 @@ Revised: 04/13/2022 Modified provider forms and buttons to appear on dashboard p
 Revised: 04/17/2022 Adjustments to data flow from iepLogin to SESSION to dashboard to fix
 issue updating data after changes to database; Cleanup of old code and testing code
 Revised: 04/22/2022 Added handling for Admin user
+Revised: 04/27/2022 : Adjusted form data validation
 
 */
 include_once realpath("initialization.php");
@@ -20,28 +21,25 @@ include_once realpath("initialization.php");
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>IEP Portal: Dashboard</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="iepDetailView.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-    <!-- <script> document.getElementById("defaultOpen").click(); </script> -->
     <script>
-      //Run when student tab link is clicked
+      //jQuery for user Dashboards
 
       $(document).ready(function() {
 
         $(".tablinks").click(function() {
-          // Declare all variables
-          //var i, tablinks;
-
           // Get all elements with class="tablinks" and remove the class "active"
           $('.tablinks').removeClass('active');
           // Add class "active" to the clicked tablink
           $(this).addClass("active");
-
+          // Load mainContent.php into center of page
           $(".tabcontent").load("mainContent.php", {
               activeStudentId: $(this).attr("data-studentId"),
               activeStudentName: $(this).attr("data-studentName")
@@ -68,7 +66,7 @@ include_once realpath("initialization.php");
         //Identify the defaultOpen element
         $("#defaultOpen").click();
 
-        // Handle detail view toggle with jQuery?
+        // Detail View toggle
         $(document).on("click", ".detailViewButton", function() {
           // detail view button needs to contain the id of its associated detail view div
           var detailDivId = $(this).attr("data-detailDivId");
@@ -97,15 +95,36 @@ include_once realpath("initialization.php");
           });
         });
 
+        // Load Messages page for currentUser
+        $(document).on("click", "#userMessagesLink", function() {
+          // Load iepSettings content into accountContent div with user info
+          $("#mainContent").load("iepMessage.html");
+        });
+
         // Load Settings page for selected user when selected by admin
         $(document).on("change", "#accountSelect", function() {
           var selectedUserId = $(this).find(":selected").val();
-          alert(selectedUserId);
           // Load admin content into accountContent div
-          $("#accountContent").load("iepSettings.php", {
+          $("#mainContent").load("iepSettings.php", {
             "selectedUserId": selectedUserId
           });
         });
+
+        // Load Settings content for currentUser when userSettingsLink clicked
+        // User data accessed from SESSION variables
+        $(document).on("click", "#userSettingsLink", function() {
+          // Load iepSettings content into accountContent div with user info
+          $("#mainContent").load("iepSettings.php");
+        });
+
+        // Open Documents Page in main content when Documents button clicked
+        // Active Student data accessed from SESSION
+        $(document).on("click", "#documentLink", function() {
+          // Load iepSettings content into accountContent div with user info
+          $("#mainContent").load("iepDocument.php");
+        });
+
+        // Include function to reload click activeStudent tab when naviagting away from Documents, User Settings or Messages content
 
         // Open Goal Form on page to modify existing goal with button click
         $(document).on("click", ".modifyGoalFormButton", function() {
@@ -150,8 +169,10 @@ include_once realpath("initialization.php");
             // New Goal, load into newGoalForm div
             // if save, send data to goalFormResponse
             if ($(this).attr("name") == "saveGoal") {
-              
-              $("#newGoalForm"+ studentId).load("goalFormResponse.php", {
+              // Check for goal data
+              if (goalLabel && goalCategory && goalText && goalActive) {
+                // Send to form response page
+                $("#newGoalForm"+ studentId).load("goalFormResponse.php", {
                 "saveGoal" : $("#saveGoal" + studentId).val(),
                 "studentId" : studentId,
                 "goalId" : goalId,
@@ -166,6 +187,11 @@ include_once realpath("initialization.php");
                 alert("Goal Saved");
             
               });
+
+              } else {
+                alert("Please enter goal data to save");
+              }
+
 
             }
             
@@ -183,7 +209,10 @@ include_once realpath("initialization.php");
             // modified goal, load into modifyGoalForm div
             // if save, send data to goalFormResponse
             if ($(this).attr("name") == "saveGoal") {
-              $("#modifyGoalForm"+ goalId).load("goalFormResponse.php", {
+              // Check for goal data
+              if (goalLabel && goalCategory && goalText && goalActive) {
+                // Send to form response page
+                $("#modifyGoalForm"+ goalId).load("goalFormResponse.php", {
                 "saveGoal" : $("#saveGoal" + studentId).val(),
                 "studentId" : studentId,
                 "goalId" : goalId,
@@ -191,13 +220,17 @@ include_once realpath("initialization.php");
                 "goalCategory" : goalCategory,
                 "goalText" : goalText,
                 "goalActive" : goalActive
-              }, function() {
-                alert("Goal Saved");
-                // Load mainContent with activeStudent data
-                $(".tablinks.active").click();
-                
-            
-              });
+                }, function() {
+                  alert("Goal Saved");
+                  // Load mainContent with activeStudent data
+                  $(".tablinks.active").click();
+                  
+              
+                });
+              } else {
+                alert("Please enter goal data to save");
+              }
+
 
             }
             
@@ -273,7 +306,10 @@ include_once realpath("initialization.php");
             // New Objective, load into newObjectiveForm div
             // if save, send data to objectiveFormResponse
             if ($(this).attr("name") == "saveObjective") {
-              $("#newObjectiveForm"+ goalId).load("objectiveFormResponse.php", {
+              // Check for data to save
+              if (objectiveLabel && objectiveText && objectiveAttempts && objectiveTarget && objectiveStatus) {
+                // Send to form response page
+                $("#newObjectiveForm"+ goalId).load("objectiveFormResponse.php", {
                 "saveObjective" : $("#saveObjective").val(),
                 "objectiveId" : objectiveId,
                 "goalId" : goalId,
@@ -288,6 +324,10 @@ include_once realpath("initialization.php");
                 $(".tablinks.active").click();
             
               });
+              } else {
+                alert ("Please enter objective data to save");
+              }
+
 
             }
             
@@ -305,7 +345,10 @@ include_once realpath("initialization.php");
             // modified objective, load into modifyObjectiveForm div
             // if save, send data to objectiveFormResponse
             if ($(this).attr("name") == "saveObjective") {
-              $("#modifyObjectiveForm"+ objectiveId).load("objectiveFormResponse.php", {
+              // Check for data to save
+              if (objectiveLabel && objectiveText && objectiveAttempts && objectiveTarget && objectiveStatus) {
+                // send to form response page
+                $("#modifyObjectiveForm"+ objectiveId).load("objectiveFormResponse.php", {
                 "saveObjective" : $("#saveObjective").val(),
                 "objectiveId" : objectiveId,
                 "goalId" : goalId,
@@ -320,6 +363,11 @@ include_once realpath("initialization.php");
                 $(".tablinks.active").click();
             
               });
+              } else {
+                alert ("Please enter objective data to save");
+
+              }
+
 
             }
             
@@ -382,31 +430,47 @@ include_once realpath("initialization.php");
           var reportId = $("#reportId").val();
 
           if ($(this).attr("name") == "saveReport") {
-            $("#reportForm"+ objectiveId).load("reportFormResponse.php", {
-            "saveReport" : $("#saveReport").val(),
-            "objectiveId" : objectiveId,
-            "reportObserved" : reportObserved,
-            "reportDate" : reportDate,
-            "reportId" : reportId
-          }, function() {
-            alert("Report Saved");
-            // Load mainContent with activeStudent data
-            $(".tablinks.active").click();
-        
-          });
+            // Check for blank values, back to form if nothing to save
+            if (reportDate && reportObserved) {
+              // Variables contain values, proceed to response page
+              $("#reportForm"+ objectiveId).load("reportFormResponse.php", {
+              "saveReport" : $("#saveReport").val(),
+              "objectiveId" : objectiveId,
+              "reportObserved" : reportObserved,
+              "reportDate" : reportDate,
+              "reportId" : reportId
+              }, function() {
+                alert("Report Saved");
+                // Load mainContent with activeStudent data
+                $(".tablinks.active").click();
+            
+              });
+
+            } else {
+              // Variables are not truthy, ask for data input
+              alert("Please enter report data to save");
+
+            }
 
           }
 
           if ($(this).attr("name") == "deleteReport") {
             // Load reportFormResponse with report data to delete
-            $("#reportForm"+ objectiveId).load("reportFormResponse.php", {
-            "deleteReport" : $("#deleteReport").val(),
-            "reportId" : reportId
-            }, function() {
-              alert("Report Deleted " + $(".tablinks.active").length);
-              // Load mainContent with activeStudent data
-              $(".tablinks.active").click();
-            });
+            // Check for reportId to delete
+            if (reportId) {
+              $("#reportForm"+ objectiveId).load("reportFormResponse.php", {
+              "deleteReport" : $("#deleteReport").val(),
+              "reportId" : reportId
+              }, function() {
+                alert("Report Deleted");
+                // Load mainContent with activeStudent data
+                $(".tablinks.active").click();
+              });
+            } else {
+              alert("No report selected to delete");
+
+            }
+
           }
 
           if ($(this).attr("name") == "cancelReport") {
@@ -506,33 +570,7 @@ include_once realpath("initialization.php");
       // User is an admin
 
     }
-    /*
-    // Set students array depending on type of user
-    if (strcmp($currentUserType, "provider") === 0) {
-      $students = $currentUser->get_provider_students();
 
-    } elseif (strcmp($currentUserType, "user") === 0) {
-
-      $students = $currentUser->get_guardian_students();
-     
-    } elseif (strcmp($currentUserType, "student") === 0) {
-      // Student User--only one value for students, same as current user
-      $students[] = $currentUser;
-    } else {
-      echo "incompatible user type";
-      echo "<br />";
-
-    }
-
-    // Default active student value:
-    $activeStudent = $students[0];
-    $activeStudentId = $activeStudent->get_student_id();
-    $activeStudentName = $activeStudent->get_full_name();
-
-
-    // Save activeStudentId to SESSION
-    $_SESSION["activeStudentId"] = $activeStudentId;
-  */
   ?>
     <!-- Page is encompassed in grid -->
     <div class="gridContainer">
@@ -541,13 +579,18 @@ include_once realpath("initialization.php");
         <h1>IEP Portal</h1>
         <div id="accountHolderInfo">
           <!-- Username, messages button, and account settings button here -->
-          <h2>Welcome: <?php echo $currentUserName; ?></h2>
+          
+          <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
+          <!-- Add Logout button here -->
         </div>
         <div id="horizontalNav">
+          <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
+          <a class="hNavButton" id="userMessagesLink" href="javascript:void(0)"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
+          <a class="hNavButton" id="userSettingsLink" href="javascript:void(0)"><h3><i class="fa fa-gear"></i> Settings</h3></a>
+          <a class="hNavButton" id="userLogout" href="#"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
 
-          <a class="hNavButton" href=""><h3>Messages</h3></a>
-          <a class="hNavButton" href=""><h3>Settings</h3></a>
         </div>
+
       </header>
 
       <!-- Vertical navigation bar -->
@@ -557,7 +600,7 @@ include_once realpath("initialization.php");
         <?php
         // For Admin User, this section to contain select input with each available user account
         if (strcmp($currentUserType, "admin") === 0) {
-          echo "<h3>Available Accounts</h3>";
+          echo "<h3><i class=\"fa fa-users\"></i> Available Accounts</h3>";
 
           // function returning Lastname, Firstname and user_id of each user from db
           $accounts = getUserList($conn);
@@ -572,13 +615,13 @@ include_once realpath("initialization.php");
             echo "<select name=\"accountSelect\" class=\"accountSelect\" id=\"accountSelect\">";
               // Options for accountSelect
               foreach($accounts as $a => $a_value) {
-                  echo "<option class=\"accountOption\" value=\"" . $a . "\">" . $a_value . "</option>";
+                  echo "<option class=\"accountOption vNavButton\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
               }
             echo "</select>"; // end of select
           } // end of if accounts set and has values  
         } else {
           // For other users, this section to contain tab links to available student data
-          echo "<h3>Your Student Accounts</h3>";
+          echo "<h3><i class=\"fa fa-users\"></i> Your Student Accounts</h3>";
           // Toggle between different students for this user
           $studentCount = 0;
           foreach ($students as $value) {
@@ -588,16 +631,15 @@ include_once realpath("initialization.php");
 
             // Version from testing
             if ($studentCount == 0) {
-              echo "<div class=\"tab\">";
-              //echo "<a class='vNavButton, tablinks' href='' id='defaultOpen' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
-
-              echo "<button class=\"tablinks vNavButton\" id=\"defaultOpen\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\">" . $studentName . "</button>";
+              echo "<div class=\"tab vNavButton tablinks\" id=\"defaultOpen\" data-studentName=\"" . $studentName . "\" data-studentId=\"" . $studentId . "\">";
+              //echo "<a class=\"vNavButton tablinks\" href='javascript:void(0)' id='defaultOpen' data-studentName=\"" . $studentName . "\" data-studentId='" . $studentId . "'><h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3></a>";
+              echo "<h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3>";
               echo "</div>";
             } else {
-              echo "<div class=\"tab\">";
-              //echo "<a class='vNavButton, tablinks' href='' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
+              echo "<div class=\"tab vNavButton tablinks\" data-studentName=\"" . $studentName . "\" data-studentId=\"" . $studentId . "\">";
+              //echo "<a class=\"vNavButton tablinks\" href='javascript:void(0)' data-studentName=\"" . $studentName . "\" data-studentId='" . $studentId . "'><h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3></a>";
+              echo "<h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3>";
 
-              echo "<button class=\"tablinks vNavButton\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\" >" . $studentName . "</button>";
               echo "</div>";
             }
           
@@ -608,40 +650,13 @@ include_once realpath("initialization.php");
 
 
         } // end of if user is of type admin
-
-/*
-        // Toggle between different students for this user
-        $studentCount = 0;
-        foreach ($students as $value) {
-          $studentName = $value->get_full_name();
-          // Needs to be the userId of the chosen student
-          $studentId = $value->get_student_id();
-
-          // Version from testing
-          if ($studentCount == 0) {
-            echo "<div class=\"tab\">";
-            //echo "<a class='vNavButton, tablinks' href='' id='defaultOpen' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
-
-            echo "<button class=\"tablinks vNavButton\" id=\"defaultOpen\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\">" . $studentName . "</button>";
-            echo "</div>";
-          } else {
-            echo "<div class=\"tab\">";
-            //echo "<a class='vNavButton, tablinks' href='' onclick='openTab(event, \"" . $studentName . "\");' data-studentName=\"" . $studentName . "\" data-student_id='" . $studentId . "'><h3>" . $studentName . "</h3></a>";
-
-            echo "<button class=\"tablinks vNavButton\" data-studentId=\"" . $studentId . "\" data-studentName=\"" . $studentName . "\" >" . $studentName . "</button>";
-            echo "</div>";
-        }
-        
-
-        $studentCount++;
-          
-      }
-  */       
+       
       ?>
 
       </div>
+
       <!-- Account content area -->
-      <div class="middle mainContent accountContent" id="accountContent"></div>
+      <div class="middle accountContent" id="accountContent" display="block"></div>
 
       <!-- Main content of page -->
       <div class="middle mainContent tabcontent" id="mainContent"></div>

@@ -6,6 +6,7 @@ reportForm.php - Provider Report Form
       Date Written: 04/10/2022
       Revised: 04/17/2022 Modified use of SESSION data;
       cleanup of unnecessary testing code
+      04/27/2022 : Adjusted form data validation
 */
 include_once realpath("initialization.php");
 
@@ -30,28 +31,9 @@ if(array_key_exists("selectedDate", $_POST)) {
     $reportDate = "";
 }
 
-// error variables for incomplete or unacceptable data
-$report_date_err =
-$report_observed_err = "";
-
-// test_input if the form has been submitted
-if($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (empty($_POST["reportDate"])) {
-        $report_date_err = "Report Date is required";
-    } else {
-        $reportDate = test_input($_POST["reportDate"]);
-    }
-
-    if (empty($_POST["reportObserved"])) {
-        $report_observed_err = "Report Observed is required";
-    } else {
-        $reportObserved = test_input($_POST["reportObserved"]);
-    }
-}
-
 
 ?>
-    <form action="" method="post">
+    <form action="" method="post" class="providerForm">
         
         <!-- Hidden field with reportId-->
         <div>
@@ -61,37 +43,49 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         <div>
             <input type="hidden" id="objectiveId" name="objectiveId" value="<?php echo $objectiveId; ?>">
         </div>
+        <div class="flex-formContainer">
+            <div>
+                <h4>Please fill in all fields</h4>       
+            </div>
+        </div>
                     
         <!-- Date field for reportDate 
                 Set default value to current date with JavaScript-->
-        <div>
-            <label for="reportDate">Report Date</label>
-            <input type="date"id="reportDate" name="reportDate" value="<?php echo $reportDate; ?>"> 
-            <span class="error">* <?php echo $report_date_err;?></span>       
+
+        <div class="flex-formContainer">
+            <div class="formElement formLabel">
+                <label for="reportDate">Report Date</label>
+            </div>
+            <div class="formElement">
+                <input type="date"id="reportDate" name="reportDate" value="<?php echo $reportDate; ?>"> 
+            </div>
         </div>
 
         <!-- Number picker for reportObserved -->
-        <div>
+        <div class="flex-formContainer">
+            <div class="formElement formLabel">
             <label for="reportObserved">Observed</label>
-            <input type="number" id="reportObserved" name="reportObserved" value="<?php echo $reportObserved; ?>">
-            <span class="error">* <?php echo $report_observed_err;?></span> 
+            </div>
+            <div class="formElement">
+            <input type="number" min="0" id="reportObserved" name="reportObserved" value="<?php echo $reportObserved; ?>">
+            </div>
         </div>
 
-        <!-- Button to Save report -->
-        <div>
+        <div class="flex-formContainer">
+                                <!-- Button to Save report -->
+
+            <div class="formButton">
             <input type="button" id="saveReport" class="save refresh reportSubmit" name="saveReport" value="Save Report">
-        </div>
+            </div>
+                                <!-- Button to Delete report -->
 
-
-        <!-- Button to Delete report -->
-        <div>
+            <div class="formButton">
             <input type="button" id="deleteReport" class="delete refresh reportSubmit" name="deleteReport" value="Delete Report">
-        </div>
+            </div>
+                                <!-- Button to Cancel action -->    
 
-        <!-- Button to Cancel action -->
-        <div>
+            <div class="formButton">
             <input type="button" id="cancelReport" class="cancel reportSubmit" name="cancelReport" value="Cancel">
+            </div>
         </div>
-
-
     </form>

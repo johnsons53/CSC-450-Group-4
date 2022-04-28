@@ -4,11 +4,17 @@
   Written: 02/11/2022
   Revised: 
   02/21/2022 by Lisa Ahnell : added .navigation for navigation links
+  04/25/2022 by Lisa Ahnell : Color changes, updates to dashboard
+  04/26/2022 by Lisa Ahnell : Added styling for provider forms, Dashboard color adjustments
   */
 
 
 
 /* ********** Page settings ********** */
+* {
+  box-sizing: border-box;
+}
+
 body {
   color: black;
   font-family: 'Segoe UI', Tahoma, 'Geneva', Verdana, sans-serif;
@@ -57,7 +63,10 @@ h2 {
 
 h3 {
   margin: 0em;
-  padding: 0.5em;
+  padding-left: 0em;
+  padding-right:0.5em;
+  padding-top:0.3em;
+  padding-bottom: 0.3em;
 }
 
 h4 {
@@ -74,7 +83,8 @@ h4 {
 }
 
 header {
-  background-color: #d8fdf4;
+  background-color: rgba(29, 78, 137, 1);
+  color: #ffffff;
   display: grid;
   grid-template-areas: 
     'header-left header-left header-mid header-mid header-right header-right'
@@ -86,47 +96,88 @@ header {
 
 /* ********** Horizontal navigation settings ********** */
 #horizontalNav {
-  display: flex;
-  flex-flow: row wrap;
+  /*display: flex;
+  flex-flow: row wrap;*/
   grid-area: header-bottom;
   justify-content: space-around;
+  width: 100%;
+  overflow: auto;
 }
 
 .hNavButton {
-  background-color: #d8fdf4;
+  background-color: rgba(29, 78, 137, 1);
+  color: #ffffff;
   min-width: 16.66%;
+  float: left;
+  text-align: center;
+  padding: 1em;
+  font-size: medium;
 }
 
 .hNavButton:hover {
-  background-color: #ebfffa; 
+  background-color: rgba(251, 209, 162, 1);
+  color: #212121;
 }
 
 .hNavButton:active {
-  background-color: #c2f0e4;
+  background-color: rgba(251, 209, 162, 1);
+  color: #212121;
+}
+
+@media screen and (max-width: 500px) {
+  .hNavButton {
+    float: none;
+    display: block;
+  }
 }
 
 
 /* ********** Left side settings ********** */
 #verticalNav {
-  background-color: #fff9e9;
+  background-color: rgba(125, 207, 182, 1);
   display: flex;
   flex-flow: column wrap;
   grid-area: left;
   padding: 0em;
+
 }
 
 .vNavButton {
-  background-color: #fff9e9;
+  background-color: inherit;
   text-align: left;
 }
 
-.vNavButton:hover {
-  background-color: #fffdf6;
+/* ********** Vertical Navigation Tab settings ********** */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
 }
 
-.vNavButton:active {
-  background-color: #fcf3d9;
+/* Style the buttons that are used to open the tab content */
+ .tab {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
 }
+
+/* Change background color of buttons on hover */
+ .tab:hover {
+  background-color: #e1f4ee;
+  font-weight: bolder;
+  font-style: oblique;
+} 
+
+/* Create an active/current tablink class */
+ .tab.active {
+  background-color: #e1f4ee;
+  font-weight: bolder;
+  font-variant-caps: small-caps;
+} 
 
 
 /* ********** Middle area settings ********** */
@@ -135,7 +186,9 @@ header {
   flex-flow: column wrap;
   grid-area: middle;
   justify-content: space-around;
-  padding: 0.3em;
+  padding: 0.5em;
+  
+  background-color: #e1f4ee;
 }
 
 #mainContent {
@@ -147,11 +200,99 @@ header {
 }
 
 .contentCard {
-  border: solid black 1px;
+  border: solid black 2px;
   border-radius: 5px;
-  margin: 0.2em;
-  padding: 0.4em;
+  margin: 0.3em;
+  padding: 1em;
+  background-color: #ffffff;
 }
+
+.contentCard.goal {
+  border-color: rgba(29, 78, 137, 1);
+  background-color: #eef4fb;
+}
+.contentCard.objective {
+  border-color: #613305;
+  background-color: #f6f3f1;
+
+}
+.contentCard.graphView {
+  width: 90%;
+  min-width: 400px;
+  border-color: rgba(247, 146, 86, 1);
+  background-color: #ffffff;
+}
+
+
+/* ********** Form, button, input settings ********** */
+.flex-formContainer {
+  min-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content:flex-start;
+  align-items: baseline;
+  align-content: stretch;
+}
+
+.flex-formContainer>div {
+  min-width: 12em;
+  padding-right: 0.2em;
+  padding-bottom: 0.2em;
+}
+/* Responsive layout for forms */
+@media (max-width: 800px) {
+  .flex-formContainer {
+    flex-direction: column;
+  }
+}
+
+form.providerForm {
+  margin: 0.2em;
+  padding: 0.2em;
+  border: solid rgba(0, 178, 202, 1) 2px;
+  border-radius: 5px;
+}
+
+label {
+  width: 10em;
+  padding: 0.5em;
+}
+
+input {
+  width : 14em;
+}
+
+input[type=button], input[type=submit] {
+  margin : 0.2em;
+  padding : 1em 2em;
+  border: none;
+  border-radius: 0%;
+  background-color: rgba(29, 78, 137, 1);
+  color : #ffffff;
+  font-size: medium;
+}
+
+input[type=button]:hover, input[type=submit]:hover {
+  font-weight: bold;
+  background-color: rgba(0, 178, 202, 1);
+  color : #ffffff;
+}
+
+#documentLink {
+  border: none;
+  border-radius: 0%;
+  background-color: rgba(29, 78, 137, 1);
+  color : #ffffff;
+}
+
+#documentLink:hover {
+  border: none;
+  border-radius: 0%;
+  background-color: rgba(0, 178, 202, 1);
+  color : #ffffff;
+}
+
 
 /* ********** Message settings ********** */
 #messageContent {
@@ -184,42 +325,6 @@ header {
 @media (max-width: 600px) {
   #horizontalNav {
     flex-flow: column wrap;
-    justify-content: center;
+    justify-content: left;
   }
 }
-
-/* ********** Vertical Navigation Tab settings ********** */
-.tab {
-  overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
-}
-
-/* Style the buttons that are used to open the tab content */
- .tab button {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
-}
-
-/* Change background color of buttons on hover */
- .tab button:hover {
-  background-color: #ddd;
-} 
-
-/* Create an active/current tablink class */
- .tab button.active {
-  background-color: #ccc;
-} 
-
-/* Style the tab content */
- .tabcontent {
-  display: none;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-top: none;
-}  

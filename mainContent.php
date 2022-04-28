@@ -61,14 +61,8 @@ include_once realpath("initialization.php");
 
     // Student Name
     echo "<div class='currentStudentName'>";
-    echo "<h3>" . $activeStudentName . "</h3>";
+      echo "<h3><i class=\"fa fa-star\"></i> " . $activeStudentName . "</h3>";
     echo "</div>"; // end of student name div
-
-    // Calendar
-    echo "<div class='calendar contentCard'>";
-      echo "<h3>Calendar</h3>";
-
-    echo "</div>"; // end of Calendar div
 
     // Schedule
     echo "<div class='schedule contentCard'>";
@@ -83,15 +77,8 @@ include_once realpath("initialization.php");
     echo "</div>"; // end of Schedule div
 
     // Documents Page Link
-    echo "<div class='documents contentCard'>";
+    echo "<div class='documents contentCard' name=\"documentDiv\" id=\"documentLink\">";
       echo "<h3>Documents</h3>";
-      /* DOCUMENTS page button */
-      echo "<form action=\"iepDocument.php\" method=\"post\">";
-      echo "<input type=\"hidden\" id=\"DstudentId\" name=\"activeStudentId\" value=\"" . $activeStudentId . "\">";
-      echo "<input type=\"hidden\" id=\"DstudentName\" name=\"activeStudentName\" value=\"" . $activeStudentName . "\">";
-      echo "<input type=\"submit\" name=\"documents\" value=\"Documents\">";
-      echo "</form>";
-
     echo "</div>"; // end of Documents div
 
     // Goals
@@ -127,14 +114,15 @@ include_once realpath("initialization.php");
 
         $objectives = $g->get_objectives();
         // Display Content for each Goal
-        echo "<div class='contentCard'>";
-          echo "<h4>Goal:" . $g->get_goal_label() . "</h4>";
-          echo "<p>Goal Description: " . $g->get_goal_text() . "</p>";
+        echo "<div class='contentCard goal'>";
+          echo "<h3>Goal: " . $g->get_goal_label() . "</h3>";
+          echo "<h4>Description: </h4>";
+          echo "<p>" . $g->get_goal_text() . "</p>";
 
           // Provider Modify and Delete Goal Buttons and form
           if (strcmp($currentUserType, "provider") === 0) {
 
-            echo "<div class=\"goalChanges\">";
+            echo "<div class=\"goalChanges providerForm\">";
             // Modify current objective--load goalForm.php below with activeStudentId, goalId, goalLabel, goalCategory
             // goalText, goalActive
             echo "<input type=\"button\" id=\"modifyGoal" . $goalId . "\" " . 
@@ -150,7 +138,7 @@ include_once realpath("initialization.php");
                 " class=\"deleteGoalButton\" name=\"deleteGoal\" value=\"Delete Goal\">";
 
             // Div for modify objective form
-            echo "<div class=\"modifyGoalForm\" id=\"modifyGoalForm" . $goalId . "\" display=\"block\">";
+            echo "<div class=\"modifyGoalForm providerForm\" id=\"modifyGoalForm" . $goalId . "\" display=\"block\">";
 
             echo "</div>";
 
@@ -164,7 +152,7 @@ include_once realpath("initialization.php");
               "class=\"newObjectiveFormButton\" name=\"newObjective\" value=\"New Objective\">";
 
             // Div for new ojbective form
-            echo "<div class=\"newObjectiveForm\" id=\"newObjectiveForm" . $goalId . "\" display=\"block\">";
+            echo "<div class=\"newObjectiveForm providerForm\" id=\"newObjectiveForm" . $goalId . "\" display=\"block\">";
 
             echo "</div>";
 
@@ -183,12 +171,12 @@ include_once realpath("initialization.php");
             $objectiveStatus = $o->get_objective_status();
 
             $reports = $o->get_reports();
-            echo "<div class='contentCard'>";
-            echo "<h5>Objective: " . $objectiveLabel . "</h5>";
+            echo "<div class='contentCard objective'>";
+            echo "<h3>Objective: " . $objectiveLabel . "</h3>";
 
             /* PROVIDER OBJECTIVE BUTTONS */
             if (strcmp($currentUserType, "provider") === 0) {
-              echo "<div class=\"objectiveChanges\">";
+              echo "<div class=\"objectiveChanges providerFrom\">";
                 // Modify current objective--load objectiveForm.php below with objectiveId, goalId, objectiveLabel, objectiveText
                 // objectiveAttempts, objectiveTarget, objectiveStatus
                 echo "<input type=\"button\" id=\"modifyObjective" . $objectiveId . "\" " . 
@@ -205,7 +193,7 @@ include_once realpath("initialization.php");
                     " class=\"deleteObjectiveButton\" name=\"deleteObjective\" value=\"Delete Objective\">";
 
                 // Div for modify objective form
-                echo "<div class=\"modifyObjectiveForm\" id=\"modifyObjectiveForm" . $objectiveId . "\" display=\"block\">";
+                echo "<div class=\"modifyObjectiveForm providerForm\" id=\"modifyObjectiveForm" . $objectiveId . "\" display=\"block\">";
 
                 echo "</div>";
 
@@ -225,7 +213,7 @@ include_once realpath("initialization.php");
                 echo "<input type=\"submit\" data-objectiveid=\"" . $objectiveId . "\" data-reportDate=\"\" data-reportId=\"\" data-reportObserved=\"\" id=\"addReport" . $objectiveId . "\" class=\"reportFormButton\" name=\"addReport\" value=\"New Report\">";
                     
                 // Div for Report Form, do not display unless Report buttons clicked
-                echo "<div class=\"reportForm\" id=\"reportForm" . $objectiveId . "\" display=\"block\">";
+                echo "<div class=\"reportForm providerForm\" id=\"reportForm" . $objectiveId . "\" display=\"block\">";
 
                 echo "</div>"; // end of Report Form Div
 
@@ -256,17 +244,6 @@ include_once realpath("initialization.php");
                   // Modify selected report button
                   // Open form with values of selected report
                   echo "<input type=\"submit\" data-objectiveid=\"" . $objectiveId . "\"id=\"modifyReport" . $objectiveId . "\" class=\"reportFormButton\" name=\"modifyReport\" value=\"Modify Selected Report\">";
-  
-                  // Add new report button
-                  // Open form with only objectiveId value
-                  //echo "<input type=\"submit\" data-objectiveid=\"" . $objectiveId . "\" data-reportDate=\"\" data-reportId=\"\" data-reportObserved=\"\" id=\"addReport" . $objectiveId . "\" class=\"reportFormButton\" name=\"addReport\" value=\"New Report\">";
-  
-                
-  
-                  // Div for Report Form, do not display unless Report buttons clicked
-                  //echo "<div class=\"reportForm\" id=\"reportForm" . $objectiveId . "\" display=\"block\">";
-  
-                  //echo "</div>"; // end of Report Form Div
   
                   echo "</div>";
   
