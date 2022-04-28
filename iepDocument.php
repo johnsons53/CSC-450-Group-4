@@ -66,15 +66,92 @@ try {
       
       // Select database
       $conn->select_db(DATABASE_NAME);
+
+      // Determine first-time or returning user
+      if(array_key_exists('hidSubmitFlag', $_POST)) {
+        echo  "<h3>Button selected</h3>"; //////////////////////////////// DEBUGGING FLAG: REMOVE IN FINAL PRODUCT
+    
+        // check for user selection
+        $submitFlag = $_POST['hidSubmitFlag'];
+    
+        // Choose an action based on user form submission
+        switch($submitFlag) {
+          case "00": 
+              addDocument( );
+              break;
+          case "99": 
+              deleteDocument( );
+              break;
+        }
+      }
+
+      /** addDocument( ) - add document to database */
+      function addDocument( ) {
+        global $conn;
+
+        // TODO: update student and user id to pull from page info
+        $addStudentID = 0;
+        $addUserId = 0;
+        $docName = $_POST['addFile'];
+        // TODO: update file path with path for server
+        $path = "http://localhost/capstoneCurrent/documents/";
+        
+        echo "<h4>" . $docName . "</h4>"; ///////////////////////////// DEBUGGING FLAG
+        
+        $newDocument = array($addStudentID, $addUserId, $docName, $path);
+        $sql = "INSERT INTO document (student_id, user_id, document_date, document_name, document_path) "
+          . "VALUES ('" . $newDocument[0] . "', '"
+          . $newDocument[1] . "', '"
+          . "1000-01-01 00:00:00" . "', '"
+          . $newDocument[2] . "', '"
+          . $newDocument[3] . "')";
+        runQuery($sql, "New document insert: $docName", true);
+      }
+
+      /** deleteDocument( ) - delete document from database and server */
+      function deleteDocument( ) {
+        global $conn;
+        
+        // Save form input (document id) as array
+        $deleteDoc = array($_POST['lstRemoveFile']);
+
+        // TODO: delete file from server as well as database
+
+        // Delete delete document row from database
+        $sql = "DELETE FROM document WHERE " . $deleteDoc[0] . "=document.document_id";
+        
+        // TODO: change true to false below (don't show debugging)
+        runQuery($sql, "Delete document: " . $deleteDoc[0], true);
+      }
+
+      /** runQuery($sql, $msg, $success) - execute sql query, display message on failure/success
+       * $sql - string to execute
+       * $msg - text to display in success/failure message
+       * $success - if true, display message, else do not display message */
+      function runQuery($sql, $msg, $success) {
+        global $conn;
+         
+        // run the query
+        if ($conn->query($sql) === TRUE) {
+           if($success) {
+              echo "<h4>" . $msg . " successful.</h4>";
+           }
+        } else {
+           echo "<h4>Error when: " . $msg . " using SQL: " . $sql . " " . $conn->error . "</h4>";
+        }   
+     } // end of runQuery( )
       
-      // Close database 
+      /* **  Close database ** */
       function close_db( ) {
         global $conn;
         $conn->close();
       }
 
+
+
       /* ********************************
        * displayDocumentList( ) - display list of all docments in db
+       * $displayAsLink - display documents as either plain text or as links
        * TODO: modify to only display documents relevant to user
        * ******************************** */
       function displayDocumentList( ) {
@@ -87,11 +164,11 @@ try {
           echo "<ul>";
           // Display first row document information
           $heading = $result->fetch_assoc( );
-          displayDocumentName($heading);
+          displayDocumentLink($heading);
   
-          // Display the rest of the dpcuments
+          // Display the rest of the documents
           while($row = $result->fetch_assoc( )) {
-              displayDocumentName($row); 
+            displayDocumentLink($row);
           } // end while( )
           // End list
           echo "</ul>";
@@ -99,33 +176,46 @@ try {
       }
 
       /* ********************************
-          * displayDocumentButton($heading) - display a document & its info 
-          * $row - db row containing document info
-          * called by displayDocuments( )
-          * ******************************** */
-          function displayDocumentName($heading) {
-            global $conn; 
-        
-            // Display document info in list format
-            echo "<li><a href='" . $heading['document_path'] . $heading['document_name'] . "' target='_blank'>" . $heading['document_name'] . "</a></li>";
-        }
+       * displayDocumentInput( ) - display all documents as input options
+       * TODO: modify to only display documents relevant to user
+       * ******************************** */
+      function displayDocumentInput( ) {
+        global $conn;
+
+        $sql = "SELECT * FROM document";
+        $result = $conn->query($sql);
+        if ($result->num_rows > 0) {
+          
+          // Display first row document information
+          $heading = $result->fetch_assoc( );
+          displayDocumentOption($heading);
+  
+          // Display the rest of the documents
+          while($row = $result->fetch_assoc( )) {
+            displayDocumentOption($row);
+          } // end while( )
+        } // end if
+      }
 
       /* ********************************
-          * displayDocument($heading) - display a document & its info 
-          * $row - db row containing document info
-          * called by displayDocuments( )
-          * ******************************** */
-          function displayDocument($heading) {
-            global $conn; 
-        
-            // Display document info in list format
-            echo "<div class='contentCard'>";
-            echo "<h4>" . $heading['document_name'] . "</h4>";
-            echo "<embed src='" . $heading['document_path'] . $heading['document_name'] . "' width='100%' height='700' type='application/pdf'>";
-            echo "</div>";
-        }
+        * displayDocumentLink($document) - display a document & its info as a link to the document
+        * ******************************** */
+      function displayDocumentLink($document) {
+        global $conn; 
+        echo "<li><a href='" . $document['document_path'] . $document['document_name'] . "' target='_blank'>" . $document['document_name'] . "</a></li>";
+      }
+
+      /* ********************************
+        * displayDocumentOption($document) - display a document & its info as an input list option
+        * ******************************** */
+      function displayDocumentOption($document) {
+        global $conn; 
+        echo "<option value='" . $document['document_id'] . "'>" . $document['document_name'] . "</option>";
+      }
 
     ?>
+
+
     <!-- Page is encompassed in grid -->
     <div class="gridContainer">
       <header>
@@ -135,7 +225,7 @@ try {
           <!-- Username, messages button, and account settings button here -->
         </div>
         <div id="horizontalNav">
-          <!-- Links are inactive: no further pages have been built -->
+          <!-- Links are inactive -->
           <a class="hNavButton" href=""><h3 class="button">Documents</h3></a>
           <a class="hNavButton" href=""><h3>Goals</h3></a>
           <a class="hNavButton" href=""><h3>Events</h3></a>
@@ -149,29 +239,74 @@ try {
       <div class="left" id="verticalNav">
         <h3>Navigation</h3>
         <a class="vNavButton" href=""><h3>Child #1</h3></a>
-        <a class="vNavButton" href=""><h3>Child #2</h3></a>
-        <a class="vNavButton" href=""><h3>Child #3</h3></a>
       </div>
 
       <!-- Main content of page -->
       <div class="middle" id="mainContent">
         <div class="currentStudentName">
             <h3>Student Name</h3>
-        </div>   
-        <div class="calendar contentCard">
-            <h3>Calendar</h3>
-
-        </div>
-        <div class="schedule contentCard">
-            <h3>Upcoming</h3>
         </div>
         
         <div class="contentCard">
           <h3>Documents</h3>
           <?php 
             displayDocumentList( );
-            close_db( );
           ?>
+        </div>
+
+
+        <!-- Add (upload) a document -->
+        <div class="formAdd">
+          <form name="frmAddDocument"
+            action="<?PHP echo htmlentities($_SERVER['PHP_SELF']); ?>"
+            method="POST" >
+            <fieldset name="addDocument">
+              <legend>Add a Document</legend>
+
+              <!-- Document name is saved and document is uploaded to server file -->
+              <label for="addFile">Select a file:</label>
+              <input type="file" id="addFile" name="addFile" />
+              <br /><br />
+
+              <!-- Submit button -->
+              <input type="submit" name="btnAdd" value="Add Document">
+
+              <!-- Store user choice in hidden field
+                00 = remove document -->
+              <input type="hidden" name="hidSubmitFlag" id="hidSubmitFlag" value="00">
+
+            </fieldset>
+          </form>
+        </div>
+
+
+        <!-- Remove (delete) a document -->
+        <div class="formRemove">
+          <form name="frmRemoveDocument"
+            action="<?PHP echo htmlentities($_SERVER['PHP_SELF']); ?>"
+            method="POST" >
+            <fieldset name="removeDocument">
+              <legend>Remove a Document</legend>
+
+              <!-- Auto-populate list of documents -->
+              <label for="removeFile">Select a file:</label>
+                <select name="lstRemoveFile">
+                  <option> </option>
+                  <?php 
+                    displayDocumentInput( );
+                  ?>
+                </select>
+              <br /><br />
+
+              <!-- Submit button -->
+              <input type="submit" name="btnRemove" value="Remove Document">
+
+              <!-- Store user choice in hidden field
+                99 = remove document -->
+              <input type="hidden" name="hidSubmitFlag" id="hidSubmitFlag" value="99">
+
+            </fieldset>
+          </form>
         </div>
       
       <footer>
