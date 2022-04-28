@@ -5,6 +5,7 @@
   Revised: 
   02/21/2022 by Lisa Ahnell : added .navigation for navigation links
   04/25/2022 by Lisa Ahnell : Color changes, updates to dashboard
+  04/26/2022 by Lisa Ahnell : Added styling for provider forms, Dashboard color adjustments
   */
 
 
@@ -62,7 +63,10 @@ h2 {
 
 h3 {
   margin: 0em;
-  padding: 0.5em;
+  padding-left: 0em;
+  padding-right:0.5em;
+  padding-top:0.3em;
+  padding-bottom: 0.3em;
 }
 
 h4 {
@@ -142,15 +146,7 @@ header {
   background-color: inherit;
   text-align: left;
 }
-/*
-.vNavButton:hover {
-  background-color: rgba(251, 209, 162, 1);
-}
 
-.vNavButton:active {
-  background-color: rgba(251, 209, 162, 1);
-}
-*/
 /* ********** Vertical Navigation Tab settings ********** */
 .tab {
   overflow: hidden;
@@ -171,14 +167,14 @@ header {
 
 /* Change background color of buttons on hover */
  .tab:hover {
-  background-color: rgba(251, 209, 162, 1);
+  background-color: #e1f4ee;
   font-weight: bolder;
   font-style: oblique;
 } 
 
 /* Create an active/current tablink class */
  .tab.active {
-  background-color: rgba(251, 209, 162, 1);
+  background-color: #e1f4ee;
   font-weight: bolder;
   font-variant-caps: small-caps;
 } 
@@ -191,7 +187,8 @@ header {
   grid-area: middle;
   justify-content: space-around;
   padding: 0.5em;
-  margin: 0.3em;
+  
+  background-color: #e1f4ee;
 }
 
 #mainContent {
@@ -207,19 +204,23 @@ header {
   border-radius: 5px;
   margin: 0.3em;
   padding: 1em;
+  background-color: #ffffff;
 }
 
 .contentCard.goal {
   border-color: rgba(29, 78, 137, 1);
+  background-color: #eef4fb;
 }
 .contentCard.objective {
-  border-color: rgba(125, 207, 182, 1);
+  border-color: #613305;
+  background-color: #f6f3f1;
 
 }
 .contentCard.graphView {
   width: 90%;
   min-width: 400px;
   border-color: rgba(247, 146, 86, 1);
+  background-color: #ffffff;
 }
 
 
@@ -327,14 +328,3 @@ input[type=button]:hover, input[type=submit]:hover {
     justify-content: left;
   }
 }
-
-
-
-/* Style the tab content */
-/*
- .tabcontent {
-  display: none;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-top: none;
-} */

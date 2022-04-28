@@ -12,6 +12,7 @@ Revised: 04/13/2022 Modified provider forms and buttons to appear on dashboard p
 Revised: 04/17/2022 Adjustments to data flow from iepLogin to SESSION to dashboard to fix
 issue updating data after changes to database; Cleanup of old code and testing code
 Revised: 04/22/2022 Added handling for Admin user
+Revised: 04/27/2022 : Adjusted form data validation
 
 */
 include_once realpath("initialization.php");
@@ -28,21 +29,17 @@ include_once realpath("initialization.php");
     <script src="iepDetailView.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-    <!-- <script> document.getElementById("defaultOpen").click(); </script> -->
     <script>
-      //Run when student tab link is clicked
+      //jQuery for user Dashboards
 
       $(document).ready(function() {
 
         $(".tablinks").click(function() {
-          // Declare all variables
-          //var i, tablinks;
-
           // Get all elements with class="tablinks" and remove the class "active"
           $('.tablinks').removeClass('active');
           // Add class "active" to the clicked tablink
           $(this).addClass("active");
-
+          // Load mainContent.php into center of page
           $(".tabcontent").load("mainContent.php", {
               activeStudentId: $(this).attr("data-studentId"),
               activeStudentName: $(this).attr("data-studentName")
@@ -69,7 +66,7 @@ include_once realpath("initialization.php");
         //Identify the defaultOpen element
         $("#defaultOpen").click();
 
-        // Handle detail view toggle with jQuery?
+        // Detail View toggle
         $(document).on("click", ".detailViewButton", function() {
           // detail view button needs to contain the id of its associated detail view div
           var detailDivId = $(this).attr("data-detailDivId");
@@ -172,8 +169,10 @@ include_once realpath("initialization.php");
             // New Goal, load into newGoalForm div
             // if save, send data to goalFormResponse
             if ($(this).attr("name") == "saveGoal") {
-              
-              $("#newGoalForm"+ studentId).load("goalFormResponse.php", {
+              // Check for goal data
+              if (goalLabel && goalCategory && goalText && goalActive) {
+                // Send to form response page
+                $("#newGoalForm"+ studentId).load("goalFormResponse.php", {
                 "saveGoal" : $("#saveGoal" + studentId).val(),
                 "studentId" : studentId,
                 "goalId" : goalId,
@@ -188,6 +187,11 @@ include_once realpath("initialization.php");
                 alert("Goal Saved");
             
               });
+
+              } else {
+                alert("Please enter goal data to save");
+              }
+
 
             }
             
@@ -205,7 +209,10 @@ include_once realpath("initialization.php");
             // modified goal, load into modifyGoalForm div
             // if save, send data to goalFormResponse
             if ($(this).attr("name") == "saveGoal") {
-              $("#modifyGoalForm"+ goalId).load("goalFormResponse.php", {
+              // Check for goal data
+              if (goalLabel && goalCategory && goalText && goalActive) {
+                // Send to form response page
+                $("#modifyGoalForm"+ goalId).load("goalFormResponse.php", {
                 "saveGoal" : $("#saveGoal" + studentId).val(),
                 "studentId" : studentId,
                 "goalId" : goalId,
@@ -213,13 +220,17 @@ include_once realpath("initialization.php");
                 "goalCategory" : goalCategory,
                 "goalText" : goalText,
                 "goalActive" : goalActive
-              }, function() {
-                alert("Goal Saved");
-                // Load mainContent with activeStudent data
-                $(".tablinks.active").click();
-                
-            
-              });
+                }, function() {
+                  alert("Goal Saved");
+                  // Load mainContent with activeStudent data
+                  $(".tablinks.active").click();
+                  
+              
+                });
+              } else {
+                alert("Please enter goal data to save");
+              }
+
 
             }
             
@@ -295,7 +306,10 @@ include_once realpath("initialization.php");
             // New Objective, load into newObjectiveForm div
             // if save, send data to objectiveFormResponse
             if ($(this).attr("name") == "saveObjective") {
-              $("#newObjectiveForm"+ goalId).load("objectiveFormResponse.php", {
+              // Check for data to save
+              if (objectiveLabel && objectiveText && objectiveAttempts && objectiveTarget && objectiveStatus) {
+                // Send to form response page
+                $("#newObjectiveForm"+ goalId).load("objectiveFormResponse.php", {
                 "saveObjective" : $("#saveObjective").val(),
                 "objectiveId" : objectiveId,
                 "goalId" : goalId,
@@ -310,6 +324,10 @@ include_once realpath("initialization.php");
                 $(".tablinks.active").click();
             
               });
+              } else {
+                alert ("Please enter objective data to save");
+              }
+
 
             }
             
@@ -327,7 +345,10 @@ include_once realpath("initialization.php");
             // modified objective, load into modifyObjectiveForm div
             // if save, send data to objectiveFormResponse
             if ($(this).attr("name") == "saveObjective") {
-              $("#modifyObjectiveForm"+ objectiveId).load("objectiveFormResponse.php", {
+              // Check for data to save
+              if (objectiveLabel && objectiveText && objectiveAttempts && objectiveTarget && objectiveStatus) {
+                // send to form response page
+                $("#modifyObjectiveForm"+ objectiveId).load("objectiveFormResponse.php", {
                 "saveObjective" : $("#saveObjective").val(),
                 "objectiveId" : objectiveId,
                 "goalId" : goalId,
@@ -342,6 +363,11 @@ include_once realpath("initialization.php");
                 $(".tablinks.active").click();
             
               });
+              } else {
+                alert ("Please enter objective data to save");
+
+              }
+
 
             }
             
@@ -404,31 +430,47 @@ include_once realpath("initialization.php");
           var reportId = $("#reportId").val();
 
           if ($(this).attr("name") == "saveReport") {
-            $("#reportForm"+ objectiveId).load("reportFormResponse.php", {
-            "saveReport" : $("#saveReport").val(),
-            "objectiveId" : objectiveId,
-            "reportObserved" : reportObserved,
-            "reportDate" : reportDate,
-            "reportId" : reportId
-          }, function() {
-            alert("Report Saved");
-            // Load mainContent with activeStudent data
-            $(".tablinks.active").click();
-        
-          });
+            // Check for blank values, back to form if nothing to save
+            if (reportDate && reportObserved) {
+              // Variables contain values, proceed to response page
+              $("#reportForm"+ objectiveId).load("reportFormResponse.php", {
+              "saveReport" : $("#saveReport").val(),
+              "objectiveId" : objectiveId,
+              "reportObserved" : reportObserved,
+              "reportDate" : reportDate,
+              "reportId" : reportId
+              }, function() {
+                alert("Report Saved");
+                // Load mainContent with activeStudent data
+                $(".tablinks.active").click();
+            
+              });
+
+            } else {
+              // Variables are not truthy, ask for data input
+              alert("Please enter report data to save");
+
+            }
 
           }
 
           if ($(this).attr("name") == "deleteReport") {
             // Load reportFormResponse with report data to delete
-            $("#reportForm"+ objectiveId).load("reportFormResponse.php", {
-            "deleteReport" : $("#deleteReport").val(),
-            "reportId" : reportId
-            }, function() {
-              alert("Report Deleted " + $(".tablinks.active").length);
-              // Load mainContent with activeStudent data
-              $(".tablinks.active").click();
-            });
+            // Check for reportId to delete
+            if (reportId) {
+              $("#reportForm"+ objectiveId).load("reportFormResponse.php", {
+              "deleteReport" : $("#deleteReport").val(),
+              "reportId" : reportId
+              }, function() {
+                alert("Report Deleted");
+                // Load mainContent with activeStudent data
+                $(".tablinks.active").click();
+              });
+            } else {
+              alert("No report selected to delete");
+
+            }
+
           }
 
           if ($(this).attr("name") == "cancelReport") {
@@ -542,7 +584,7 @@ include_once realpath("initialization.php");
           <!-- Add Logout button here -->
         </div>
         <div id="horizontalNav">
-          <a class="hNavButton active" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
+          <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
           <a class="hNavButton" id="userMessagesLink" href="javascript:void(0)"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
           <a class="hNavButton" id="userSettingsLink" href="javascript:void(0)"><h3><i class="fa fa-gear"></i> Settings</h3></a>
           <a class="hNavButton" id="userLogout" href="#"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>

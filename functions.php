@@ -192,7 +192,7 @@ function insertGoal($conn, $studentId, $goalLabel, $goalCategory, $goalText, $go
 
     // execute prepared statement
     $stmt->execute();
-    $result = $stmt->get_result();
+    //$result = $stmt->get_result();
 
     return true; 
 }
@@ -211,7 +211,7 @@ function updateGoal($conn, $studentId, $goalLabel, $goalCategory, $goalText, $go
 
     // execute prepared statement
     $stmt->execute();
-    $result = $stmt->get_result();
+    //$result = $stmt->get_result();
 
     return true;
 }
@@ -342,6 +342,7 @@ function test_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
+    //echo "<script>alert(\"input tested\");</script>";
     return $data;
 }
 

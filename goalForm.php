@@ -6,6 +6,7 @@ goalForm.php - Provider Goal Form
       Date Written: 04/19/2022
       Revised: 04/25/2022 : Removed testing code
       04/26/2022 : Added table to display form elements neatly
+      04/27/2022 : Adjusted form data validation
 */
 include_once realpath("initialization.php");
 
@@ -48,43 +49,6 @@ include_once realpath("initialization.php");
         $goalActive = "";
     }
 
-// define variables from form and set to empty values
-// This is not the final version, since some values will be sent when the page
-// loads.
-
-$goalLabelErr =
-$goalCategoryErr =
-$goalTextErr = 
-$goalActiveErr = "";
-
-// Has the form been submitted? If not, can display blank values, if so, 
-// validate form
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    // Test inputs to make sure there are values when form is submitted
-    if (empty($_POST["goalLabel"])) {
-        $goalLabelErr = "Goal Label is required";
-    } else {
-        $goalLabel = test_input($_POST["goalLabel"]);
-    }
-    
-    if (empty($_POST["goalCategory"])) {
-        $goalCategoryErr = "Goal Category is required";
-    } else {
-        $goalCategory = test_input($_POST["goalCategory"]);
-    }
-    
-    if (empty($_POST["goalText"])) {
-        $goalTextErr = "Goal Description is required";
-    } else {
-        $goalText = test_input($_POST["goalText"]);
-    }
-    if (empty($_POST["goalActive"])) {
-        $goalActiveErr = "Goal Status is required";
-    } else {
-        $goalActive = test_input($_POST["goalActive"]);
-    }    
-}
 ?> 
     <div id="providerGoalForm">
         <form action="" method="post" class="providerForm">
@@ -98,6 +62,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="hidden" id="studentId" name="studentId" value="<?php echo $studentId;?>">
                 
             </div>
+
+            <div class="flex-formContainer">
+            <div>
+                <h4>Please fill in all fields</h4>       
+            </div>
+        </div>
             <!-- Text field for goalLabel-->
             <div class="flex-formContainer">
                 <div class="formElement formLabel">
@@ -105,9 +75,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="formElement">
                 <input type="text" id="goalLabel<?php echo $studentId ?>" name="goalLabel" value="<?php echo $goalLabel;?>"> 
-                </div>
-                <div>
-                <span class="error"><?php echo $goalLabelErr;?></span>
                 </div>
             </div>
 
@@ -119,9 +86,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="formElement">
                 <input type="text" id="goalCategory<?php echo $studentId ?>" name="goalCategory" value="<?php echo $goalCategory;?>">
                 </div>
-                <div>
-                <span class="error"><?php echo $goalCategoryErr;?></span>
-                </div>
             </div>
 
             <!-- Text field for goalText-->
@@ -131,9 +95,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="formElement">
                 <textarea id="goalText<?php echo $studentId ?>" name="goalText" rows="6" cols="40"><?php echo $goalText; ?></textarea>
-                </div>
-                <div>
-                <span class="error"><?php echo $goalTextErr;?></span>
                 </div>
             </div>
         
@@ -155,9 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php if(isset($goalActive) && $goalActive == "1") echo "checked";?>
                         value="1">Complete</label>         
                 </div>
-                <div>
-                <span class="error"><?php echo $goalActiveErr;?></span>
-                </div>
+
             </div>
 
 

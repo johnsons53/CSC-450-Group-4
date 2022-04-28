@@ -6,6 +6,7 @@ objectiveForm.php - Provider Objective Form
       Date Written: 04/18/2022
       Revised: 04/25/2022: Removed testing code
             04/26/2022 : Added table to display form elements neatly
+            04/27/2022 : Adjusted form data validation
 
 */
 include_once realpath("initialization.php");
@@ -46,46 +47,6 @@ if (array_key_exists("objectiveStatus", $_POST)) {
     $objectiveStatus = "";
 }
 
-// error variables for incomplete or unacceptable data entry
-$objectiveLabelErr =
-$objectiveTextErr =
-$objectiveAttemptsErr =
-$objectiveTargetErr =
-$objectiveStatusErr = "";
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    if (empty($_POST["objectiveLabel"])) {
-        $objectiveLabelErr = "Objective Label is required";
-    } else {
-        $objectiveLabel = test_input($_POST["objectiveLabel"]);
-    }
-
-    if (empty($_POST["objectiveText"])) {
-        $objectiveTextErr = "Objective Description is required";
-    } else {
-        $objectiveText = test_input($_POST["objectiveText"]);
-    }
-
-    if (empty($_POST["objectiveAttempts"])) {
-        $objectiveAttemptsErr = "Objective Attempts is required";
-    } else {
-        $objectiveAttempts = test_input($_POST["objectiveAttempts"]);
-    }
-
-    if (empty($_POST["objectiveTarget"])) {
-        $objectiveTargetErr = "Objective Target is required";
-    } else {
-        $objectiveTarget = test_input($_POST["objectiveTarget"]);
-    }
-
-    if (empty($_POST["objectiveStatus"])) {
-        $objectiveStatusErr = "Objective Status is required";
-    } else {
-        $objectiveStatus = test_input($_POST["objectiveStatus"]);
-    }          
-}
-
 ?>
 
     <div id="providerObjectiveForm">
@@ -100,6 +61,12 @@ $objectiveStatusErr = "";
             <input type="hidden" id="goalId" name="goalId" value="<?php echo $goalId; ?>">
         </div>
 
+        <div class="flex-formContainer">
+            <div>
+                <h4>Please fill in all fields</h4>       
+            </div>
+        </div>
+
         <!-- Text field for objectiveLabel -->
         <div class="flex-formContainer">
             <div class="formElement formLabel">
@@ -107,9 +74,6 @@ $objectiveStatusErr = "";
             </div>
             <div class="formElement">
             <input type="text" id="objectiveLabel" name="objectiveLabel" value="<?php echo $objectiveLabel; ?>">
-            </div>
-            <div>
-            <span class="error"><?php echo $objectiveLabelErr;?></span>
             </div>
         </div>
 
@@ -121,9 +85,6 @@ $objectiveStatusErr = "";
             <div class="formElement">
             <textarea id="objectiveText" name="objectiveText" rows="6" cols="40"><?php echo $objectiveText; ?></textarea>
             </div>
-            <div>
-            <span class="error"><?php echo $objectiveTextErr;?></span>
-            </div>
         </div>
 
         <!-- Number picker for objectiveAttempts -->
@@ -132,10 +93,7 @@ $objectiveStatusErr = "";
             <label for="objectiveAttempts">Objective Attempts</label>
             </div>
             <div class="formElement">
-            <input type="number" id="objectiveAttempts" name="objectiveAttempts" value="<?php echo $objectiveAttempts; ?>"> 
-            </div>
-            <div>
-            <span class="error"><?php echo $objectiveAttemptsErr;?></span>
+            <input type="number" min="0" id="objectiveAttempts" name="objectiveAttempts" value="<?php echo $objectiveAttempts; ?>"> 
             </div>
         </div>
 
@@ -145,10 +103,7 @@ $objectiveStatusErr = "";
             <label for="objectiveTarget">Objective Target</label>
             </div>
             <div class="formElement">
-            <input type="number" id="objectiveTarget" name="objectiveTarget" value="<?php echo $objectiveTarget; ?>"> 
-            </div>
-            <div>
-            <span class="error"><?php echo $objectiveTargetErr;?></span>
+            <input type="number" min="0" id="objectiveTarget" name="objectiveTarget" value="<?php echo $objectiveTarget; ?>"> 
             </div>
         </div>
 
@@ -169,9 +124,6 @@ $objectiveStatusErr = "";
             <label><input type="radio" name="objectiveStatus" 
                 <?php if(isset($objectiveStatus) && $objectiveStatus == "1") echo "checked";?>
                 value="1">Complete</label>           
-            </div>
-            <div>
-            <span class="error"><?php echo $objectiveStatusErr;?></span>
             </div>
         </div>
 
