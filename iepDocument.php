@@ -145,27 +145,37 @@ try {
         global $conn;
         
         // Save form input (document id) as array
-        $deleteDoc = array($_POST['removeFile']);
+        $deleteDocId = array($_POST['removeFile']);
         $deletePath = "documents/";
         $deleteKey = 1;
 
-        echo $deleteDoc;
-
-        if ($deleteDoc == "" || $deleteDoc == "blank") {
+        if ($deleteDocId[0] == "" || $deleteDocId[0] == "blank") {
           echo "No file selected for deletion.";
           $deleteKey = 0;
         }
+        else {
+          // Locate document name and extension
+          $sql = "SELECT document_name FROM document WHERE document_id=" . $deleteDocId[0];
+          $result = $conn->query($sql);
+          $docInfo = $result->fetch_assoc( );
+          $docNameToDelete = $docInfo['document_name'];
 
-        if ($deleteKey == 1) {
-          // TODO: delete file from server as well as database
-          if (unlink($deleteDoc)) {
-            // Delete delete document row from database
-            $sql = "DELETE FROM document WHERE " . $deleteDoc[0] . "=document.document_id";
-                      
-            // TODO: change true to false below (don't show debugging)
-            runQuery($sql, "Delete document: " . $deleteDoc[0], true);
+          echo "Doc ID: " . $deleteDocId[0] . " doc name: " . $docNameToDelete . "<br />";
+
+
+
+          if ($deleteKey == 1) {
+            // TODO: delete file from server as well as database
+            if (unlink($deletePath . $docNameToDelete)) {
+              // Delete delete document row from database
+              $sql = "DELETE FROM document WHERE " . $deleteDocId[0] . "=document.document_id";
+                        
+              // TODO: change true to false below (don't show debugging)
+              runQuery($sql, "Delete document: " . $deleteDocId[0], true);
+            }
           }
         }
+        
       } // end deleteDocument( )
 
 
@@ -191,7 +201,6 @@ try {
         global $conn;
         $conn->close();
       }
-
 
 
       /* ********************************
@@ -255,7 +264,7 @@ try {
         * ******************************** */
       function displayDocumentOption($document) {
         global $conn; 
-        echo "<option value='" . $document['document_name'] . "'>" . $document['document_name'] . "</option>";
+        echo "<option value='" . $document['document_id'] . "'>" . $document['document_name'] . "</option>";
       }
 
     ?>
