@@ -66,23 +66,13 @@ try {
       
       // Select database
       $conn->select_db(DATABASE_NAME);
-
-      // Determine first-time or returning user
-      if(array_key_exists('hidSubmitFlag', $_POST)) {
-        echo  "<h3>Button selected</h3>"; //////////////////////////////// DEBUGGING FLAG: REMOVE IN FINAL PRODUCT
     
-        // check for user selection
-        $submitFlag = $_POST['hidSubmitFlag'];
-    
-        // Choose an action based on user form submission
-        switch($submitFlag) {
-          case "00": 
-              addDocument( );
-              break;
-          case "99": 
-              deleteDocument( );
-              break;
-        }
+      // Choose an action based on user form submission (add or remove document)
+      if(isset($_POST["btnAdd"])) {
+        addDocument( );
+      }
+      if(isset($_POST["btnRemove"])) {
+        deleteDocument( );
       }
 
       /** addDocument( ) - add document to database */
@@ -92,37 +82,92 @@ try {
         // TODO: update student and user id to pull from page info
         $addStudentID = 0;
         $addUserId = 0;
-        $docName = $_POST['addFile'];
+        //$docName = $_POST['addFile'];
         // TODO: update file path with path for server
         $path = "http://localhost/capstoneCurrent/documents/";
+
+        /* File object and file extension to be uploaded
+        $fileToUpload = $path . basename($_FILES["addFile"]["name"]);
+        $fileType = strtolower(pathinfo($fileToUpload,PATHINFO_EXTENSION)); */
+
         
         echo "<h4>" . $docName . "</h4>"; ///////////////////////////// DEBUGGING FLAG
-        
-        $newDocument = array($addStudentID, $addUserId, $docName, $path);
-        $sql = "INSERT INTO document (student_id, user_id, document_date, document_name, document_path) "
-          . "VALUES ('" . $newDocument[0] . "', '"
-          . $newDocument[1] . "', '"
-          . "1000-01-01 00:00:00" . "', '"
-          . $newDocument[2] . "', '"
-          . $newDocument[3] . "')";
-        runQuery($sql, "New document insert: $docName", true);
-      }
+
+
+        // File object and file extension to be uploaded
+        $target_directory = "documents/";
+        $fileToUpload = $target_directory . basename($_FILES["addFile"]["name"]);
+        $fileType = strtolower(pathinfo($fileToUpload,PATHINFO_EXTENSION));
+
+        echo "<h4>" . $fileType . "</h4>"; ///////////////////////////////
+
+        // Check for only document file formats
+        $uploadKey = 1;
+        /*if($fileType != "pdf" && $fileType != "docx" && $fileType != "doc") {
+          echo "Error: file type not compatible. Please upload a PDF, DOCX, or DOC file.";
+          $uploadKey = 0;
+        }*/
+
+        /* Check filesize
+        if ($_FILES["addFile"]["size"] > 3000000) {
+          echo "Error: file is too large to upload";
+          $uploadKey = 0;
+        }*/
+
+        if($uploadKey == 0) {
+          echo "File not uploaded.";
+        }
+        else {
+          if (move_uploaded_file($_FILES["addFile"]["tmp_name"], $fileToUpload)) {
+
+            // Upload file to database
+            // TODO: get CURRENT time and input into database
+            $newDocument = array($addStudentID, $addUserId, $_FILES["addFile"]["name"], $path);
+            $sql = "INSERT INTO document (student_id, user_id, document_date, document_name, document_path) "
+              . "VALUES ('" . $newDocument[0] . "', '"
+              . $newDocument[1] . "', '"
+              . "1000-01-01 00:00:00" . "', '"
+              . $newDocument[2] . "', '"
+              . $newDocument[3] . "')";
+            runQuery($sql, "New document insert: $docName", true); 
+
+            echo "The file " . htmlspecialchars(basename($_FILES["addFile"]["name"])) . " has been uploaded.";
+          }
+          else {
+            echo "An error has occurred uploading your file. Please try again.";
+          }
+        }
+      } // end addDocument( )
+
 
       /** deleteDocument( ) - delete document from database and server */
       function deleteDocument( ) {
         global $conn;
         
         // Save form input (document id) as array
-        $deleteDoc = array($_POST['lstRemoveFile']);
+        $deleteDoc = array($_POST['removeFile']);
+        $deletePath = "documents/";
+        $deleteKey = 1;
 
-        // TODO: delete file from server as well as database
+        echo $deleteDoc;
 
-        // Delete delete document row from database
-        $sql = "DELETE FROM document WHERE " . $deleteDoc[0] . "=document.document_id";
-        
-        // TODO: change true to false below (don't show debugging)
-        runQuery($sql, "Delete document: " . $deleteDoc[0], true);
-      }
+        if ($deleteDoc == "" || $deleteDoc == "blank") {
+          echo "No file selected for deletion.";
+          $deleteKey = 0;
+        }
+
+        if ($deleteKey == 1) {
+          // TODO: delete file from server as well as database
+          if (unlink($deleteDoc)) {
+            // Delete delete document row from database
+            $sql = "DELETE FROM document WHERE " . $deleteDoc[0] . "=document.document_id";
+                      
+            // TODO: change true to false below (don't show debugging)
+            runQuery($sql, "Delete document: " . $deleteDoc[0], true);
+          }
+        }
+      } // end deleteDocument( )
+
 
       /** runQuery($sql, $msg, $success) - execute sql query, display message on failure/success
        * $sql - string to execute
@@ -210,7 +255,7 @@ try {
         * ******************************** */
       function displayDocumentOption($document) {
         global $conn; 
-        echo "<option value='" . $document['document_id'] . "'>" . $document['document_name'] . "</option>";
+        echo "<option value='" . $document['document_name'] . "'>" . $document['document_name'] . "</option>";
       }
 
     ?>
@@ -259,7 +304,8 @@ try {
         <div class="formAdd">
           <form name="frmAddDocument"
             action="<?PHP echo htmlentities($_SERVER['PHP_SELF']); ?>"
-            method="POST" >
+            method="POST"
+            enctype="multipart/form-data" >
             <fieldset name="addDocument">
               <legend>Add a Document</legend>
 
@@ -270,10 +316,6 @@ try {
 
               <!-- Submit button -->
               <input type="submit" name="btnAdd" value="Add Document">
-
-              <!-- Store user choice in hidden field
-                00 = remove document -->
-              <input type="hidden" name="hidSubmitFlag" id="hidSubmitFlag" value="00">
 
             </fieldset>
           </form>
@@ -290,8 +332,8 @@ try {
 
               <!-- Auto-populate list of documents -->
               <label for="removeFile">Select a file:</label>
-                <select name="lstRemoveFile">
-                  <option> </option>
+                <select name="removeFile">
+                  <option value="blank"></option>
                   <?php 
                     displayDocumentInput( );
                   ?>
@@ -300,10 +342,6 @@ try {
 
               <!-- Submit button -->
               <input type="submit" name="btnRemove" value="Remove Document">
-
-              <!-- Store user choice in hidden field
-                99 = remove document -->
-              <input type="hidden" name="hidSubmitFlag" id="hidSubmitFlag" value="99">
 
             </fieldset>
           </form>
