@@ -39,7 +39,7 @@ include_once realpath("initialization.php");
     // Check for POST["activeStudentId"]
     if(array_key_exists("activeStudentId", $_POST)) {
       // update the value in SESSION
-      echo "activeStudentId in POST: " . $_POST["activeStudentId"];
+      //echo "activeStudentId in POST: " . $_POST["activeStudentId"];
       $_SESSION["activeStudentId"] = $_POST["activeStudentId"];
     }
 

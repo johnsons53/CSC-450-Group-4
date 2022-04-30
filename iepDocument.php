@@ -26,39 +26,52 @@
     // report data for creating graph
     //  
 
-    include_once realpath("initialization.php");
-
-/*
-// Confirmed $activeStudentId and $activeStudentName values sent via $_POST
-      try {
-        echo $_POST["activeStudentId"];
-        echo "<br />";
-        echo $_POST["activeStudentName"];
-        echo "<br />";
-      } catch (Exception $e) {
-        echo "Message: " . $e->getMessage();
-
-      }
-*/
+    //include_once realpath("initialization.php");
  
  
 // Confirmed $activeStudentId value available via $_SESSION 
 try {
-  echo $_SESSION["activeStudentId"];
-  echo "<br />";
+  $activeStudentId = $_SESSION["activeStudentId"];
 } catch (Exception $e) {
   echo "Message: " . $e->getMessage();
 
 } 
 try {
-  echo $_SESSION["currentUserId"];
-  echo "<br />";
+  $currentUserId = $_SESSION["currentUserId"];
 } catch (Exception $e) {
   echo "Message: " . $e->getMessage();
+}
 
-} 
+try {
+  $currentUserType = $_SESSION["currentUserType"];
+} catch (Exception $e) {
+  echo "Message: " . $e->getMessage();
+}
+
+
+// Initialize currentUser as new User of correct type
+// Pass $currentUserId, $currentUserType, $conn into createUser() function
+try {
+  $currentUser = createUser($currentUserId, $currentUserType, $conn);
+
+} catch (Exception $e) {
+  echo "Message: " . $e->getMessage();
+}
+
+try {
+  $activeStudent = createStudent($activeStudentId, $conn);
+
+} catch (Exception $e) {
+  echo "Message: " . $e->getMessage();
+}
+
+// Can use $currentUser
+$currentUserName = $currentUser->get_full_name();
+
+// Can use $activeStudent
+$activeStudentName = $activeStudent->get_full_name();
   
-/*
+
       // Connection constants for use with AMPPS
       define("SERVER_NAME", "localhost");
       define("DBF_USER_NAME", "root"); 
@@ -73,7 +86,7 @@ try {
       
       // Select database
       $conn->select_db(DATABASE_NAME);
- */   
+    
       // Choose an action based on user form submission (add or remove document)
       if(isset($_POST["btnAdd"])) {
         addDocument( );
@@ -281,17 +294,20 @@ try {
     <!-- Page is encompassed in grid -->
     <div class="gridContainer">
       
-      <header>
-        <!-- Insert logo image here -->
-        <h1>IEP Portal</h1>
-        <div id="accountHolderInfo">
-          <!-- Username, messages button, and account settings button here -->
-        </div>
-        <div id="horizontalNav">
+    <header>
+      <!-- Insert logo image here -->
+      <h1>IEP Portal</h1>
+      <div id="accountHolderInfo">
+        <!-- Username, messages button, and account settings button here -->
+        <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
+      </div>
+      <div id="horizontalNav">
         <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
-
-        </div>
-      </header>
+        <a class="hNavButton" id="userMessagesLink" href="iepMessage.html"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
+        <a class="hNavButton" id="userSettingsLink" href="iepSettings.php"><h3><i class="fa fa-gear"></i> Settings</h3></a>
+        <a class="hNavButton" id="userLogout" href="#"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
+      </div>
+    </header>
 
       <!-- Vertical navigation bar -->
       <div class="left" id="verticalNav">
@@ -302,7 +318,7 @@ try {
       <!-- Main content of page -->
       <div class="middle" id="mainContent">
         <div class="currentStudentName">
-            <h3>Student Name</h3>
+            <h3><?php echo $activeStudentName; ?></h3>
         </div>
         
         <div class="contentCard">

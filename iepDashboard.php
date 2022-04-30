@@ -102,13 +102,7 @@ include_once realpath("initialization.php");
             low: $(this).attr("data-low")
           });
         });
-/*
-        // Load Messages page for currentUser
-        $(document).on("click", "#userMessagesLink", function() {
-          // Load iepSettings content into accountContent div with user info
-          $("#mainContent").load("iepMessage.html");
-        });
-*/
+
         // Load Settings page for selected user when selected by admin
         $(document).on("change", ".accountSelect", function () {
         
@@ -116,8 +110,7 @@ include_once realpath("initialization.php");
           window.location = "iepSettings.php?selectedUserId=" + $(this).find(":selected").val();
           return false;
           alert("on.(change, accountSelect) complete");
-          
-        
+                  
         });
 
         // Open Goal Form on page to modify existing goal with button click
@@ -552,8 +545,8 @@ include_once realpath("initialization.php");
 
       // Check for existing activeStudentId
       try {
-        echo $_SESSION["activeStudentId"];
-        echo "<br />";
+        //echo $_SESSION["activeStudentId"];
+        //echo "<br />";
       } catch (Exception $e) {
         echo "Message: " . $e->getMessage();
       
@@ -590,7 +583,6 @@ include_once realpath("initialization.php");
           <!-- Username, messages button, and account settings button here -->
           
           <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
-          <!-- Add Logout button here -->
         </div>
         <div id="horizontalNav">
           <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
