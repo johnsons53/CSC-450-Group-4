@@ -102,60 +102,50 @@ $activeStudentName = $activeStudent->get_full_name();
         // TODO: update student and user id to pull from page info
         $addStudentID = 0;
         $addUserId = 0;
-        echo "POST at addFile: " . $_POST["addFile"];
-        $docName = $_POST['addFile'];
+
+        $currentDateTime = date("Y-m-d\nH:i:s");
+        echo "current datetime is: " . $currentDateTime . "<br />";
+        
         // TODO: update file path with path for server
         $path = "http://localhost/capstoneCurrent/documents/";
 
-        /* File object and file extension to be uploaded
-        $fileToUpload = $path . basename($_FILES["addFile"]["name"]);
-        $fileType = strtolower(pathinfo($fileToUpload,PATHINFO_EXTENSION)); */
-
-        
-        echo "<h4>" . $docName . "</h4>"; ///////////////////////////// DEBUGGING FLAG
-
-
-        // File object and file extension to be uploaded
-        $target_directory = "documents/";
-        $fileToUpload = $target_directory . basename($_FILES["addFile"]["name"]);
+        // File file and file extension to be uploaded
+        $filePath = "documents/";
+        $fileName = $_FILES["addFile"]["name"];
+        $fileToUpload = $filePath . basename($_FILES["addFile"]["name"]);
         $fileType = strtolower(pathinfo($fileToUpload,PATHINFO_EXTENSION));
-
-        echo "<h4>" . $fileType . "</h4>"; ///////////////////////////////
-
-        // Check for only document file formats
-        $uploadKey = 1;
-        /*if($fileType != "pdf" && $fileType != "docx" && $fileType != "doc") {
-          echo "Error: file type not compatible. Please upload a PDF, DOCX, or DOC file.";
-          $uploadKey = 0;
-        }*/
-
-        /* Check filesize
-        if ($_FILES["addFile"]["size"] > 3000000) {
-          echo "Error: file is too large to upload";
-          $uploadKey = 0;
-        }*/
-
-        if($uploadKey == 0) {
-          echo "File not uploaded.";
+        
+        if ($fileType == "") {
+          // Check if a file was selected to upload
+          echo "Error: no file selected. Please select a file to upload<br />";
+        }
+        else if (file_exists($fileToUpload)) {
+          // Check if file of same name in database
+          echo "Sorry, file already exists<br />";
+        }
+        else if($fileType != "pdf" && $fileType != "docx" && $fileType != "doc") {
+          // Check for accepted document file formats (pdf, doc, docx)
+          echo "Error: file type " . $fileType . " not compatible. Please upload a PDF, DOCX, or DOC file.<br />";
         }
         else {
+          // Attempt to move document to correct server folder
+          // If successful, add document info to database
           if (move_uploaded_file($_FILES["addFile"]["tmp_name"], $fileToUpload)) {
 
             // Upload file to database
-            // TODO: get CURRENT time and input into database
-            $newDocument = array($addStudentID, $addUserId, $_FILES["addFile"]["name"], $path);
+            $newDocument = array($addStudentID, $addUserId, $currentDateTime, $fileName, $path);
             $sql = "INSERT INTO document (student_id, user_id, document_date, document_name, document_path) "
               . "VALUES ('" . $newDocument[0] . "', '"
               . $newDocument[1] . "', '"
-              . "1000-01-01 00:00:00" . "', '"
               . $newDocument[2] . "', '"
-              . $newDocument[3] . "')";
-            runQuery($sql, "New document insert: $docName", true); 
+              . $newDocument[3] . "', '"
+              . $newDocument[4] . "')";
+            runQuery($sql, "New document insert: $fileName", true); 
 
-            echo "The file " . htmlspecialchars(basename($_FILES["addFile"]["name"])) . " has been uploaded.";
+            echo "The file " . $fileName . " has been uploaded.<br />";
           }
           else {
-            echo "An error has occurred uploading your file. Please try again.";
+            echo "An error has occurred uploading your file. Please try again.<br />";
           }
         }
       } // end addDocument( )
