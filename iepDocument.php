@@ -16,6 +16,9 @@
     <title>IEP Portal: Documents</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="iepDetailView.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
     
   </head>
 
@@ -76,7 +79,7 @@ $currentUserName = $currentUser->get_full_name();
 // Can use $activeStudent
 $activeStudentName = $activeStudent->get_full_name();
   
-
+/*
       // Connection constants for use with AMPPS
       define("SERVER_NAME", "localhost");
       define("DBF_USER_NAME", "root"); 
@@ -91,28 +94,29 @@ $activeStudentName = $activeStudent->get_full_name();
       
       // Select database
       $conn->select_db(DATABASE_NAME);
-    
+*/    
       // Choose an action based on user form submission (add or remove document)
       if(isset($_POST["btnAdd"])) {
-        addDocument( );
+        addDocument($activeStudentId, $currentUserId);
       }
       if(isset($_POST["btnRemove"])) {
         deleteDocument( );
       }
 
       /** addDocument( ) - add document to database */
-      function addDocument( ) {
+      function addDocument($studentId, $userId) {
         global $conn;
 
         // TODO: update student and user id to pull from page info
-        $addStudentID = 0;
-        $addUserId = 0;
+        //$addStudentID = 0;
+        //$addUserId = 0;
 
         $currentDateTime = date("Y-m-d\nH:i:s");
-        echo "current datetime is: " . $currentDateTime . "<br />";
+        //echo "current datetime is: " . $currentDateTime . "<br />";
         
         // TODO: update file path with path for server
-        $path = "http://localhost/capstoneCurrent/documents/";
+        //$path = "http://localhost/capstoneCurrent/documents/";
+        $path = "http://localhost:8888/CSC-450-GROUP-4/documents/";
 
         // File file and file extension to be uploaded
         $filePath = "documents/";
@@ -122,15 +126,21 @@ $activeStudentName = $activeStudent->get_full_name();
         
         if ($fileType == "") {
           // Check if a file was selected to upload
-          echo "Error: no file selected. Please select a file to upload<br />";
+          echo "<script>alert(\"No file selected. Please select a file to upload\");</script>";
+          //echo "Error: no file selected. Please select a file to upload<br />";
         }
         else if (file_exists($fileToUpload)) {
           // Check if file of same name in database
-          echo "Sorry, file already exists<br />";
+          //echo "FileName: " . $fileName . "<br />";
+          echo "<script>alert(\"Sorry, file already exists\");</script>";
+
+          //echo "Sorry, file already exists<br />";
         }
         else if($fileType != "pdf" && $fileType != "docx" && $fileType != "doc") {
           // Check for accepted document file formats (pdf, doc, docx)
-          echo "Error: file type " . $fileType . " not compatible. Please upload a PDF, DOCX, or DOC file.<br />";
+          echo "<script>alert(\"Sorry, file type not compatible. Please upload a PDF, DOCX, or DOC file\");</script>";
+
+          //echo "Error: file type " . $fileType . " not compatible. Please upload a PDF, DOCX, or DOC file.<br />";
         }
         else {
           // Attempt to move document to correct server folder
@@ -138,19 +148,35 @@ $activeStudentName = $activeStudent->get_full_name();
           if (move_uploaded_file($_FILES["addFile"]["tmp_name"], $fileToUpload)) {
 
             // Upload file to database
-            $newDocument = array($addStudentID, $addUserId, $currentDateTime, $fileName, $path);
-            $sql = "INSERT INTO document (student_id, user_id, document_date, document_name, document_path) "
-              . "VALUES ('" . $newDocument[0] . "', '"
-              . $newDocument[1] . "', '"
-              . $newDocument[2] . "', '"
-              . $newDocument[3] . "', '"
-              . $newDocument[4] . "')";
-            runQuery($sql, "New document insert: $fileName", true); 
+            //$newDocument = array("studentId"=>$addStudentID, "userId"=>$addUserId, "dateTime"=>$currentDateTime, "fileName"=>$fileName, "path"=>$path);
 
-            echo "The file " . $fileName . " has been uploaded.<br />";
+            $stmt = $conn->prepare("INSERT INTO document (student_id, user_id, document_date, document_name, document_path)
+                                    VALUES (?, ?, ?, ?,?)");
+            $stmt->bind_param("iisss", $studentId, $userId, $currentDateTime, $fileName, $path);
+
+            try {
+              $stmt->execute();
+
+            } catch (Exception $e) {
+              echo "Message: " . $e->getMessage();
+
+            }
+/*
+            $sql = "INSERT INTO document (student_id, user_id, document_date, document_name, document_path) "
+              . "VALUES ('" . $newDocument["studentId"] . "', '"
+              . $newDocument["userId"] . "', '"
+              . $newDocument["dateTime"] . "', '"
+              . $newDocument["fileName"] . "', '"
+              . $newDocument["path"] . "')";
+            runQuery($sql, "New document insert: $fileName", true); 
+*/
+            echo "<script>alert(\"File has been uploaded\");</script>";
+            //echo "The file " . $fileName . " has been uploaded.<br />";
           }
           else {
-            echo "An error has occurred uploading your file. Please try again.<br />";
+            echo "<script>alert(\"An error has occurred uploading your file. Please try again\");</script>";
+
+            //echo "An error has occurred uploading your file. Please try again.<br />";
           }
         }
       } // end addDocument( )
@@ -166,35 +192,71 @@ $activeStudentName = $activeStudent->get_full_name();
         $deleteKey = 1;
 
         if ($deleteDocId[0] == "" || $deleteDocId[0] == "blank") {
-          echo "No file selected for deletion.";
+          echo "<script>alert(\"No file selected for deletion.\");</script>";
+
+          //echo "No file selected for deletion.";
           $deleteKey = 0;
         }
         else {
 
+          $stmt = $conn->prepare("SELECT document_name
+                                  FROM document
+                                  WHERE document_id=?");
+          $stmt->bind_param("i", $deleteDocId[0]);
+
+          try {
+            $stmt->execute();
+
+          } catch (Exception $e) {
+            echo "Message: " . $e->getMessage();
+
+          }
+          //$stmt->execute();
+          $result = $stmt->get_result();
+/*
           // Locate document name and extension
           $sql = "SELECT document_name FROM document WHERE document_id=" . $deleteDocId[0];
           $result = $conn->query($sql);
+          */
           $docInfo = $result->fetch_assoc( );
 
           // Check that document was found. If not, display error
           if ($result->num_rows > 0) {
             $docNameToDelete = $docInfo['document_name'];
 
-            echo "Doc ID: " . $deleteDocId[0] . " doc name: " . $docNameToDelete . "<br />"; // DEBUGGING FLAG
+            //echo "Doc ID: " . $deleteDocId[0] . " doc name: " . $docNameToDelete . "<br />"; // DEBUGGING FLAG
 
             if ($deleteKey == 1) {
 
               // Delete document from server folder and remove from db
               if (unlink($deletePath . $docNameToDelete)) {
-                $sql = "DELETE FROM document WHERE " . $deleteDocId[0] . "=document.document_id";
+
+                // Prepared Statement
+                $stmt = $conn->prepare("DELETE FROM document
+                                        WHERE ?=document.document_id");
+                $stmt->bind_param("i", $deleteDocId[0]);
+
+                try {
+                  $stmt->execute();
+      
+                } catch (Exception $e) {
+                  echo "Message: " . $e->getMessage();
+      
+                }
+
+                echo "<script>alert(\"File has been deleted\");</script>";
+
+                //$sql = "DELETE FROM document WHERE " . $deleteDocId[0] . "=document.document_id";
                           
                 // TODO: change true to false below (don't show debugging)
-                runQuery($sql, "Delete document: " . $deleteDocId[0], true);
+                //runQuery($sql, "Delete document: " . $deleteDocId[0], true);
               }
             }
           }
           else {
-            echo "An error occurred while uploading your document.<br />";
+            echo "<script>alert(\"An error occurred while uploading your document.\");</script>";
+
+            //echo "An error occurred while uploading your document.<br />";
           }
         }
       } // end deleteDocument( )
@@ -210,7 +272,8 @@ $activeStudentName = $activeStudent->get_full_name();
         // run the query
         if ($conn->query($sql) === TRUE) {
            if($success) {
-              echo "<h4>" . $msg . " successful.</h4>";
+            echo "<script>alert(\"File has been deleted\");</script>";
+              //echo "<h4>" . $msg . " successful.</h4>";
            }
         } else {
            echo "<h4>Error when: " . $msg . " using SQL: " . $sql . " " . $conn->error . "</h4>";
@@ -225,15 +288,25 @@ $activeStudentName = $activeStudent->get_full_name();
 
 
       /* ********************************
-       * displayDocumentList( ) - display list of all docments in db
+       * displayDocumentList( ) - display list of all documents for specified student
        * $displayAsLink - display documents as either plain text or as links
        * TODO: modify to only display documents relevant to user
        * ******************************** */
-      function displayDocumentList( ) {
+      function displayDocumentList($studentId) {
         global $conn;
 
-        $sql = "SELECT * FROM document ORDER BY document_date DESC";
-        $result = $conn->query($sql);
+
+        $stmt = $conn->prepare("SELECT * 
+                                FROM document
+                                WHERE student_id=?
+                                ORDER BY document_date DESC");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        //$sql = "SELECT * FROM document ORDER BY document_date DESC";
+        //$result = $conn->query($sql);
+
         if ($result->num_rows > 0) {
           // Start list
           echo "<ul>";
@@ -254,11 +327,19 @@ $activeStudentName = $activeStudent->get_full_name();
        * displayDocumentInput( ) - display all documents as input options
        * TODO: modify to only display documents relevant to user
        * ******************************** */
-      function displayDocumentInput( ) {
+      function displayDocumentInput($studentId) {
         global $conn;
 
-        $sql = "SELECT * FROM document";
-        $result = $conn->query($sql);
+        $stmt = $conn->prepare("SELECT * 
+                                FROM document
+                                WHERE student_id=?
+                                ORDER BY document_date DESC");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        //$sql = "SELECT * FROM document";
+        //$result = $conn->query($sql);
         if ($result->num_rows > 0) {
           
           // Display first row document information
@@ -324,7 +405,7 @@ $activeStudentName = $activeStudent->get_full_name();
         <div class="contentCard">
           <h3>Documents</h3>
           <?php 
-            displayDocumentList( );
+            displayDocumentList($activeStudentId);
           ?>
         </div>
 
@@ -364,7 +445,7 @@ $activeStudentName = $activeStudent->get_full_name();
                 <select name="removeFile">
                   <option value="blank"></option>
                   <?php 
-                    displayDocumentInput( );
+                    displayDocumentInput($activeStudentId);
                   ?>
                 </select>
               <br /><br />
