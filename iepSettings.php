@@ -13,11 +13,11 @@
 
     // See if selectedUserId exists in POST
     try {
-      if (array_key_exists("selectedUserId", $_POST)) {
-        $selectedUserId = $_POST["selectedUserId"];
+      if (array_key_exists("selectedUserId", $_GET)) {
+        $selectedUserId = $_GET["selectedUserId"];
       } else {
         //$selectedUserId = "";
-        //echo "No user selected to edit <br />";
+        echo "No user selected to edit <br />";
       }
     } catch (Exception $e) {
       echo "Message: " . $e->getMessage();
@@ -40,12 +40,55 @@
     */
     if (isset($selectedUserId)) {
       $selectedUserInfo = getUserInfo($conn, $selectedUserId);
-      //print_r($selectedUserInfo);
-      //echo "<br />";
+      print_r($selectedUserInfo);
+      echo "<br />";
+      // Use selectedUserInfo values Admin edits
+      $currentUserFullName = $selectedUserInfo["userFullName"];
+      $currentUserType = $selectedUserInfo["userType"];
+      $currentUsername = $selectedUserInfo["userName"];
+      $currentUserPassword = $selectedUserInfo["userPassword"];
+      $currentUserEmail = $selectedUserInfo["userEmail"];
+      $currentUserAddress = $selectedUserInfo["userAddress"];
+      $currentUserPhoneNumber = $selectedUserInfo["userPhone"];
+
+    } else {
+
+          // See if currentUserId and type exist in Session
+      try {
+        $currentUserId = $_SESSION["currentUserId"];
+      } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+      }
+
+      try {
+        $currentUserType = $_SESSION["currentUserType"];
+      } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+      }
+
+
+      // Initialize currentUser as new User of correct type
+      // Pass $currentUserId, $currentUserType, $conn into createUser() function
+      try {
+        $currentUser = createUser($currentUserId, $currentUserType, $conn);
+
+      } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+      }
+
+        // Save user information to be displayed
+        $currentUserFullName = $currentUser->get_full_name();
+        $currentUserType = $currentUser->get_user_type();
+        $currentUsername = $currentUser->get_user_name();
+        $currentUserPassword = $currentUser->get_user_password();
+        $currentUserEmail = $currentUser->get_user_email();
+        $currentUserAddress = $currentUser->get_user_address();
+        $currentUserPhoneNumber = $currentUser->get_user_phone();
+
     }
 
 
-      
+ /*     
     // See if currentUserId and type exist in Session
     try {
       $currentUserId = $_SESSION["currentUserId"];
@@ -77,6 +120,8 @@
       $currentUserEmail = $currentUser->get_user_email();
       $currentUserAddress = $currentUser->get_user_address();
       $currentUserPhoneNumber = $currentUser->get_user_phone();
+
+ */     
       ?>
 
       <!DOCTYPE html>

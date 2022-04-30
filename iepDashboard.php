@@ -63,8 +63,16 @@ include_once realpath("initialization.php");
           });
         });
 
-        //Identify the defaultOpen element
+        //If no tablinks are active, click defaultOpen.
         $("#defaultOpen").click();
+        // If dashboard loads with active student value,
+        
+        //$(".tablinks.active").click();
+
+        // User Home Link
+        $(document).on("click", "#userHomeLink", function() {
+          // 
+        });
 
         // Detail View toggle
         $(document).on("click", ".detailViewButton", function() {
@@ -94,37 +102,23 @@ include_once realpath("initialization.php");
             low: $(this).attr("data-low")
           });
         });
-
+/*
         // Load Messages page for currentUser
         $(document).on("click", "#userMessagesLink", function() {
           // Load iepSettings content into accountContent div with user info
           $("#mainContent").load("iepMessage.html");
         });
-
+*/
         // Load Settings page for selected user when selected by admin
-        $(document).on("change", "#accountSelect", function() {
-          var selectedUserId = $(this).find(":selected").val();
-          // Load admin content into accountContent div
-          $("#mainContent").load("iepSettings.php", {
-            "selectedUserId": selectedUserId
-          });
+        $(document).on("change", ".accountSelect", function () {
+        
+          // Load url on new page
+          window.location = "iepSettings.php?selectedUserId=" + $(this).find(":selected").val();
+          return false;
+          alert("on.(change, accountSelect) complete");
+          
+        
         });
-
-        // Load Settings content for currentUser when userSettingsLink clicked
-        // User data accessed from SESSION variables
-        $(document).on("click", "#userSettingsLink", function() {
-          // Load iepSettings content into accountContent div with user info
-          $("#mainContent").load("iepSettings.php");
-        });
-
-        // Open Documents Page in main content when Documents button clicked
-        // Active Student data accessed from SESSION
-        $(document).on("click", "#documentLink", function() {
-          // Load iepSettings content into accountContent div with user info
-          $("#mainContent").load("iepDocument.php");
-        });
-
-        // Include function to reload click activeStudent tab when naviagting away from Documents, User Settings or Messages content
 
         // Open Goal Form on page to modify existing goal with button click
         $(document).on("click", ".modifyGoalFormButton", function() {
@@ -556,14 +550,29 @@ include_once realpath("initialization.php");
 
       }
 
-      // Default active student value:
-      $activeStudent = $students[0];
-      $activeStudentId = $activeStudent->get_student_id();
-      $activeStudentName = $activeStudent->get_full_name();
+      // Check for existing activeStudentId
+      try {
+        echo $_SESSION["activeStudentId"];
+        echo "<br />";
+      } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+      
+      } 
+      if (isset($_SESSION["activeStudentId"])) {
+        $activeStudentId = $_SESSION["activeStudentId"];
+      } else {
+
+        // Default active student value:
+        //$activeStudent = $students[0];
+        //$activeStudentId = $activeStudent->get_student_id();
+        //$activeStudentName = $activeStudent->get_full_name();
 
 
-      // Save activeStudentId to SESSION
-      $_SESSION["activeStudentId"] = $activeStudentId;
+        // Save activeStudentId to SESSION
+        //$_SESSION["activeStudentId"] = $activeStudentId;
+      }
+
+ 
 
 
     } else {
@@ -585,8 +594,8 @@ include_once realpath("initialization.php");
         </div>
         <div id="horizontalNav">
           <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
-          <a class="hNavButton" id="userMessagesLink" href="javascript:void(0)"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
-          <a class="hNavButton" id="userSettingsLink" href="javascript:void(0)"><h3><i class="fa fa-gear"></i> Settings</h3></a>
+          <a class="hNavButton" id="userMessagesLink" href="iepMessage.html"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
+          <a class="hNavButton" id="userSettingsLink" href="iepSettings.php"><h3><i class="fa fa-gear"></i> Settings</h3></a>
           <a class="hNavButton" id="userLogout" href="#"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
 
         </div>
@@ -614,8 +623,9 @@ include_once realpath("initialization.php");
             echo "<label for=\"accountSelect\">Select User Account</label>";
             echo "<select name=\"accountSelect\" class=\"accountSelect\" id=\"accountSelect\">";
               // Options for accountSelect
+              echo "<option class=\"accountOption vNavButton\" hidden disabled selected value> -- Select a User -- </option>";
               foreach($accounts as $a => $a_value) {
-                  echo "<option class=\"accountOption vNavButton\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
+                  echo "<option class=\"accountOption vNavButton\" data-url=\"iepSettings.php\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
               }
             echo "</select>"; // end of select
           } // end of if accounts set and has values  

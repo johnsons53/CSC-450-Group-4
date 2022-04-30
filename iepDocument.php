@@ -26,7 +26,7 @@
     // report data for creating graph
     //  
 
-    //include_once realpath("initialization.php");
+    include_once realpath("initialization.php");
 
 /*
 // Confirmed $activeStudentId and $activeStudentName values sent via $_POST
@@ -39,9 +39,9 @@
         echo "Message: " . $e->getMessage();
 
       }
-
-*/ 
-/* 
+*/
+ 
+ 
 // Confirmed $activeStudentId value available via $_SESSION 
 try {
   echo $_SESSION["activeStudentId"];
@@ -50,8 +50,15 @@ try {
   echo "Message: " . $e->getMessage();
 
 } 
-*/  
+try {
+  echo $_SESSION["currentUserId"];
+  echo "<br />";
+} catch (Exception $e) {
+  echo "Message: " . $e->getMessage();
 
+} 
+  
+/*
       // Connection constants for use with AMPPS
       define("SERVER_NAME", "localhost");
       define("DBF_USER_NAME", "root"); 
@@ -66,7 +73,7 @@ try {
       
       // Select database
       $conn->select_db(DATABASE_NAME);
-    
+ */   
       // Choose an action based on user form submission (add or remove document)
       if(isset($_POST["btnAdd"])) {
         addDocument( );
@@ -82,7 +89,8 @@ try {
         // TODO: update student and user id to pull from page info
         $addStudentID = 0;
         $addUserId = 0;
-        //$docName = $_POST['addFile'];
+        echo "POST at addFile: " . $_POST["addFile"];
+        $docName = $_POST['addFile'];
         // TODO: update file path with path for server
         $path = "http://localhost/capstoneCurrent/documents/";
 
@@ -272,6 +280,7 @@ try {
 
     <!-- Page is encompassed in grid -->
     <div class="gridContainer">
+      
       <header>
         <!-- Insert logo image here -->
         <h1>IEP Portal</h1>
@@ -279,20 +288,15 @@ try {
           <!-- Username, messages button, and account settings button here -->
         </div>
         <div id="horizontalNav">
-          <!-- Links are inactive -->
-          <a class="hNavButton" href=""><h3 class="button">Documents</h3></a>
-          <a class="hNavButton" href=""><h3>Goals</h3></a>
-          <a class="hNavButton" href=""><h3>Events</h3></a>
-          <a class="hNavButton" href=""><h3>Messages</h3></a>
-          <a class="hNavButton" href=""><h3>Information</h3></a>
-          <a class="hNavButton" href=""><h3>Settings</h3></a>
+        <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
+
         </div>
       </header>
 
       <!-- Vertical navigation bar -->
       <div class="left" id="verticalNav">
-        <h3>Navigation</h3>
-        <a class="vNavButton" href=""><h3>Child #1</h3></a>
+<!--         <h3>Navigation</h3>
+        <a class="vNavButton" href=""><h3>Child #1</h3></a> -->
       </div>
 
       <!-- Main content of page -->
@@ -312,7 +316,7 @@ try {
         <!-- Add (upload) a document -->
         <div class="formAdd">
           <form name="frmAddDocument"
-            action="<?PHP echo htmlentities($_SERVER['PHP_SELF']); ?>"
+            action=""
             method="POST"
             enctype="multipart/form-data" >
             <fieldset name="addDocument">
@@ -324,7 +328,7 @@ try {
               <br /><br />
 
               <!-- Submit button -->
-              <input type="submit" name="btnAdd" value="Add Document">
+              <input type="submit" class="documentChange" name="btnAdd" id="btnDocumentAdd" value="Add Document">
 
             </fieldset>
           </form>
@@ -350,7 +354,7 @@ try {
               <br /><br />
 
               <!-- Submit button -->
-              <input type="submit" name="btnRemove" value="Remove Document">
+              <input type="submit" class="documentChange" name="btnRemove" id="btnDocumentRemove" value="Remove Document">
 
             </fieldset>
           </form>
