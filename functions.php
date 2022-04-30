@@ -375,6 +375,7 @@ function getUserList($conn) {
 
 }
 
+
 /*
 Get contact and account information for given userId
 */
