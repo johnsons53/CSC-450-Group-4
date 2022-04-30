@@ -18,6 +18,29 @@
 
         $query = "SELECT * FROM user";
         $result = mysqli_query($conn, $query);
+
+        // Initialize currentUser as new User of correct type
+        // Pass $currentUserId, $currentUserType, $conn into createUser() function
+        // See if currentUserId and type exist in Session
+        try {
+            $currentUserId = $_SESSION["currentUserId"];
+        } catch (Exception $e) {
+            echo "Message: " . $e->getMessage();
+        }
+    
+        try {
+            $currentUserType = $_SESSION["currentUserType"];
+        } catch (Exception $e) {
+            echo "Message: " . $e->getMessage();
+        }
+        try {
+            $currentUser = createUser($currentUserId, $currentUserType, $conn);
+    
+        } catch (Exception $e) {
+            echo "Message: " . $e->getMessage();
+        }
+    
+        $currentUserName = $currentUser->get_full_name();
         ?>
 
       <!DOCTYPE html>
@@ -28,35 +51,30 @@
           <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
           <link rel="stylesheet" type="text/css" href="style.css">
           <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
           <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
       </head>
 
       <body>
           <div class="gridContainer">
-              <header> <!-- Header settings -->
-                  <!-- Insert logo image here -->
-                  <h1>IEP Portal</h1>
-                  <div id="accountHolderInfo">
-                      <!-- Username, messages button, and account settings button here -->
+          <header>
+        <!-- Insert logo image here -->
+        <h1>IEP Portal</h1>
+        <div id="accountHolderInfo">
+          <!-- Username, messages button, and account settings button here -->
+          
+          <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
+        </div>
+        <div id="horizontalNav">
+          <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
+          <a class="hNavButton" id="userMessagesLink" href="iepMessage.php"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
+          <a class="hNavButton" id="userSettingsLink" href="iepSettings.php"><h3><i class="fa fa-gear"></i> Settings</h3></a>
+          <a class="hNavButton" id="userLogout" href="iepUserLogout.php"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
 
-                      <!-- Add Logout button here -->
-                  </div>
-                  <div id="horizontalNav">
-                      <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php">
-                          <h3>Home</h3>
-                      </a>
-                      <a class="hNavButton" id="userMessagesLink" href="javascript:void(0)">
-                          <h3>Messages</h3>
-                      </a>
-                      <a class="hNavButton" id="userSettingsLink" href="javascript:void(0)">
-                          <h3>Settings</h3>
-                      </a>
-                      <a class="hNavButton" id="userLogout" href="#">
-                          <h3>Logout</h3>
-                      </a>
-                  </div>
-                  <!-- Insert logo image here -->
-              </header>
+        </div>
+
+      </header>
 
 
               <!-- Table to populate users -->
