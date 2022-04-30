@@ -15,7 +15,7 @@
   </head>
 
   <body>
-    <!-- TODO Add PHP here to manage variables and queries to database -->
+
     <?php 
     // Variables needed: array of student_id values associated with the parent user
     // array of student names, pulled from user table and combined into one string for display
@@ -82,59 +82,49 @@ try {
         // TODO: update student and user id to pull from page info
         $addStudentID = 0;
         $addUserId = 0;
-        //$docName = $_POST['addFile'];
+
+        $currentDateTime = date("Y-m-d\nH:i:s");
+        echo "current datetime is: " . $currentDateTime . "<br />";
+        
         // TODO: update file path with path for server
         $path = "http://localhost/capstoneCurrent/documents/";
-
-        /* File object and file extension to be uploaded
-        $fileToUpload = $path . basename($_FILES["addFile"]["name"]);
-        $fileType = strtolower(pathinfo($fileToUpload,PATHINFO_EXTENSION)); */
-
-        
-        echo "<h4>" . $docName . "</h4>"; ///////////////////////////// DEBUGGING FLAG
-
 
         // File object and file extension to be uploaded
         $target_directory = "documents/";
         $fileToUpload = $target_directory . basename($_FILES["addFile"]["name"]);
         $fileType = strtolower(pathinfo($fileToUpload,PATHINFO_EXTENSION));
-
-        echo "<h4>" . $fileType . "</h4>"; ///////////////////////////////
-
-        // Check for only document file formats
-        $uploadKey = 1;
-        /*if($fileType != "pdf" && $fileType != "docx" && $fileType != "doc") {
-          echo "Error: file type not compatible. Please upload a PDF, DOCX, or DOC file.";
-          $uploadKey = 0;
-        }*/
-
-        /* Check filesize
-        if ($_FILES["addFile"]["size"] > 3000000) {
-          echo "Error: file is too large to upload";
-          $uploadKey = 0;
-        }*/
-
-        if($uploadKey == 0) {
-          echo "File not uploaded.";
+        
+        if ($fileType == "") {
+          // Check if a file was selected to upload
+          echo "Error: no file selected. Please select a file to upload<br />";
+        }
+        else if (file_exists($fileToUpload)) {
+          // Check if file of same name in database
+          echo "Sorry, file already exists<br />";
+        }
+        else if($fileType != "pdf" && $fileType != "docx" && $fileType != "doc") {
+          // Check for accepted document file formats (pdf, doc, docx)
+          echo "Error: file type " . $fileType . " not compatible. Please upload a PDF, DOCX, or DOC file.<br />";
         }
         else {
+          // Attempt to move document to correct server folder
+          // If successful, add document info to database
           if (move_uploaded_file($_FILES["addFile"]["tmp_name"], $fileToUpload)) {
 
             // Upload file to database
-            // TODO: get CURRENT time and input into database
-            $newDocument = array($addStudentID, $addUserId, $_FILES["addFile"]["name"], $path);
+            $newDocument = array($addStudentID, $addUserId, $currentDateTime, $_FILES["addFile"]["name"], $path);
             $sql = "INSERT INTO document (student_id, user_id, document_date, document_name, document_path) "
               . "VALUES ('" . $newDocument[0] . "', '"
               . $newDocument[1] . "', '"
-              . "1000-01-01 00:00:00" . "', '"
               . $newDocument[2] . "', '"
-              . $newDocument[3] . "')";
+              . $newDocument[3] . "', '"
+              . $newDocument[4] . "')";
             runQuery($sql, "New document insert: $docName", true); 
 
-            echo "The file " . htmlspecialchars(basename($_FILES["addFile"]["name"])) . " has been uploaded.";
+            echo "The file " . $docName . " has been uploaded.<br />";
           }
           else {
-            echo "An error has occurred uploading your file. Please try again.";
+            echo "An error has occurred uploading your file. Please try again.<br />";
           }
         }
       } // end addDocument( )
@@ -154,28 +144,33 @@ try {
           $deleteKey = 0;
         }
         else {
+
           // Locate document name and extension
           $sql = "SELECT document_name FROM document WHERE document_id=" . $deleteDocId[0];
           $result = $conn->query($sql);
           $docInfo = $result->fetch_assoc( );
-          $docNameToDelete = $docInfo['document_name'];
 
-          echo "Doc ID: " . $deleteDocId[0] . " doc name: " . $docNameToDelete . "<br />";
+          // Check that document was found. If not, display error
+          if ($result->num_rows > 0) {
+            $docNameToDelete = $docInfo['document_name'];
 
+            echo "Doc ID: " . $deleteDocId[0] . " doc name: " . $docNameToDelete . "<br />"; // DEBUGGING FLAG
 
+            if ($deleteKey == 1) {
 
-          if ($deleteKey == 1) {
-            // TODO: delete file from server as well as database
-            if (unlink($deletePath . $docNameToDelete)) {
-              // Delete delete document row from database
-              $sql = "DELETE FROM document WHERE " . $deleteDocId[0] . "=document.document_id";
-                        
-              // TODO: change true to false below (don't show debugging)
-              runQuery($sql, "Delete document: " . $deleteDocId[0], true);
+              // Delete document from server folder and remove from db
+              if (unlink($deletePath . $docNameToDelete)) {
+                $sql = "DELETE FROM document WHERE " . $deleteDocId[0] . "=document.document_id";
+                          
+                // TODO: change true to false below (don't show debugging)
+                runQuery($sql, "Delete document: " . $deleteDocId[0], true);
+              }
             }
           }
+          else {
+            echo "An error occurred while uploading your document.<br />";
+          }
         }
-        
       } // end deleteDocument( )
 
 
@@ -211,7 +206,7 @@ try {
       function displayDocumentList( ) {
         global $conn;
 
-        $sql = "SELECT * FROM document";
+        $sql = "SELECT * FROM document ORDER BY document_date DESC";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
           // Start list
