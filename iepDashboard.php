@@ -12,7 +12,8 @@ Revised: 04/13/2022 Modified provider forms and buttons to appear on dashboard p
 Revised: 04/17/2022 Adjustments to data flow from iepLogin to SESSION to dashboard to fix
 issue updating data after changes to database; Cleanup of old code and testing code
 Revised: 04/22/2022 Added handling for Admin user
-Revised: 04/27/2022 : Adjusted form data validation
+Revised: 04/27/2022 Adjusted form data validation
+Revised: 04/29/2022 Modified horizontal navigation to other views
 
 */
 include_once realpath("initialization.php");
