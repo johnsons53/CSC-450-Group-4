@@ -47,7 +47,7 @@
       $currentUserName = $currentUser->get_full_name();
 
 
-
+/*
       // Connection constants for use with AMPPS
       define("SERVER_NAME", "localhost");
       define("DBF_USER_NAME", "root"); 
@@ -62,7 +62,7 @@
       
       // Select database
       $conn->select_db(DATABASE_NAME);
-    
+ */   
       // Choose an action based on user form submission (add or remove document)
       if(isset($_POST["btnSend"])) {
         sendMessage( );
@@ -236,6 +236,10 @@
             method="POST">
             <fieldset name="sendMessage">
               <legend>Send a message</legend>
+              <!-- Selection List for message recipients -->
+              <?php
+              userSelectionList($conn);
+              ?>
 
               <!-- Text field to type message -->
               <label for="txtMessage">Type your message:</label>
