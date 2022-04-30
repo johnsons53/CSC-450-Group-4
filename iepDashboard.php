@@ -65,14 +65,6 @@ include_once realpath("initialization.php");
 
         //If no tablinks are active, click defaultOpen.
         $("#defaultOpen").click();
-        // If dashboard loads with active student value,
-        
-        //$(".tablinks.active").click();
-
-        // User Home Link
-        $(document).on("click", "#userHomeLink", function() {
-          // 
-        });
 
         // Detail View toggle
         $(document).on("click", ".detailViewButton", function() {
