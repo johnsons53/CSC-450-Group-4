@@ -9,7 +9,8 @@
     <!-- iepMessage.php - IEP messaging page
       Spring 100 CSC 450 Capstone, Group 4
       Author: Sienna-Rae Johnson
-      Date Written: 04/30/2022
+      Date Written: 04/29/2022
+      Date Revised: 04/30/2022 - 
     -->
     <title>IEP Portal: Messages</title>
     <link rel="stylesheet" type="text/css" href="style.css">
@@ -63,7 +64,7 @@
       // Select database
       $conn->select_db(DATABASE_NAME);
  */   
-      // Choose an action based on user form submission (add or remove document)
+      // If the 'send' button was just clicked, send the message
       if(isset($_POST["btnSend"])) {
         sendMessage( );
       }
@@ -91,19 +92,54 @@
         $conn->close();
       }
 
-      /* displayMessages( ) - display messages to/from users 
+      /* displayMessages( ) - display messages to/from users */
       function displayMessages( ) {
         global $conn;
 
-        // Locate messages sent and received between two users
-        $sql = "SELECT * FROM message INNER JOIN message_recipient ON message.message_id = message_recipient.message_id "
-          . "WHERE user_id = '" . $currentUserId "'";
-        $resultSent = $conn->query($sql);
+        // Hardcoded users for now
+        $otherUser = 16;
+        $thisUser = 13;
 
-        // Locate messages received by the user
-        $sql = "SELECT * FROM message_recipient WHERE user_id = '" . $currentUserId "'";
-        $resultReceived = $conn->query($sql);
-      } */
+        // Locate other user name
+        $sql = "SELECT user_name, user_id FROM user WHERE user_id='" . $otherUser . "'";
+        $result = $conn->query($sql);
+        $otherUserName = $result->fetch_assoc( );
+
+        // Locate active user's user name
+        $sql = "SELECT user_name, user_id FROM user WHERE user_id='" . $thisUser . "'";
+        $result = $conn->query($sql);
+        $thisUserName = $result->fetch_assoc( );
+
+        // Locate messages sent and received between two users
+        $sql = "SELECT message.user_id AS 'sender', " 
+          . "message_recipient.user_id AS 'recipient', message.message_id, message_recipient.message_id, "
+          . "message.message_text, message.message_date, message_recipient.message_read " 
+          . "FROM message INNER JOIN message_recipient ON message.message_id = message_recipient.message_id "
+          . "WHERE (message.user_id='" . $thisUser . "' OR message.user_id='" . $otherUser . "') " 
+          . " AND (message_recipient.user_id='" . $thisUser . "' OR message_recipient.user_id='" . $otherUser . "')";
+        $result = $conn->query($sql);
+
+        // Display messages as divs with class 'msgOtherUser' or 'msgThisUser'
+        if ($result->num_rows > 0) {
+
+          while($oneMessage = $result->fetch_assoc( )) {
+            $messageClass = "msgOtherUser";
+            $sentBy = $otherUserName['user_name'];
+
+            if ($oneMessage['sender'] == $thisUser) {
+              $messageClass = "msgThisUser";
+              $sentBy = $thisUserName['user_name'];
+            }
+
+            // Start displaying message
+            echo "<div class='" . $messageClass . "'>";
+            echo "<h4>Username: " . $sentBy;
+            echo "  Date: " . $oneMessage['message_date'] . "</h4>";
+            echo "<p>Message: " . $oneMessage['message_text'] . "</p>";
+            echo "</div>";
+          } // end while
+        } // end if
+      } // end displayMessages( )
 
       /* sendMessage( ) - upload a message to the database */
       function sendMessage( ) {
@@ -111,7 +147,7 @@
 
         // Hardcoded users for now
         $sendToUser = 16;
-        $currentUserId = 12;
+        $currentUserId = 13;
         $message = array($_POST['txtMessage']);
 
         // Insert message into SENT message table
@@ -134,13 +170,11 @@
           $firstRow = $result->fetch_assoc( );
           $sentMessage = $firstRow['message_id'];
   
-          echo "sent message id is: " . $sentMessage . "<br />"; ///////////////
-  
           // Insert message into message_recipient table
           $sql = "INSERT INTO message_recipient (message_id, message_recipient.user_id) "
             . "VALUES ('" . $sentMessage . "', '"
             . $sendToUser . "')";
-          runQuery($sql, "Message sent ", true);
+          runQuery($sql, "Message received by other user ", true);
         }
       } // end sendMessage( )
 
@@ -223,7 +257,7 @@
         <div class="contentCard">
           <h3>Messages</h3>
           <?php 
-            
+            displayMessages( );
           ?>
         </div>
 
@@ -238,8 +272,9 @@
               <legend>Send a message</legend>
               <!-- Selection List for message recipients -->
               <?php
-              userSelectionList($conn);
+                userSelectionList($conn);
               ?>
+              <br />
 
               <!-- Text field to type message -->
               <label for="txtMessage">Type your message:</label>
