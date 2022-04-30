@@ -153,7 +153,14 @@ $activeStudentName = $activeStudent->get_full_name();
             $stmt = $conn->prepare("INSERT INTO document (student_id, user_id, document_date, document_name, document_path)
                                     VALUES (?, ?, ?, ?,?)");
             $stmt->bind_param("iisss", $studentId, $userId, $currentDateTime, $fileName, $path);
-            $stmt->execute();
+
+            try {
+              $stmt->execute();
+
+            } catch (Exception $e) {
+              echo "Message: " . $e->getMessage();
+
+            }
 /*
             $sql = "INSERT INTO document (student_id, user_id, document_date, document_name, document_path) "
               . "VALUES ('" . $newDocument["studentId"] . "', '"
@@ -192,9 +199,25 @@ $activeStudentName = $activeStudent->get_full_name();
         }
         else {
 
+          $stmt = $conn->prepare("SELECT document_name
+                                  FROM document
+                                  WHERE document_id=?");
+          $stmt->bind_param("i", $deleteDocId[0]);
+
+          try {
+            $stmt->execute();
+
+          } catch (Exception $e) {
+            echo "Message: " . $e->getMessage();
+
+          }
+          //$stmt->execute();
+          $result = $stmt->get_result();
+/*
           // Locate document name and extension
           $sql = "SELECT document_name FROM document WHERE document_id=" . $deleteDocId[0];
           $result = $conn->query($sql);
+          */
           $docInfo = $result->fetch_assoc( );
 
           // Check that document was found. If not, display error
@@ -207,10 +230,26 @@ $activeStudentName = $activeStudent->get_full_name();
 
               // Delete document from server folder and remove from db
               if (unlink($deletePath . $docNameToDelete)) {
-                $sql = "DELETE FROM document WHERE " . $deleteDocId[0] . "=document.document_id";
+
+                // Prepared Statement
+                $stmt = $conn->prepare("DELETE FROM document
+                                        WHERE ?=document.document_id");
+                $stmt->bind_param("i", $deleteDocId[0]);
+
+                try {
+                  $stmt->execute();
+      
+                } catch (Exception $e) {
+                  echo "Message: " . $e->getMessage();
+      
+                }
+
+                echo "<script>alert(\"File has been deleted\");</script>";
+
+                //$sql = "DELETE FROM document WHERE " . $deleteDocId[0] . "=document.document_id";
                           
                 // TODO: change true to false below (don't show debugging)
-                runQuery($sql, "Delete document: " . $deleteDocId[0], true);
+                //runQuery($sql, "Delete document: " . $deleteDocId[0], true);
               }
             }
           }
