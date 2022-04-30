@@ -1,3 +1,6 @@
+<?php 
+  include_once realpath("initialization.php");
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -7,6 +10,8 @@
       Spring 100 CSC 450 Capstone, Group 4
       Author: Sienna-Rae Johnson
       Date Written: 04/19/2022
+      Date Revised: 4/28/2022 - add/remove document functionality added
+      Date Revised: 4/29/2022 - display documents relevant to active user & selected student only
     -->
     <title>IEP Portal: Documents</title>
     <link rel="stylesheet" type="text/css" href="style.css">
@@ -89,9 +94,10 @@ try {
         // TODO: update file path with path for server
         $path = "http://localhost/capstoneCurrent/documents/";
 
-        // File object and file extension to be uploaded
-        $target_directory = "documents/";
-        $fileToUpload = $target_directory . basename($_FILES["addFile"]["name"]);
+        // File file and file extension to be uploaded
+        $filePath = "documents/";
+        $fileName = $_FILES["addFile"]["name"];
+        $fileToUpload = $filePath . basename($_FILES["addFile"]["name"]);
         $fileType = strtolower(pathinfo($fileToUpload,PATHINFO_EXTENSION));
         
         if ($fileType == "") {
@@ -112,16 +118,16 @@ try {
           if (move_uploaded_file($_FILES["addFile"]["tmp_name"], $fileToUpload)) {
 
             // Upload file to database
-            $newDocument = array($addStudentID, $addUserId, $currentDateTime, $_FILES["addFile"]["name"], $path);
+            $newDocument = array($addStudentID, $addUserId, $currentDateTime, $fileName, $path);
             $sql = "INSERT INTO document (student_id, user_id, document_date, document_name, document_path) "
               . "VALUES ('" . $newDocument[0] . "', '"
               . $newDocument[1] . "', '"
               . $newDocument[2] . "', '"
               . $newDocument[3] . "', '"
               . $newDocument[4] . "')";
-            runQuery($sql, "New document insert: $docName", true); 
+            runQuery($sql, "New document insert: $fileName", true); 
 
-            echo "The file " . $docName . " has been uploaded.<br />";
+            echo "The file " . $fileName . " has been uploaded.<br />";
           }
           else {
             echo "An error has occurred uploading your file. Please try again.<br />";
