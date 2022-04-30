@@ -110,20 +110,22 @@
         global $conn;
 
         // Hardcoded users for now
-        $sendToUser = 4;
+        $sendToUser = 16;
         $currentUserId = 12;
         $message = array($_POST['txtMessage']);
 
         // Insert message into SENT message table
-        $sql = "INSERT INTO message (user_id, message_text) "
+        $sql = "INSERT INTO message (message.user_id, message_text) "
           . "VALUES ('" . $currentUserId . "', '"
           . $message[0] . "')";
         runQuery($sql, "Message sent", true);
 
+        echo "message is: " . $message[0] . "<br />"; ////////////////
+        echo "id is: " . $currentUserId . "<br />"; ////////////////
+
         // Find message id of message just sent
         $sql = "SELECT message_id, message.user_id, message_text, message_date FROM message WHERE message.user_id='"
-          . $currentUserId . "' AND message_text='" . $message[0] . "')" 
-          . " ORDER BY message_date DESC";
+          . $currentUserId . "' AND message_text='" . $message[0] . "' ORDER BY message_date DESC";
         $result = $conn->query($sql);
 
         if($result->num_rows > 0) {
@@ -135,9 +137,10 @@
           echo "sent message id is: " . $sentMessage . "<br />"; ///////////////
   
           // Insert message into message_recipient table
-          $sql = "INSERT INTO message_recipient (message_id, user_id) "
-            . "VALUES ('" . $sendToUser . "')";
-          runQuery($sql, "Message received", true);
+          $sql = "INSERT INTO message_recipient (message_id, message_recipient.user_id) "
+            . "VALUES ('" . $sentMessage . "', '"
+            . $sendToUser . "')";
+          runQuery($sql, "Message sent ", true);
         }
       } // end sendMessage( )
 
