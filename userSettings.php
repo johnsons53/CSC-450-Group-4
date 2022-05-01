@@ -88,9 +88,9 @@
 
               <!-- Table to populate users -->
               <br /><br />
-              <div class="container contentCard">
+              <div class="container mainContent">
                   <br />
-                  <div class="table-responsive">
+                  <div class="table-responsive contentCard">
                       <br />
                       <div id="users_table">
                           <table class="table table-bordered">
@@ -125,7 +125,9 @@
                                 ?>
                           </table>
                       </div>
+
                   </div>
+                  
               </div>
               <?php include_once(realpath("footer.php")); ?>
       </body>

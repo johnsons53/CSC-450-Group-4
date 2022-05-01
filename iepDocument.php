@@ -457,10 +457,9 @@ $activeStudentName = $activeStudent->get_full_name();
           </form>
         </div>
       
-      <footer>
-        <!-- Insert footer info here -->
-      </footer>
+        
 
     </div>
+    <?php include_once(realpath("footer.php")); ?>
   </body>
 </html>

@@ -351,6 +351,6 @@ input[type=button]:hover, input[type=submit]:hover {
   #verticalNav {
     min-width: 20em !important;
     width: auto;
-    max-width: 30em !important;
+    max-width: 25em !important; 
   }
 }
