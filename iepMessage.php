@@ -64,7 +64,7 @@
       // Select database
       $conn->select_db(DATABASE_NAME);
  */   
-      // If the 'send' button was just clicked, send the message
+      // If the 'send' button was activated, send the message
       if(isset($_POST["btnSend"])) {
         sendMessage( );
       }
@@ -116,30 +116,32 @@
           . "message.message_text, message.message_date, message_recipient.message_read " 
           . "FROM message INNER JOIN message_recipient ON message.message_id = message_recipient.message_id "
           . "WHERE (message.user_id='" . $thisUser . "' OR message.user_id='" . $otherUser . "') " 
-          . " AND (message_recipient.user_id='" . $thisUser . "' OR message_recipient.user_id='" . $otherUser . "')";
+          . " AND (message_recipient.user_id='" . $thisUser . "' OR message_recipient.user_id='" . $otherUser . "')"
+          . " ORDER BY message.message_date ASC";
         $result = $conn->query($sql);
 
-        // Display messages as divs with class 'msgOtherUser' or 'msgThisUser'
+        // Display messages as divs
         if ($result->num_rows > 0) {
 
           while($oneMessage = $result->fetch_assoc( )) {
-            $messageClass = "msgOtherUser";
+            $messageClass = "otherMessageCard";
             $sentBy = $otherUserName['user_name'];
 
             if ($oneMessage['sender'] == $thisUser) {
-              $messageClass = "msgThisUser";
+              $messageClass = "userMessageCard";
               $sentBy = $thisUserName['user_name'];
             }
 
             // Start displaying message
-            echo "<div class='" . $messageClass . "'>";
-            echo "<h4>Username: " . $sentBy;
-            echo "  Date: " . $oneMessage['message_date'] . "</h4>";
-            echo "<p>Message: " . $oneMessage['message_text'] . "</p>";
+            echo "<div class='" . $messageClass . " messageCard'>";
+            echo "<h4 class='msgUserName'>" . $sentBy . "</h4>";
+            echo "<h4 class='msgDate'>" . $oneMessage['message_date'] . "</h4>";
+            echo "<p class='message'>" . $oneMessage['message_text'] . "</p>";
             echo "</div>";
           } // end while
         } // end if
       } // end displayMessages( )
+
 
       /* sendMessage( ) - upload a message to the database */
       function sendMessage( ) {
@@ -177,50 +179,7 @@
           runQuery($sql, "Message received by other user ", true);
         }
       } // end sendMessage( )
-
-
-      /* ********************************
-       * displayDocumentList( ) - display list of all docments in db
-       * $displayAsLink - display documents as either plain text or as links
-       * TODO: modify to only display documents relevant to user
-       * ******************************** */
-      function displayDocumentList( ) {
-        global $conn;
-
-        $sql = "SELECT * FROM document ORDER BY document_date DESC";
-        $result = $conn->query($sql);
-        if ($result->num_rows > 0) {
-          
-          echo "<ul>";
-          // Display first row document information
-          $heading = $result->fetch_assoc( );
-          displayDocumentLink($heading);
-  
-          // Display the rest of the documents
-          while($row = $result->fetch_assoc( )) {
-            displayDocumentLink($row);
-          } // end while( )
-          // End list
-          echo "</ul>";
-        } // end if
-      }
-
-      /* ********************************
-        * displayDocumentLink($document) - display a document & its info as a link to the document
-        * ******************************** */
-      function displayDocumentLink($document) {
-        global $conn; 
-        echo "<li><a href='" . $document['document_path'] . $document['document_name'] . "' target='_blank'>" . $document['document_name'] . "</a></li>";
-      }
-
-      /* ********************************
-        * displayDocumentOption($document) - display a document & its info as an input list option
-        * ******************************** */
-      function displayDocumentOption($document) {
-        global $conn; 
-        echo "<option value='" . $document['document_id'] . "'>" . $document['document_name'] . "</option>";
-      }
-
+      
     ?>
 
 
@@ -245,26 +204,23 @@
 
       <!-- Vertical navigation bar -->
       <div class="left" id="verticalNav">
-        <h3>Navigation</h3>
+        <!-- Blank: maintains page structure -->
       </div>
 
       <!-- Main content of page -->
-      <div class="middle" id="mainContent">
-        <div class="currentStudentName">
-            <h3>Student Name</h3>
-        </div>
+      <div class="mainContent">
         
-        <div class="contentCard">
-          <h3>Messages</h3>
+        <h3>Messages</h3>
+        <div class="contentCard" id="messageContent">
           <?php 
             displayMessages( );
           ?>
         </div>
 
-        <!-- Messaging display & interface -->
-        <div class="messages">
-          <!-- List user messages -->
+        <!-- Messaging interface: select user and send message -->
+        <div class="messageForm">
 
+          <!-- Send message form -->
           <form name="frmSendMessage"
             action="<?PHP echo htmlentities($_SERVER['PHP_SELF']); ?>"
             method="POST">
@@ -274,7 +230,7 @@
               <?php
                 userSelectionList($conn);
               ?>
-              <br />
+              <br /><br />
 
               <!-- Text field to type message -->
               <label for="txtMessage">Type your message:</label>
@@ -285,7 +241,6 @@
 
             </fieldset>
         </div>
-
     </div>
   </body>
 </html>
