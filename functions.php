@@ -387,7 +387,7 @@ function countUnreadMessages($conn, $userId) {
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        $messageCount = $result->num_rows();
+        $messageCount = $result->num_rows;
     }
 
     return $messageCount;
