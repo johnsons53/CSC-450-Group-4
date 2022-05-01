@@ -24,79 +24,51 @@
 
   <body>
 
-    <?php 
-    // Variables needed: array of student_id values associated with the parent user
-    // array of student names, pulled from user table and combined into one string for display
-    // selected student to control which student's records are displayed
-    // array of selected student values from student table
-    // array for selected student's current goals
-    // array for selected student's current objectives
-    // report data for creating graph
-    //  
+    <?php
+      // Confirmed $activeStudentId value available via $_SESSION 
+      try {
+        $activeStudentId = $_SESSION["activeStudentId"];
+      } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
 
-    //include_once realpath("initialization.php");
- 
- 
-// Confirmed $activeStudentId value available via $_SESSION 
-try {
-  $activeStudentId = $_SESSION["activeStudentId"];
-} catch (Exception $e) {
-  echo "Message: " . $e->getMessage();
-
-} 
-try {
-  $currentUserId = $_SESSION["currentUserId"];
-} catch (Exception $e) {
-  echo "Message: " . $e->getMessage();
-}
-
-try {
-  $currentUserType = $_SESSION["currentUserType"];
-} catch (Exception $e) {
-  echo "Message: " . $e->getMessage();
-}
-
-
-// Initialize currentUser as new User of correct type
-// Pass $currentUserId, $currentUserType, $conn into createUser() function
-try {
-  $currentUser = createUser($currentUserId, $currentUserType, $conn);
-
-} catch (Exception $e) {
-  echo "Message: " . $e->getMessage();
-}
-$currentUserName = $currentUser->get_full_name();
-$unreadMessageCount = countUnreadMessages($conn, $currentUserId);
-
-try {
-  $activeStudent = createStudent($activeStudentId, $conn);
-
-} catch (Exception $e) {
-  echo "Message: " . $e->getMessage();
-}
-
-// Can use $currentUser
-$currentUserName = $currentUser->get_full_name();
-
-// Can use $activeStudent
-$activeStudentName = $activeStudent->get_full_name();
-  
-/*
-      // Connection constants for use with AMPPS
-      define("SERVER_NAME", "localhost");
-      define("DBF_USER_NAME", "root"); 
-      define("DBF_PASSWORD", "mysql");
-      define("DATABASE_NAME", "iep_portal");
-
-      // Create new connection object, then test connection
-      $conn = new mysqli(SERVER_NAME, DBF_USER_NAME, DBF_PASSWORD);
-      if ($conn->connect_error) {
-          die("Connection failed: " . $conn->connect_error);
+      } 
+      try {
+        $currentUserId = $_SESSION["currentUserId"];
+      } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
       }
-      
-      // Select database
-      $conn->select_db(DATABASE_NAME);
-*/    
+
+      try {
+        $currentUserType = $_SESSION["currentUserType"];
+      } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+      }
+
+
+      // Initialize currentUser as new User of correct type
+      // Pass $currentUserId, $currentUserType, $conn into createUser() function
+      try {
+        $currentUser = createUser($currentUserId, $currentUserType, $conn);
+
+      } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+      }
+      $currentUserName = $currentUser->get_full_name();
+      $unreadMessageCount = countUnreadMessages($conn, $currentUserId);
+
+      try {
+        $activeStudent = createStudent($activeStudentId, $conn);
+
+      } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+      }
+
+      // Can use $currentUser
+      $currentUserName = $currentUser->get_full_name();
+
+      // Can use $activeStudent
+      $activeStudentName = $activeStudent->get_full_name();
+
       // Choose an action based on user form submission (add or remove document)
       if(isset($_POST["btnAdd"])) {
         addDocument($activeStudentId, $currentUserId);
@@ -109,16 +81,16 @@ $activeStudentName = $activeStudent->get_full_name();
       function addDocument($studentId, $userId) {
         global $conn;
 
-        // TODO: update student and user id to pull from page info
-        //$addStudentID = 0;
-        //$addUserId = 0;
+        $currentDate = date("Y-m-d");
+        $currentTime = date("H:i:s");
+        $currentDateTime = $currentDate . " " . $currentTime;
 
-        $currentDateTime = date("Y-m-d\nH:i:s");
+
         //echo "current datetime is: " . $currentDateTime . "<br />";
         
         // TODO: update file path with path for server
-        //$path = "http://localhost/capstoneCurrent/documents/";
-        $path = "http://localhost:8888/CSC-450-GROUP-4/documents/";
+        $path = "http://localhost/capstoneCurrent/documents/";
+        //$path = "http://localhost:8888/CSC-450-GROUP-4/documents/";
 
         // File file and file extension to be uploaded
         $filePath = "documents/";
@@ -129,20 +101,14 @@ $activeStudentName = $activeStudent->get_full_name();
         if ($fileType == "") {
           // Check if a file was selected to upload
           echo "<script>alert(\"No file selected. Please select a file to upload\");</script>";
-          //echo "Error: no file selected. Please select a file to upload<br />";
         }
         else if (file_exists($fileToUpload)) {
           // Check if file of same name in database
-          //echo "FileName: " . $fileName . "<br />";
           echo "<script>alert(\"Sorry, file already exists\");</script>";
-
-          //echo "Sorry, file already exists<br />";
         }
         else if($fileType != "pdf" && $fileType != "docx" && $fileType != "doc") {
           // Check for accepted document file formats (pdf, doc, docx)
           echo "<script>alert(\"Sorry, file type not compatible. Please upload a PDF, DOCX, or DOC file\");</script>";
-
-          //echo "Error: file type " . $fileType . " not compatible. Please upload a PDF, DOCX, or DOC file.<br />";
         }
         else {
           // Attempt to move document to correct server folder
@@ -150,7 +116,6 @@ $activeStudentName = $activeStudent->get_full_name();
           if (move_uploaded_file($_FILES["addFile"]["tmp_name"], $fileToUpload)) {
 
             // Upload file to database
-            //$newDocument = array("studentId"=>$addStudentID, "userId"=>$addUserId, "dateTime"=>$currentDateTime, "fileName"=>$fileName, "path"=>$path);
 
             $stmt = $conn->prepare("INSERT INTO document (student_id, user_id, document_date, document_name, document_path)
                                     VALUES (?, ?, ?, ?,?)");
@@ -163,22 +128,10 @@ $activeStudentName = $activeStudent->get_full_name();
               echo "Message: " . $e->getMessage();
 
             }
-/*
-            $sql = "INSERT INTO document (student_id, user_id, document_date, document_name, document_path) "
-              . "VALUES ('" . $newDocument["studentId"] . "', '"
-              . $newDocument["userId"] . "', '"
-              . $newDocument["dateTime"] . "', '"
-              . $newDocument["fileName"] . "', '"
-              . $newDocument["path"] . "')";
-            runQuery($sql, "New document insert: $fileName", true); 
-*/
             echo "<script>alert(\"File has been uploaded\");</script>";
-            //echo "The file " . $fileName . " has been uploaded.<br />";
           }
           else {
             echo "<script>alert(\"An error has occurred uploading your file. Please try again\");</script>";
-
-            //echo "An error has occurred uploading your file. Please try again.<br />";
           }
         }
       } // end addDocument( )
@@ -193,14 +146,13 @@ $activeStudentName = $activeStudent->get_full_name();
         $deletePath = "documents/";
         $deleteKey = 1;
 
+        // Verify that file was selected by user
         if ($deleteDocId[0] == "" || $deleteDocId[0] == "blank") {
           echo "<script>alert(\"No file selected for deletion.\");</script>";
-
-          //echo "No file selected for deletion.";
           $deleteKey = 0;
         }
         else {
-
+          // Prepared statement
           $stmt = $conn->prepare("SELECT document_name
                                   FROM document
                                   WHERE document_id=?");
@@ -213,20 +165,12 @@ $activeStudentName = $activeStudent->get_full_name();
             echo "Message: " . $e->getMessage();
 
           }
-          //$stmt->execute();
           $result = $stmt->get_result();
-/*
-          // Locate document name and extension
-          $sql = "SELECT document_name FROM document WHERE document_id=" . $deleteDocId[0];
-          $result = $conn->query($sql);
-          */
           $docInfo = $result->fetch_assoc( );
 
           // Check that document was found. If not, display error
           if ($result->num_rows > 0) {
             $docNameToDelete = $docInfo['document_name'];
-
-            //echo "Doc ID: " . $deleteDocId[0] . " doc name: " . $docNameToDelete . "<br />"; // DEBUGGING FLAG
 
             if ($deleteKey == 1) {
 
@@ -247,46 +191,14 @@ $activeStudentName = $activeStudent->get_full_name();
                 }
 
                 echo "<script>alert(\"File has been deleted\");</script>";
-
-                //$sql = "DELETE FROM document WHERE " . $deleteDocId[0] . "=document.document_id";
-                          
-                // TODO: change true to false below (don't show debugging)
-                //runQuery($sql, "Delete document: " . $deleteDocId[0], true);
               }
             }
           }
           else {
             echo "<script>alert(\"An error occurred while uploading your document.\");</script>";
-
-            //echo "An error occurred while uploading your document.<br />";
           }
         }
       } // end deleteDocument( )
-
-
-      /** runQuery($sql, $msg, $success) - execute sql query, display message on failure/success
-       * $sql - string to execute
-       * $msg - text to display in success/failure message
-       * $success - if true, display message, else do not display message */
-      function runQuery($sql, $msg, $success) {
-        global $conn;
-         
-        // run the query
-        if ($conn->query($sql) === TRUE) {
-           if($success) {
-            echo "<script>alert(\"File has been deleted\");</script>";
-              //echo "<h4>" . $msg . " successful.</h4>";
-           }
-        } else {
-           echo "<h4>Error when: " . $msg . " using SQL: " . $sql . " " . $conn->error . "</h4>";
-        }   
-     } // end of runQuery( )
-      
-      /* **  Close database ** */
-      function close_db( ) {
-        global $conn;
-        $conn->close();
-      }
 
 
       /* ********************************
@@ -297,7 +209,7 @@ $activeStudentName = $activeStudent->get_full_name();
       function displayDocumentList($studentId) {
         global $conn;
 
-
+        // Prepared statement - locate documents in database
         $stmt = $conn->prepare("SELECT * 
                                 FROM document
                                 WHERE student_id=?
@@ -305,9 +217,6 @@ $activeStudentName = $activeStudent->get_full_name();
         $stmt->bind_param("i", $studentId);
         $stmt->execute();
         $result = $stmt->get_result();
-
-        //$sql = "SELECT * FROM document ORDER BY document_date DESC";
-        //$result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
           // Start list
@@ -340,8 +249,7 @@ $activeStudentName = $activeStudent->get_full_name();
         $stmt->execute();
         $result = $stmt->get_result();
 
-        //$sql = "SELECT * FROM document";
-        //$result = $conn->query($sql);
+        // Display documents
         if ($result->num_rows > 0) {
           
           // Display first row document information
@@ -360,7 +268,7 @@ $activeStudentName = $activeStudent->get_full_name();
         * ******************************** */
       function displayDocumentLink($document) {
         global $conn; 
-        echo "<li><a href='" . $document['document_path'] . $document['document_name'] . "' target='_blank'>" . $document['document_name'] . "</a></li>";
+        echo "<li class='docLink'><a href='" . $document['document_path'] . $document['document_name'] . "' target='_blank'>" . $document['document_name'] . "</a></li>";
       }
 
       /* ********************************
@@ -399,15 +307,12 @@ $activeStudentName = $activeStudent->get_full_name();
           <h3><i class="fa fa-sign-out"></i> Logout</h3>
         </a>
 
-
       </div>
-
     </header>
 
       <!-- Vertical navigation bar -->
       <div class="left" id="verticalNav">
-<!--         <h3>Navigation</h3>
-        <a class="vNavButton" href=""><h3>Child #1</h3></a> -->
+        <!-- Left blank: no vertical nav needed on this page -->
       </div>
 
       <!-- Main content of page -->

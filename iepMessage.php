@@ -290,5 +290,7 @@
         </div>
       </div>
     </div>
+    <?php include_once(realpath("footer.php")); ?>
+
   </body>
 </html>
