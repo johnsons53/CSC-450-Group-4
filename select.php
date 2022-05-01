@@ -2,7 +2,7 @@
       Spring 100 CSC 450 Capstone, Group 4
       Author: Andy Yang
       Revision: 04/29/2022 Changeed iepSettings.php to two views, adminSettings.php and userSettings.php
-      Date Written: 04/29/2022: Selects user information to display in Modal
+      Created: 04/29/2022: Selects user information to display in Modal
       
       Resources:
       https://www.webslesson.info/2016/09/php-ajax-display-dynamic-mysql-data-in-bootstrap-modal.html
@@ -10,19 +10,19 @@
     -->
 
       <?php
-      global $conn;
+          global $conn;
 
-        include_once realpath("initialization.php");
+          include_once realpath("initialization.php");
 
-        if (isset($_POST["temp_id"])) {
-            $output = '';
-            $query = "SELECT * FROM user WHERE user_id = '" . $_POST["temp_id"] . "'";
-            $result = mysqli_query($conn, $query);
-            $output .= '  
+          if (isset($_POST["currentAccount"])) {
+               $output = '';
+               $query = "SELECT * FROM user WHERE user_id = '" . $_POST["currentAccount"] . "'";
+               $result = mysqli_query($conn, $query);
+               $output .= '  
       <div class="table-responsive">  
            <table class="table table-bordered">';
-            while ($row = mysqli_fetch_array($result)) {
-                $output .= '  
+               while ($row = mysqli_fetch_array($result)) {
+                    $output .= '  
                 <tr>  
                      <td width="30%"><label>Name</label></td>  
                      <td width="70%">' . $row["user_first_name"] . ' ' . $row["user_last_name"] . '</td>  
@@ -53,7 +53,7 @@
                 </tr> 
                 
                 ';
-            }
-            $output .= "</table></div>";
-            echo $output;
-        }
+               }
+               $output .= "</table></div>";
+               echo $output;
+          }

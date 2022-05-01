@@ -47,13 +47,13 @@
             $email = mysqli_real_escape_string($conn, $_POST["email"]);
             $address = mysqli_real_escape_string($conn, $_POST["address"]);
             $phone = mysqli_real_escape_string($conn, $_POST["phone"]);
-            if ($_POST["temp_id"] != '') {
+            if ($_POST["currentAccount"] != '') {
                 $query = "  
           UPDATE user   
           SET user_email='$email',   
           user_address='$address',   
           user_phone='$phone'
-          WHERE user_id='" . $_POST["temp_id"] . "'";
+          WHERE user_id='" . $_POST["currentAccount"] . "'";
                 $message = 'Information Updated';
             } else {
                 $message = 'Update Fail';
@@ -76,7 +76,7 @@
                     $output .= '  
                      <tr>  
                           <td><h4>' . $row["user_first_name"] . ' ' . $row["user_last_name"] . '</h4></td>  
-                          <td><input type="button" name="edit" value="Update" id="' . $row["user_id"] . '" class="btn btn-info btn-xs edit_data" /></td>  
+                          <td><input type="button" name="edit" value="Update" id="' . $row["user_id"] . '" class="btn btn-info btn-xs update_data" /></td>  
                           <td><input type="button" name="view" value="View" id="' . $row["user_id"] . '" class="btn btn-info btn-xs view_data" /></td>  
                      </tr>  
                 ';

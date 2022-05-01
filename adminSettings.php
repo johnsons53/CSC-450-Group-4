@@ -63,12 +63,10 @@
               <!-- No header due to admin view being intergrated into admin dashboard -->
 
               <!-- Table to populate users -->
-              <br /><br />
               <div class="container contentCard">
-                  <br />
                   <div class="table-responsive">
                       <br />
-                      <div id="users_table">
+                      <div id="usersTable">
                           <table class="table table-bordered">
                               <tr>
                                   <th width="100%">
@@ -88,7 +86,7 @@
                                       <td>
                                           <h4><?php echo $row["user_first_name"] . ' ' . $row["user_last_name"]; ?></h4>
                                       </td>
-                                      <td><input type="button" name="edit" value="Update" id="<?php echo $row["user_id"]; ?>" class="btn btn-info btn-xs edit_data" /></td>
+                                      <td><input type="button" name="update" value="Update" id="<?php echo $row["user_id"]; ?>" class="btn btn-info btn-xs update_data" /></td>
                                       <td><input type="button" name="view" value="View" id="<?php echo $row["user_id"]; ?>" class="btn btn-info btn-xs view_data" /></td>
                                   </tr>
                               <?php
@@ -103,14 +101,13 @@
       </html>
 
       <!-- First Modal that displays account information -->
-      <div id="dataModal" class="modal fade">
+      <div id="showInformationModal" class="modal fade">
           <div class="modal-dialog">
               <div class="modal-content">
                   <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal">&times;</button>
                       <h4 class="modal-title">Account Details</h4>
                   </div>
-                  <div class="modal-body" id="user_detail">
+                  <div class="modal-body" id="userDetail">
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -120,15 +117,14 @@
       </div>
 
       <!-- Second Modal that updates account information -->
-      <div id="add_data_Modal" class="modal fade">
+      <div id="updateModal" class="modal fade">
           <div class="modal-dialog">
               <div class="modal-content">
                   <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal">&times;</button>
                       <h4 class="modal-title">Update Information</h4>
                   </div>
                   <div class="modal-body">
-                      <form method="post" id="insert_form">
+                      <form method="post" id="updateForm">
                           <label>Update First Name</label>
                           <input type="text" name="firstname" id="firstname" class="form-control"></input>
                           <label>Update Last Name</label>
@@ -142,8 +138,8 @@
                           <label>Update Phone Number</label>
                           <input type="tel" name="phone" id="phone" maxlength="10" pattern="\d{10}" class="form-control" />
                           <br />
-                          <input type="hidden" name="temp_id" id="temp_id" />
-                          <input type="submit" name="insert" id="insert" value="Insert" class="btn btn-xs btn-success" />
+                          <input type="hidden" name="currentAccount" id="currentAccount" />
+                          <input type="submit" name="update" id="update" value="Update" class="btn btn-xs btn-success" />
                       </form>
                   </div>
                   <div class="modal-footer">
@@ -153,24 +149,20 @@
           </div>
       </div>
 
-
       <script>
           // Fetches all user information to display in table
-          function refreshPage() {
-              location.reload(true);
-          }
           $(document).ready(function() {
               $('#add').click(function() {
-                  $('#insert').val("Insert");
-                  $('#insert_form')[0].reset();
+                  $('#update').val("Update");
+                  $('#updateForm')[0].reset();
               });
-              $(document).on('click', '.edit_data', function() {
-                  var temp_id = $(this).attr("id");
+              $(document).on('click', '.update_data', function() {
+                  var currentAccount = $(this).attr("id");
                   $.ajax({
                       url: "fetch.php",
                       method: "POST",
                       data: {
-                          temp_id: temp_id
+                        currentAccount: currentAccount
                       },
                       dataType: "json",
                       success: function(data) {
@@ -180,26 +172,26 @@
                           $('#email').val(data.user_email);
                           $('#address').val(data.user_address);
                           $('#phone').val(data.user_phone);
-                          $('#temp_id').val(data.user_id);
-                          $('#insert').val("Update");
-                          $('#add_data_Modal').modal('show');
+                          $('#currentAccount').val(data.user_id);
+                          $('#update').val("Update");
+                          $('#updateModal').modal('show');
                       }
                   });
               });
 
               // Populates First Modal when account information view button is clicked
               $(document).on('click', '.view_data', function() {
-                  var temp_id = $(this).attr("id");
-                  if (temp_id != '') {
+                  var currentAccount = $(this).attr("id");
+                  if (currentAccount != '') {
                       $.ajax({
                           url: "select.php",
                           method: "POST",
                           data: {
-                              temp_id: temp_id
+                            currentAccount: currentAccount
                           },
                           success: function(data) {
-                              $('#user_detail').html(data);
-                              $('#dataModal').modal("show");
+                              $('#userDetail').html(data);
+                              $('#showInformationModal').modal("show");
                           }
                       });
                   }
@@ -207,7 +199,7 @@
           });
 
           // Sends updated information from Second Modale to database to update, then redisplays table
-          $('#insert').on("click", function(event) {
+          $('#update').on("click", function(event) {
               event.preventDefault();
               if ($('#firstname').val() == "") {
                   alert("First name is required");
@@ -225,15 +217,15 @@
                   $.ajax({
                       url: "adminInsert.php",
                       method: "POST",
-                      data: $('#insert_form').serialize(),
+                      data: $('#updateForm').serialize(),
                       beforeSend: function() {
-                          $('#insert').val("Updating");
+                          $('#update').val("Updating");
                       },
                       success: function(data) {
-                          $('#insert_form')[0].reset();
-                          $('#add_data_Modal').modal('hide');
-                          $('#users_table').html(data);
-                          $('#temp_id').val();
+                          $('#updateForm')[0].reset();
+                          $('#updateModal').modal('hide');
+                          $('#usersTable').html(data);
+                          $('#currentAccount').val();
                           $('html, body').animate({ scrollTop: 0 }, 'fast');
                       }
                   });
