@@ -591,12 +591,10 @@ include_once realpath("initialization.php");
           // Version from testing
           if ($studentCount == 0) {
             echo "<div class=\"tab vNavButton tablinks\" id=\"defaultOpen\" data-studentName=\"" . $studentName . "\" data-studentId=\"" . $studentId . "\">";
-            //echo "<a class=\"vNavButton tablinks\" href='javascript:void(0)' id='defaultOpen' data-studentName=\"" . $studentName . "\" data-studentId='" . $studentId . "'><h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3></a>";
             echo "<h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3>";
             echo "</div>";
           } else {
             echo "<div class=\"tab vNavButton tablinks\" data-studentName=\"" . $studentName . "\" data-studentId=\"" . $studentId . "\">";
-            //echo "<a class=\"vNavButton tablinks\" href='javascript:void(0)' data-studentName=\"" . $studentName . "\" data-studentId='" . $studentId . "'><h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3></a>";
             echo "<h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3>";
 
             echo "</div>";
