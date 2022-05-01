@@ -56,24 +56,6 @@
       }
 
 
-      /** runQuery($sql, $msg, $success) - execute sql query, display message on failure/success
-       * $sql - string to execute
-       * $msg - text to display in success/failure message
-       * $success - if true, display message, else do not display message */
-      function runQuery($sql, $msg, $success) {
-        global $conn;
-         
-        // run the query
-        if ($conn->query($sql) === TRUE) {
-           if($success) {
-              echo "<h4>" . $msg . " successful.</h4>";
-           }
-        } else {
-           echo "<h4>Error when: " . $msg . " using SQL: " . $sql . " " . $conn->error . "</h4>";
-        }   
-      } // end of runQuery( )
-
-
       /* getOtherUserId( ) - returns selected user id, if selected */
       function getOtherUser( ) {
         global $conn;
@@ -192,7 +174,6 @@
           . "VALUES ('" . $currentUserId . "', '"
           . $message . "')";
           $conn->query($sql);
-          //runQuery($sql, "Message sent", true);
 
           /* 
           echo "message is: " . $message[0] . "<br />";
@@ -215,7 +196,6 @@
             $sql = "INSERT INTO message_recipient (message_id, message_recipient.user_id) "
               . "VALUES ('" . $sentMessage . "', '"
               . $otherUserId . "')";
-            //runQuery($sql, "Message received by other user ", true);
             $conn->query($sql);
           }
         }
@@ -263,7 +243,7 @@
         
         <h3>Messages:
           <?php 
-            // Display other user at top of page
+            // Display other user name at top of page
             $otherUser = getOtherUser( );
             echo $otherUser[1];
           ?>
@@ -289,7 +269,11 @@
                 <!-- Selection List for message recipients, excludes current user -->
                 <?php
                   global $currentUserId;
-                  userSelectionList($conn, $currentUserId);
+
+                  // Retrieve selected user from prior page load, if applicable
+                  $otherUser = getOtherUser( );
+
+                  userSelectionList($conn, $currentUserId, $otherUser[0]);
                 ?>
               </select>
               <br /><br />
