@@ -119,8 +119,9 @@ include_once realpath("initialization.php");
         // Display Content for each Goal
         echo "<div class='contentCard goal'>";
           echo "<h3>Goal: " . $g->get_goal_label() . "</h3>";
-          echo "<h4>Description: </h4>";
-          echo "<p>" . $g->get_goal_text() . "</p>";
+          echo "<br />";
+          echo "<h4>Category: </h4>";
+          echo "<p>" . $g->get_goal_category() . "</p>";
 
           // Provider Modify and Delete Goal Buttons and form
           if (strcmp($currentUserType, "provider") === 0) {
@@ -271,9 +272,11 @@ include_once realpath("initialization.php");
             // Expanded details for Objective
             $objectiveDetailsID = "objective" . $o->get_objective_id();
             echo "<div class='expandedDetails' id=\"" . $objectiveDetailsID . "\" display=\"none\">";
-              echo "<p>Description: " . $o->get_objective_text() ."</p> ";
+              echo "<h4>Description: </h4>";
+              echo "<p>" . $o->get_objective_text() ."</p> ";
               if (isset($reports) && count($reports) > 0) {
-                  echo "<p>Latest Report Date: " . $reports[0]->get_report_date() . "</p>";
+                echo "<h4>Latest Report Date: </h4>";
+                  echo "<p>" . $reports[0]->get_report_date() . "</p>";
                 
 
                 //Set up report data for graph
@@ -340,7 +343,7 @@ include_once realpath("initialization.php");
             echo "</div>"; //end of expandedDetails
 
             // Expand/Hide button
-            echo "<button type='custom' class=\"detailViewButton\" data-detailDivId=\"" . $objectiveDetailsID . "\" id='objectiveDetails' onclick='showHide(\"" . $objectiveDetailsID . "\");'>+</button>";
+            echo "<button type='custom' class=\"detailViewButton\" data-detailDivId=\"" . $objectiveDetailsID . "\" id='btn" . $objectiveDetailsID . "' onclick='showHide(\"" . $objectiveDetailsID . "\");'><i class=\"fa fa-minus\"></i></button>";
             
             echo "</div>"; // end of Objective Div
 
@@ -349,13 +352,13 @@ include_once realpath("initialization.php");
           // Expanded details for Goal
           $goalDetailsID = "goal" . $g->get_goal_id();
           echo "<div class='expandedDetails' id=\"" . $goalDetailsID . "\" display=\"none\">";
-          echo "<p>Category: " . $g->get_goal_category() . "</p>";
+          echo "<h4>Category: " . $g->get_goal_category() . "</h4>";
           echo "<p>Description: " . $g->get_goal_text() . "</p>";
           echo "<p>Date Range: " . $activeStudent->get_student_iep_date() . " - " . $activeStudent->get_student_next_iep() . "</p>";
           echo "</div>"; // end of expandedDetails
 
           // Expand/Hide button
-          echo "<button type='custom' class=\"detailViewButton\" data-detailDivId=\"" . $goalDetailsID . "\" id='goalDetails' onclick='showHide(\"" . $goalDetailsID . "\");'>+</button>";
+          echo "<button type='custom' class=\"detailViewButton\" data-detailDivId=\"" . $goalDetailsID . "\" id='btn" . $goalDetailsID . "' onclick='showHide(\"" . $goalDetailsID . "\");'><i class=\"fa fa-minus\"></i></button>";
         echo "</div>"; // end of Goal Div
       } // end of foreach(goal)
 

@@ -38,9 +38,11 @@
         }
 
         $currentUserId = $currentUser->get_user_id();
+        $currentUserName = $currentUser->get_full_name();
 
-        $query = "SELECT * FROM user WHERE user_id = $currentUserId";
-        $result = mysqli_query($conn, $query);
+
+         $query = "SELECT * FROM user WHERE user_id = $currentUserId";
+         $result = mysqli_query($conn, $query);
 
         ?>
 
@@ -48,51 +50,52 @@
       <html>
 
       <head>
-          <title>IEP Admin Settings</title>
+          <title>IEP User Settings</title>
           <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
           <link rel="stylesheet" type="text/css" href="style.css">
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
           <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
       </head>
 
       <body>
           <div class="gridContainer">
-              <header>
-                  <!-- Header settings -->
-                  <!-- Insert logo image here -->
-                  <h1>IEP Portal</h1>
-                  <div id="accountHolderInfo">
-                      <!-- Username, messages button, and account settings button here -->
 
-                      <!-- Add Logout button here -->
-                  </div>
-                  <div id="horizontalNav">
-                      <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php">
-                          <h3>Home</h3>
-                      </a>
-                      <a class="hNavButton" id="userMessagesLink" href="javascript:void(0)">
-                          <h3>Messages</h3>
-                      </a>
-                      <a class="hNavButton" id="userSettingsLink" href="javascript:void(0)">
-                          <h3>Settings</h3>
-                      </a>
-                      <a class="hNavButton" id="userLogout" href="#">
-                          <h3>Logout</h3>
-                      </a>
-                  </div>
-                  <!-- Insert logo image here -->
-              </header>
+          <header>
+        <!-- Insert logo image here -->
+        <h1>IEP Portal: User Settings</h1>
+        <div id="accountHolderInfo">
+          <!-- Username, messages button, and account settings button here -->
+          
+          <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
+        </div>
+        <div id="horizontalNav">
+          <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
+          <a class="hNavButton" id="userMessagesLink" href="iepMessage.php"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
+          <a class="hNavButton" id="userSettingsLink" href="userSettings.php"><h3><i class="fa fa-gear"></i> Settings</h3></a>
+          <a class="hNavButton" id="userLogout" href="iepUserLogout.php"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
+
+        </div>
+
+      </header>
+                    <!-- Vertical navigation bar -->
+            <div class="left" id="verticalNav">
+                
+
+            </div>
 
 
               <!-- Table to populate users -->
               <br /><br />
-              <div class="container">
+              <div class="container contentCard">
                   <br />
                   <div class="table-responsive">
                       <br />
                       <div id="users_table">
                           <table class="table table-bordered">
                               <tr>
+
                                   <th width="100%">
                                       <h3>Account</h3>
                                   </th>
@@ -102,14 +105,18 @@
                                   <th width="30%">
                                       <h3>Account Information</h3>
                                   </th>
+
                               </tr>
                               <?php
                                 while ($row = mysqli_fetch_array($result)) {
                                 ?>
                                   <tr>
+
+
                                       <td>
                                           <h4><?php echo $row["user_first_name"] . ' ' . $row["user_last_name"]; ?></h4>
                                       </td>
+
                                       <td><input type="button" name="edit" value="Update" id="<?php echo $row["user_id"]; ?>" class="btn btn-info btn-xs edit_data" /></td>
                                       <td><input type="button" name="view" value="View" id="<?php echo $row["user_id"]; ?>" class="btn btn-info btn-xs view_data" /></td>
                                   </tr>
@@ -120,6 +127,7 @@
                       </div>
                   </div>
               </div>
+              <?php include_once(realpath("footer.php")); ?>
       </body>
 
       </html>
