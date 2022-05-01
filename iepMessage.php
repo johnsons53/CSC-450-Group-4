@@ -10,7 +10,9 @@
       Spring 100 CSC 450 Capstone, Group 4
       Author: Sienna-Rae Johnson
       Date Written: 04/29/2022
-      Date Revised: 04/30/2022 - 
+      Date Revised: 
+        04/30/2022: send/receive messages functionality fixes
+        05/01/2022: formatting changes, bug fixes
     -->
     <title>IEP Portal: Messages</title>
     <link rel="stylesheet" type="text/css" href="style.css">
@@ -47,8 +49,6 @@
 
       $currentUserName = $currentUser->get_full_name();
       $unreadMessageCount = countUnreadMessages($conn, $currentUserId);
-
-
       
       // If the 'send' button was activated, send the message
       if(isset($_POST["btnSend"])) {
@@ -56,48 +56,18 @@
       }
 
 
-      /** runQuery($sql, $msg, $success) - execute sql query, display message on failure/success
-       * $sql - string to execute
-       * $msg - text to display in success/failure message
-       * $success - if true, display message, else do not display message */
-      function runQuery($sql, $msg, $success) {
-        global $conn;
-         
-        // run the query
-        if ($conn->query($sql) === TRUE) {
-           if($success) {
-              echo "<h4>" . $msg . " successful.</h4>";
-           }
-        } else {
-           echo "<h4>Error when: " . $msg . " using SQL: " . $sql . " " . $conn->error . "</h4>";
-        }   
-      } // end of runQuery( )
-
-      
-      /* **  Close database ** */
-      function close_db( ) {
-        global $conn;
-        $conn->close();
-      }
-
-      /* displayMessages( ) - display messages to/from users */
-      function displayMessages( ) {
+      /* getOtherUserId( ) - returns selected user id, if selected */
+      function getOtherUser( ) {
         global $conn;
         global $currentUserId;
-        global $currentUserName;
 
-        // Determine if user has set message recipient
-        // If not, use a default user.
-        $otherUser = array();
-        $otherUserId = 0;
-        $otherUserName = "";
         if (isset($_POST['btnSend'])) {
           // Get other user info from form input
           $otherUser = array($_POST['userSelect']);
           $otherUserId = $otherUser[0];
-          echo "current user id: " . $currentUserId . "<br />";
+          /* echo "current user id: " . $currentUserId . "<br />";
           echo "current user name: " . $currentUserName . "<br />";
-          echo "other user id: " . $otherUserId . "<br />";
+          echo "other user id: " . $otherUserId . "<br />"; */
 
           // Locate other user name
           $sql = "SELECT user_name, user_id FROM user WHERE user_id='" . $otherUserId . "'";
@@ -115,21 +85,34 @@
           $otherUserId = $otherUser['user_id'];
           $otherUserName = $otherUser['user_first_name'] . " " . $otherUser['user_last_name'];
         }
-        
-          /* $otherUser = array($_POST['userSelect']);
-          $otherUserId = $otherUser[0];
-          echo "current user id: " . $currentUserId . "<br />";
-          echo "current user name: " . $currentUserName . "<br />";
-          echo "other user id: " . $otherUserId . "<br />"; */
 
-        
+        // Return user id and name as array
+        $otherUser = array($otherUserId, $otherUserName);
+        return $otherUser;
+      }
 
-        echo "other username is: " . $otherUserName . "<br />"; //////////////
 
-        /* Locate active user's user name
-        $sql = "SELECT user_name, user_id FROM user WHERE user_id='" . $currentUserId . "'";
+      /* displayMessages( ) - display messages to/from users */
+      function displayMessages( ) {
+        global $conn;
+        global $currentUserId;
+        global $currentUserName;
+
+        // Determine if user has set message recipient
+        // If not, use a default user.
+        $otherUser = getOtherUser( );
+        $otherUserId = $otherUser[0];
+        $otherUserName = $otherUser[1];
+
+        // echo "other username is: " . $otherUserName . "<br />";
+
+        // Mark all incoming messages from other user as read
+        $sql = "UPDATE message_recipient
+                INNER JOIN message ON message.message_id = message_recipient.message_id  
+                set message_read = '1' 
+                WHERE message.user_id = '" . $otherUserId . "' AND message_recipient.user_id = '"
+                . $currentUserId . "'";
         $result = $conn->query($sql);
-        $currentUserName = $result->fetch_assoc( ); */
 
         // Locate messages sent and received between two users
         $sql = "SELECT message.user_id AS 'sender', " 
@@ -143,12 +126,15 @@
 
         // Display messages as divs
         if ($result->num_rows > 0) {
-          echo "results found<br />";
 
+          // Cycle through all messages and display
           while($oneMessage = $result->fetch_assoc( )) {
+
+            // By default, assume the current message is an incoming message
             $messageClass = "otherMessageCard";
             $sentBy = $otherUserName;
 
+            // Check if the message was sent by the user
             if ($oneMessage['sender'] == $currentUserId) {
               $messageClass = "userMessageCard";
               $sentBy = $currentUserName;
@@ -175,24 +161,28 @@
         $otherUserId = $otherUser[0];
         
         $message = array($_POST['txtMessage']);
+        $message = test_input($message[0]);
 
         // If message is blank, do not send
-        if ($message[0] == "") {
-          echo "message is blank<br />"; /////////////////////////////
+        // Pressing send button also updates the message display
+        if ($message == "") {
+          // echo "message is blank<br />";
         }
         else {
           // Insert message into SENT message table
           $sql = "INSERT INTO message (message.user_id, message_text) "
           . "VALUES ('" . $currentUserId . "', '"
-          . $message[0] . "')";
-          runQuery($sql, "Message sent", true);
+          . $message . "')";
+          $conn->query($sql);
 
-          echo "message is: " . $message[0] . "<br />"; ////////////////
-          echo "current user id is: " . $currentUserId . "<br />"; ////////////////
+          /* 
+          echo "message is: " . $message[0] . "<br />";
+          echo "current user id is: " . $currentUserId . "<br />";
+          */
 
           // Find message id of message just sent
           $sql = "SELECT message_id, message.user_id, message_text, message_date FROM message WHERE message.user_id='"
-          . $currentUserId . "' AND message_text='" . $message[0] . "' ORDER BY message_date DESC";
+          . $currentUserId . "' AND message_text='" . $message . "' ORDER BY message_date DESC";
           $result = $conn->query($sql);
 
           if($result->num_rows > 0) {
@@ -206,80 +196,10 @@
             $sql = "INSERT INTO message_recipient (message_id, message_recipient.user_id) "
               . "VALUES ('" . $sentMessage . "', '"
               . $otherUserId . "')";
-            runQuery($sql, "Message received by other user ", true);
+            $conn->query($sql);
           }
         }
       } // end sendMessage( )
-
-
-      /* selectMessageRecipient( ) - display list of all users associated with current user
-       * user can select one to open the message history and send a message *
-      function selectMessageRecipient( ) {
-        global $conn;
-        global $currentUserId;
-
-        // HARDCODED USER ID to test admin display
-        $currentUserId = 11;
-
-        // Determine type of user
-        $sql = "SELECT user_id, user_type FROM user WHERE user_id='" . $currentUserId . "'";
-        $result = $conn->query($sql);
-        $currentUserType = $result->fetch_assoc( );
-
-        // echo "<option value='null'>current user type is: " . $currentUserType['user_type'] . "</option>"; //////////////
-
-        if ($currentUserType['user_type'] != "admin") {
-          
-          //echo "<option value='null2'>User is not admin</option>"; ///////////////////
-
-          // Locate all students that user can message
-          $sql = "SELECT user.user_id AS 'id', user.user_name, student.user_id AS 'studentId', student.student_id "
-            . "student_parent.student_id, student_parent.user_id, "
-            . "FROM user "
-            . "INNER JOIN student_parent ON student_parent.user_id = user.id "
-            . "INNER JOIN student ON student.student_id = student_parent.student_id";
-
-          
-
-          /* If user not admin, find associated users to message
-          $sql = "SELECT user.user_id AS 'id', user_name, student.user_id, student_parent.user_id, "
-          . "provider.user_id, student_parent.student_id, student.student_id "
-          . "FROM user "
-          . "INNER JOIN student_parent ON student_parent.user_id = user.user_id "
-          . "INNER JOIN student ON student.student_id = student_parent.student_id "
-          . "INNER JOIN provider ON provider.provider_id = student.provider_id "
-          . "ORDER BY user.user_id ASC"; *
-          $result = $conn->query($sql);
-
-          if ($result->num_rows > 0) {
-            echo "<option value='null'>more than 1</option>";
-
-            // Cycle through list of all users, display as selection
-            while($users = $result->fetch_assoc( )) {
-              echo "<option value='" . $users['studentId'] . "'>" . $users['user_name'] . "</option>";
-            }
-          }
-        }
-        else {
-          // If user is admin, can message all users
-          $sql = "SELECT user_id AS 'id', user_name FROM user ORDER BY user_id ASC";
-          $result = $conn->query($sql);
-
-          if ($result->num_rows > 0) {
-            // Cycle through list of all users, display as selection
-            $counter = 0;
-            while($users = $result->fetch_assoc( )) {
-              if ($counter == 0) {
-                echo "<option value='" . $users['id'] . "'>" . $users['user_name'] . "</option>";
-              }
-              else {
-                echo "<option value='" . $users['id'] . "'>" . $users['user_name'] . "</option>";
-              }
-              $counter += 1;
-            }
-          }
-        }
-      } // end selectUserRecipient( ) */
       
     ?>
 
@@ -321,7 +241,13 @@
       <!-- Main content of page -->
       <div class="mainContent">
         
-        <h3>Messages</h3>
+        <h3>Messages:
+          <?php 
+            // Display other user name at top of page
+            $otherUser = getOtherUser( );
+            echo $otherUser[1];
+          ?>
+        </h3>
 
         <div class="contentCard" id="messageContent">
           <?php 
@@ -343,7 +269,11 @@
                 <!-- Selection List for message recipients, excludes current user -->
                 <?php
                   global $currentUserId;
-                  userSelectionList($conn, $currentUserId);
+
+                  // Retrieve selected user from prior page load, if applicable
+                  $otherUser = getOtherUser( );
+
+                  userSelectionList($conn, $currentUserId, $otherUser[0]);
                 ?>
               </select>
               <br /><br />
