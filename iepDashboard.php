@@ -475,8 +475,8 @@ include_once realpath("initialization.php");
 <body>
   <?php
 
-    $currentUserName = $currentUser->get_full_name();
-    $unreadMessageCount = countUnreadMessages($conn, $currentUserId);
+    //$currentUserName = $currentUser->get_full_name();
+ 
 
 
   // variables
@@ -516,6 +516,7 @@ include_once realpath("initialization.php");
   }
 
   $currentUserName = $currentUser->get_full_name();
+  $unreadMessageCount = countUnreadMessages($conn, $currentUserId);
 
   // Provider, Guardian and Student users will view student IEP data
   if (strcmp($currentUserType, "admin") != 0) {
