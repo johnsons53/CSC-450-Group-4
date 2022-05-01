@@ -475,6 +475,9 @@ include_once realpath("initialization.php");
 <body>
   <?php
 
+    $currentUserName = $currentUser->get_full_name();
+    $unreadMessageCount = countUnreadMessages($conn, $currentUserId);
+
 
   // variables
   $currentUserId;
@@ -537,9 +540,10 @@ include_once realpath("initialization.php");
   }
 
   ?>
-  <!-- Page is encompassed in grid -->
-  <div class="gridContainer">
-    <header>
+
+    <!-- Page is encompassed in grid -->
+    <div class="gridContainer">
+<header>
       <!-- Insert logo image here -->
       <h1>IEP Portal</h1>
       <div id="accountHolderInfo">
@@ -561,12 +565,14 @@ include_once realpath("initialization.php");
           <h3><i class="fa fa-sign-out"></i> Logout</h3>
         </a>
 
+
       </div>
 
     </header>
 
-    <!-- Vertical navigation bar -->
-    <div class="left" id="verticalNav">
+      <!-- Vertical navigation bar -->
+      <div class="left" id="verticalNav">
+  
 
 
       <?php

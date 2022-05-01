@@ -510,7 +510,50 @@ function getUserList($conn)
 
     return $userList;
 }
+/*
+Get number of unread messages for specified user
+*/
+function countUnreadMessages($conn, $userId) {
+    $messageCount = 0;
+    $stmt = $conn->prepare("SELECT message_id
+                            FROM message_recipient
+                            WHERE user_id=? AND message_read=\"0\"");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
+    if ($result->num_rows > 0) {
+        $messageCount = $result->num_rows;
+    }
+
+
+    return $messageCount;
+}
+
+
+/*
+Display selection list of all users in system, allowing multiple selected users
+*/
+function userSelectionList($conn) {
+
+    // function returning Lastname, Firstname and user_id of each user from db
+    $accounts = getUserList($conn);
+    //print_r($accounts);
+
+    // Select input for each available account
+    // Would refine further by enabling search, or selecting by school and grade
+
+    if (isset($accounts) && count($accounts) > 0) {
+      // select input for accounts  
+      echo "<label for=\"userSelect\">Select Recipient(s)</label>";
+      echo "<select name=\"userSelect\" class=\"userSelect\" id=\"userSelect\" size=\"5\" multiple>";
+        // Options for accountSelect
+        foreach($accounts as $a => $a_value) {
+            echo "<option class=\"accountOption vNavButton\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
+        }
+      echo "</select>"; // end of select
+    }
+}
 
 /*
 Get contact and account information for given userId

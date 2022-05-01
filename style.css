@@ -132,6 +132,17 @@ header {
   }
 }
 
+span.badge {
+  position: relative;
+  top: -10px;
+  right: -10px; 
+  padding: 5px 10px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+  font-size: x-small;
+}
+
 
 /* ********** Left side settings ********** */
 #verticalNav {
@@ -301,26 +312,48 @@ input[type=button]:hover, input[type=submit]:hover {
   display: flex;
   flex-flow: column nowrap;
   grid-area: middle;
+  max-height: 70%;
   justify-content: space-around;
-  padding: 0.3em;
+  overflow: scroll;
+  padding: 0.2em;
 }
 
 .userMessageCard {
-  border: solid black 1px;
-  border-radius: 5px;
-  margin: 0.2em;
-  padding: 0.4em;
-  min-width: 55%;
-  margin-left: auto;
+  margin: 0.2em 0.2em 0.2em auto;
 }
 
 .otherMessageCard {
+  margin: 0.2em auto 0.2em 0.2em;
+}
+
+.messageCard {
   border: solid black 1px;
-  border-radius: 5px;
-  margin: 0.2em;
-  padding: 0.4em;
-  min-width: 55%;
-  margin-right: auto;
+  border-radius: 3px;
+  display: grid;
+  grid-template-areas: 
+    'username username username date'
+    'message message message message';
+  overflow-wrap: break-word;
+  padding: 0.2em;
+  width: 65%;
+}
+
+.msgDate {
+  font-weight: lighter;
+  grid-area: date;
+  text-align: right;
+}
+
+.msgUserName {
+  font-weight: 600;
+  grid-area: username;
+}
+
+.message {
+  grid-area: message;
+  margin: 0em;
+  overflow-wrap: break-word;
+  width: 90%;
 }
 
 /* ********** Footer settings ********** */
@@ -340,6 +373,15 @@ input[type=button]:hover, input[type=submit]:hover {
     justify-content: left;
   }
 
+
+  .mainContent {
+    width: 550px;
+  }
+
+  #messageContent {
+    width: 500px;
+  }
+
   #verticalNav {
     min-width: 10em !important;
     width: auto;
@@ -352,5 +394,26 @@ input[type=button]:hover, input[type=submit]:hover {
     min-width: 20em !important;
     width: auto;
     max-width: 25em !important; 
+
   }
 }
+/* 
+@media (max-width: 900px) {
+  .mainContent {
+    width: 850px;
+  }
+
+  #messageContent {
+    width: 800px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .mainContent {
+    width: 1100px;
+  }
+
+  #messageContent {
+    width: 1000px;
+  }
+} */
