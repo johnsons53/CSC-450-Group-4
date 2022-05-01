@@ -319,7 +319,7 @@ input[type=button]:hover, input[type=submit]:hover {
   grid-area: middle;
   max-height: 70%;
   justify-content: space-around;
-  overflow: auto;
+  overflow: scroll;
   padding: 0.2em;
 }
 

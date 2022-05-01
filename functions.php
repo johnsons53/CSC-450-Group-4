@@ -562,7 +562,7 @@ function countUnreadMessages($conn, $userId) {
 /*
 Display selection list of all users in system, allowing multiple selected users
 */
-function userSelectionList($conn, $currentUserId) {
+function userSelectionList($conn, $currentUserId, $otherUserId) {
 
     // function returning Lastname, Firstname and user_id of each user from db
     $accounts = getUserListModified($conn, $currentUserId);
@@ -578,12 +578,19 @@ function userSelectionList($conn, $currentUserId) {
         // Options for accountSelect
         $counter = 0;
         foreach($accounts as $a => $a_value) {
-            if ($counter == 0) {
+            if ($a == $otherUserId) {
                 echo "<option class=\"accountOption vNavButton\" selected='selected' value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
             }
             else {
                 echo "<option class=\"accountOption vNavButton\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
             }
+
+            /*if ($counter == 0) {
+                echo "<option class=\"accountOption vNavButton\" selected='selected' value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
+            }
+            else {
+                
+            }*/
             $counter += 1;
         }
       //echo "</select>"; // end of select
