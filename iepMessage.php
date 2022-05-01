@@ -306,9 +306,10 @@
               <legend>Send a message</legend>
               <label for="userSelect">Select recipient:</label>
               <select name="userSelect" class="userSelect" id="userSelect" size='5' multiple>
-                <!-- Selection List for message recipients -->
+                <!-- Selection List for message recipients, excludes current user -->
                 <?php
-                  userSelectionList($conn);
+                  global $currentUserId;
+                  userSelectionList($conn, $currentUserId);
                 ?>
               </select>
               <br /><br />
