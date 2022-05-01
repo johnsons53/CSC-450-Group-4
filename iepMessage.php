@@ -80,7 +80,6 @@
         $conn->close();
       }
 
-
       /* displayMessages( ) - display messages to/from users */
       function displayMessages( ) {
         global $conn;
@@ -361,5 +360,7 @@
         </div>
       </div>
     </div>
+    <?php include_once(realpath("footer.php")); ?>
+
   </body>
 </html>
