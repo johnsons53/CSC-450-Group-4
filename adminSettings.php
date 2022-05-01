@@ -5,7 +5,8 @@
       Revised: 04/18/2022, Intergrated user interface and now displays user information
       Revised: 04/22/2022 Added selectedUserId and selectedUserInfo to access user data sent on Admin accountSelect change
       Revision: 04/29/2022 Changeed iepSettings.php to two views, adminSettings.php and userSettings.php
-
+      Revised: 05/1/2022: Syntax and comment touchup
+      
       Resources:
       https://www.webslesson.info/2016/09/php-ajax-display-dynamic-mysql-data-in-bootstrap-modal.html
       https://www.webslesson.info/2016/10/php-ajax-update-mysql-data-through-bootstrap-modal.html
@@ -15,9 +16,6 @@
 
         include_once realpath("initialization.php");
         global $conn;
-
-        $query = "SELECT * FROM user";
-        $result = mysqli_query($conn, $query);
 
         // Initialize currentUser as new User of correct type
         // Pass $currentUserId, $currentUserType, $conn into createUser() function
@@ -40,10 +38,15 @@
         }
 
         $currentUserName = $currentUser->get_full_name();
+
+        // Selects all because admin view requires table to display all users
+        $query = "SELECT * FROM user";
+        $result = mysqli_query($conn, $query);
+
         ?>
 
       <!DOCTYPE html>
-      <html>
+      <html lang="en">
 
       <head>
           <title>IEP Admin Settings</title>
@@ -57,25 +60,7 @@
       <body>
           <div class="gridContainer">
 
-
-              <!--           <header>
-        
-        <h1>IEP Portal</h1>
-        <div id="accountHolderInfo">
-          
-          <h2><i class="fa fa-user"></i> <?php //echo $currentUserName; 
-                                            ?></h2>
-        </div>
-        <div id="horizontalNav">
-          <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
-          <a class="hNavButton" id="userMessagesLink" href="iepMessage.php"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
-          <a class="hNavButton" id="userSettingsLink" href="iepSettings.php"><h3><i class="fa fa-gear"></i> Settings</h3></a>
-          <a class="hNavButton" id="userLogout" href="iepUserLogout.php"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
-
-        </div>
-
-      </header> -->
-
+              <!-- No header due to admin view being intergrated into admin dashboard -->
 
               <!-- Table to populate users -->
               <br /><br />
@@ -117,7 +102,7 @@
 
       </html>
 
-      <!-- Modal that displays account information -->
+      <!-- First Modal that displays account information -->
       <div id="dataModal" class="modal fade">
           <div class="modal-dialog">
               <div class="modal-content">
@@ -134,7 +119,7 @@
           </div>
       </div>
 
-      <!-- Modal to update account information -->
+      <!-- Second Modal that updates account information -->
       <div id="add_data_Modal" class="modal fade">
           <div class="modal-dialog">
               <div class="modal-content">
@@ -202,40 +187,7 @@
                   });
               });
 
-              // Sends updated information to database to update
-              $('#insert').on("click", function(event) {
-                  event.preventDefault();
-                  if ($('#firstname').val() == "") {
-                      alert("First name is required");
-                  } else if ($('#lastname').val() == '') {
-                      alert("Last name is required");
-                  } else if ($('#password').val() == '') {
-                      alert("Password is required");
-                  } else if ($('#email').val() == '') {
-                      alert("Email is required");
-                  } else if ($('#address').val() == '') {
-                      alert("Address is required");
-                  } else if ($('#phone').val() == '') {
-                      alert("Phone is required");
-                  } else {
-                      $.ajax({
-                          url: "adminInsert.php",
-                          method: "POST",
-                          data: $('#insert_form').serialize(),
-                          beforeSend: function() {
-                              $('#insert').val("Updating");
-                          },
-                          success: function(data) {
-                              $('#insert_form')[0].reset();
-                              $('#add_data_Modal').modal('hide');
-                              $('#users_table').html(data);
-                              $('#temp_id').val();
-                          }
-                      });
-                  }
-              });
-
-              // Populates Modal when account information view button is clicked
+              // Populates First Modal when account information view button is clicked
               $(document).on('click', '.view_data', function() {
                   var temp_id = $(this).attr("id");
                   if (temp_id != '') {
@@ -252,5 +204,39 @@
                       });
                   }
               });
+          });
+
+          // Sends updated information from Second Modale to database to update, then redisplays table
+          $('#insert').on("click", function(event) {
+              event.preventDefault();
+              if ($('#firstname').val() == "") {
+                  alert("First name is required");
+              } else if ($('#lastname').val() == '') {
+                  alert("Last name is required");
+              } else if ($('#password').val() == '') {
+                  alert("Password is required");
+              } else if ($('#email').val() == '') {
+                  alert("Email is required");
+              } else if ($('#address').val() == '') {
+                  alert("Address is required");
+              } else if ($('#phone').val() == '') {
+                  alert("Phone is required");
+              } else {
+                  $.ajax({
+                      url: "adminInsert.php",
+                      method: "POST",
+                      data: $('#insert_form').serialize(),
+                      beforeSend: function() {
+                          $('#insert').val("Updating");
+                      },
+                      success: function(data) {
+                          $('#insert_form')[0].reset();
+                          $('#add_data_Modal').modal('hide');
+                          $('#users_table').html(data);
+                          $('#temp_id').val();
+                          $('html, body').animate({ scrollTop: 0 }, 'fast');
+                      }
+                  });
+              }
           });
       </script>
