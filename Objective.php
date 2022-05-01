@@ -8,9 +8,6 @@
     04/15/2022: Streamlined database connection code 
 */
 
-//ini_set('display_errors', 1);
-//error_reporting(E_ALL|E_STRICT);      
-//require_once realpath('Report.php');
 
 class Objective {
     // change these to public
@@ -62,30 +59,9 @@ class Objective {
     // Fill reports array with any available reports matching the passed objective_id
     function store_reports($id) {
          // connection to database
-         /*
-        $filepath = realpath('login.php');
-        $config = require($filepath);
-        $db_hostname = $config['DB_HOSTNAME'];
-        $db_username = $config['DB_USERNAME'];
-        $db_password = $config['DB_PASSWORD'];
-        $db_database = $config['DB_DATABASE'];
-    
-        // Create connection
-        $conn = new mysqli($db_hostname, $db_username, $db_password, $db_database);
-    
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        } 
-        */
+
         global $conn;
         // run query to select all reports where objective_id matches
-
-/*         $sql = "SELECT report_id, report_date, report_observed
-                FROM report
-                WHERE objective_id=" . $id;
-        //run query
-        $result = $conn->query($sql); */
 
         $stmt = $conn->prepare("SELECT report_id, report_date, report_observed 
                                 FROM report
@@ -105,10 +81,7 @@ class Objective {
         } else {
             //echo "0 Report results <br />";
         } 
-        // close connection to database
-        //$conn->close();
 
-        //echo "Connection closed.<br />";
     }
 }
 

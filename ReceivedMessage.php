@@ -26,7 +26,6 @@ class ReceivedMessage {
     function get_message_read() {
         return $this->message_read;
     }
-    // Setter methods--probably don't actually want to include these.
 }
 
 ?>

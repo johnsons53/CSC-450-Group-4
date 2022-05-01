@@ -10,22 +10,22 @@ reportForm.php - Provider Report Form
 */
 include_once realpath("initialization.php");
 
-if(array_key_exists("objectiveId", $_POST)) {
+if (array_key_exists("objectiveId", $_POST)) {
     $objectiveId = $_POST['objectiveId'];
 } else {
     $objectiveId = "";
 }
-if(array_key_exists("selectedReportId", $_POST)) {
+if (array_key_exists("selectedReportId", $_POST)) {
     $reportId = $_POST['selectedReportId'];
 } else {
     $reportId = "";
 }
-if(array_key_exists("selectedValue", $_POST)) {
+if (array_key_exists("selectedValue", $_POST)) {
     $reportObserved = $_POST['selectedValue'];
 } else {
     $reportObserved = "";
 }
-if(array_key_exists("selectedDate", $_POST)) {
+if (array_key_exists("selectedDate", $_POST)) {
     $reportDate = $_POST['selectedDate'];
 } else {
     $reportDate = "";
@@ -33,59 +33,59 @@ if(array_key_exists("selectedDate", $_POST)) {
 
 
 ?>
-    <form action="" method="post" class="providerForm">
-        
-        <!-- Hidden field with reportId-->
+<form action="" method="post" class="providerForm">
+
+    <!-- Hidden field with reportId-->
+    <div>
+        <input type="hidden" id="reportId" name="reportId" value="<?php echo $reportId; ?>">
+    </div>
+    <!-- Hidden field with objectiveId-->
+    <div>
+        <input type="hidden" id="objectiveId" name="objectiveId" value="<?php echo $objectiveId; ?>">
+    </div>
+    <div class="flex-formContainer">
         <div>
-            <input type="hidden" id="reportId" name="reportId" value="<?php echo $reportId; ?>">
+            <h4>Please fill in all fields</h4>
         </div>
-        <!-- Hidden field with objectiveId-->
-        <div>
-            <input type="hidden" id="objectiveId" name="objectiveId" value="<?php echo $objectiveId; ?>">
-        </div>
-        <div class="flex-formContainer">
-            <div>
-                <h4>Please fill in all fields</h4>       
-            </div>
-        </div>
-                    
-        <!-- Date field for reportDate 
+    </div>
+
+    <!-- Date field for reportDate 
                 Set default value to current date with JavaScript-->
 
-        <div class="flex-formContainer">
-            <div class="formElement formLabel">
-                <label for="reportDate">Report Date</label>
-            </div>
-            <div class="formElement">
-                <input type="date"id="reportDate" name="reportDate" value="<?php echo $reportDate; ?>"> 
-            </div>
+    <div class="flex-formContainer">
+        <div class="formElement formLabel">
+            <label for="reportDate">Report Date</label>
         </div>
+        <div class="formElement">
+            <input type="date" id="reportDate" name="reportDate" value="<?php echo $reportDate; ?>">
+        </div>
+    </div>
 
-        <!-- Number picker for reportObserved -->
-        <div class="flex-formContainer">
-            <div class="formElement formLabel">
+    <!-- Number picker for reportObserved -->
+    <div class="flex-formContainer">
+        <div class="formElement formLabel">
             <label for="reportObserved">Observed</label>
-            </div>
-            <div class="formElement">
+        </div>
+        <div class="formElement">
             <input type="number" min="0" id="reportObserved" name="reportObserved" value="<?php echo $reportObserved; ?>">
-            </div>
         </div>
+    </div>
 
-        <div class="flex-formContainer">
-                                <!-- Button to Save report -->
+    <div class="flex-formContainer">
+        <!-- Button to Save report -->
 
-            <div class="formButton">
+        <div class="formButton">
             <input type="button" id="saveReport" class="save refresh reportSubmit" name="saveReport" value="Save Report">
-            </div>
-                                <!-- Button to Delete report -->
-
-            <div class="formButton">
-            <input type="button" id="deleteReport" class="delete refresh reportSubmit" name="deleteReport" value="Delete Report">
-            </div>
-                                <!-- Button to Cancel action -->    
-
-            <div class="formButton">
-            <input type="button" id="cancelReport" class="cancel reportSubmit" name="cancelReport" value="Cancel">
-            </div>
         </div>
-    </form>
+        <!-- Button to Delete report -->
+
+        <div class="formButton">
+            <input type="button" id="deleteReport" class="delete refresh reportSubmit" name="deleteReport" value="Delete Report">
+        </div>
+        <!-- Button to Cancel action -->
+
+        <div class="formButton">
+            <input type="button" id="cancelReport" class="cancel reportSubmit" name="cancelReport" value="Cancel">
+        </div>
+    </div>
+</form>

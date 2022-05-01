@@ -5,9 +5,7 @@
     Date Written: 03/26/2022
     Revised: 
 */
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL|E_STRICT);      
+    
 
 class SentMessage {
     // change these to public
@@ -32,7 +30,4 @@ class SentMessage {
     function get_message_date() {
         return $this->message_date;
     }
-    // Setter methods--probably don't actually want to include these.
 }
-
-?>
