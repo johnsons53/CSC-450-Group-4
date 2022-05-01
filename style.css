@@ -47,6 +47,11 @@ a {
   text-decoration: none;
 }
 
+.docLink {
+  text-decoration: underline;
+  color: rgba(29, 78, 137, 1);
+}
+
 h1 {
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', Verdana, sans-serif;
   grid-area: header-left;
@@ -314,7 +319,7 @@ input[type=button]:hover, input[type=submit]:hover {
   grid-area: middle;
   max-height: 70%;
   justify-content: space-around;
-  overflow: scroll;
+  overflow: auto;
   padding: 0.2em;
 }
 
