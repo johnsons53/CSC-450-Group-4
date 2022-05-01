@@ -16,6 +16,9 @@
     <title>IEP Portal: Documents</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="iepDetailView.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
     
   </head>
 
@@ -32,31 +35,51 @@
     //  
 
     //include_once realpath("initialization.php");
-
-/*
-// Confirmed $activeStudentId and $activeStudentName values sent via $_POST
-      try {
-        echo $_POST["activeStudentId"];
-        echo "<br />";
-        echo $_POST["activeStudentName"];
-        echo "<br />";
-      } catch (Exception $e) {
-        echo "Message: " . $e->getMessage();
-
-      }
-
-*/ 
-/* 
+ 
+ 
 // Confirmed $activeStudentId value available via $_SESSION 
 try {
-  echo $_SESSION["activeStudentId"];
-  echo "<br />";
+  $activeStudentId = $_SESSION["activeStudentId"];
 } catch (Exception $e) {
   echo "Message: " . $e->getMessage();
 
 } 
-*/  
+try {
+  $currentUserId = $_SESSION["currentUserId"];
+} catch (Exception $e) {
+  echo "Message: " . $e->getMessage();
+}
 
+try {
+  $currentUserType = $_SESSION["currentUserType"];
+} catch (Exception $e) {
+  echo "Message: " . $e->getMessage();
+}
+
+
+// Initialize currentUser as new User of correct type
+// Pass $currentUserId, $currentUserType, $conn into createUser() function
+try {
+  $currentUser = createUser($currentUserId, $currentUserType, $conn);
+
+} catch (Exception $e) {
+  echo "Message: " . $e->getMessage();
+}
+
+try {
+  $activeStudent = createStudent($activeStudentId, $conn);
+
+} catch (Exception $e) {
+  echo "Message: " . $e->getMessage();
+}
+
+// Can use $currentUser
+$currentUserName = $currentUser->get_full_name();
+
+// Can use $activeStudent
+$activeStudentName = $activeStudent->get_full_name();
+  
+/*
       // Connection constants for use with AMPPS
       define("SERVER_NAME", "localhost");
       define("DBF_USER_NAME", "root"); 
@@ -71,28 +94,29 @@ try {
       
       // Select database
       $conn->select_db(DATABASE_NAME);
-    
+*/    
       // Choose an action based on user form submission (add or remove document)
       if(isset($_POST["btnAdd"])) {
-        addDocument( );
+        addDocument($activeStudentId, $currentUserId);
       }
       if(isset($_POST["btnRemove"])) {
         deleteDocument( );
       }
 
       /** addDocument( ) - add document to database */
-      function addDocument( ) {
+      function addDocument($studentId, $userId) {
         global $conn;
 
         // TODO: update student and user id to pull from page info
-        $addStudentID = 0;
-        $addUserId = 0;
+        //$addStudentID = 0;
+        //$addUserId = 0;
 
         $currentDateTime = date("Y-m-d\nH:i:s");
-        echo "current datetime is: " . $currentDateTime . "<br />";
+        //echo "current datetime is: " . $currentDateTime . "<br />";
         
         // TODO: update file path with path for server
-        $path = "http://localhost/capstoneCurrent/documents/";
+        //$path = "http://localhost/capstoneCurrent/documents/";
+        $path = "http://localhost:8888/CSC-450-GROUP-4/documents/";
 
         // File file and file extension to be uploaded
         $filePath = "documents/";
@@ -102,15 +126,21 @@ try {
         
         if ($fileType == "") {
           // Check if a file was selected to upload
-          echo "Error: no file selected. Please select a file to upload<br />";
+          echo "<script>alert(\"No file selected. Please select a file to upload\");</script>";
+          //echo "Error: no file selected. Please select a file to upload<br />";
         }
         else if (file_exists($fileToUpload)) {
           // Check if file of same name in database
-          echo "Sorry, file already exists<br />";
+          //echo "FileName: " . $fileName . "<br />";
+          echo "<script>alert(\"Sorry, file already exists\");</script>";
+
+          //echo "Sorry, file already exists<br />";
         }
         else if($fileType != "pdf" && $fileType != "docx" && $fileType != "doc") {
           // Check for accepted document file formats (pdf, doc, docx)
-          echo "Error: file type " . $fileType . " not compatible. Please upload a PDF, DOCX, or DOC file.<br />";
+          echo "<script>alert(\"Sorry, file type not compatible. Please upload a PDF, DOCX, or DOC file\");</script>";
+
+          //echo "Error: file type " . $fileType . " not compatible. Please upload a PDF, DOCX, or DOC file.<br />";
         }
         else {
           // Attempt to move document to correct server folder
@@ -118,19 +148,35 @@ try {
           if (move_uploaded_file($_FILES["addFile"]["tmp_name"], $fileToUpload)) {
 
             // Upload file to database
-            $newDocument = array($addStudentID, $addUserId, $currentDateTime, $fileName, $path);
-            $sql = "INSERT INTO document (student_id, user_id, document_date, document_name, document_path) "
-              . "VALUES ('" . $newDocument[0] . "', '"
-              . $newDocument[1] . "', '"
-              . $newDocument[2] . "', '"
-              . $newDocument[3] . "', '"
-              . $newDocument[4] . "')";
-            runQuery($sql, "New document insert: $fileName", true); 
+            //$newDocument = array("studentId"=>$addStudentID, "userId"=>$addUserId, "dateTime"=>$currentDateTime, "fileName"=>$fileName, "path"=>$path);
 
-            echo "The file " . $fileName . " has been uploaded.<br />";
+            $stmt = $conn->prepare("INSERT INTO document (student_id, user_id, document_date, document_name, document_path)
+                                    VALUES (?, ?, ?, ?,?)");
+            $stmt->bind_param("iisss", $studentId, $userId, $currentDateTime, $fileName, $path);
+
+            try {
+              $stmt->execute();
+
+            } catch (Exception $e) {
+              echo "Message: " . $e->getMessage();
+
+            }
+/*
+            $sql = "INSERT INTO document (student_id, user_id, document_date, document_name, document_path) "
+              . "VALUES ('" . $newDocument["studentId"] . "', '"
+              . $newDocument["userId"] . "', '"
+              . $newDocument["dateTime"] . "', '"
+              . $newDocument["fileName"] . "', '"
+              . $newDocument["path"] . "')";
+            runQuery($sql, "New document insert: $fileName", true); 
+*/
+            echo "<script>alert(\"File has been uploaded\");</script>";
+            //echo "The file " . $fileName . " has been uploaded.<br />";
           }
           else {
-            echo "An error has occurred uploading your file. Please try again.<br />";
+            echo "<script>alert(\"An error has occurred uploading your file. Please try again\");</script>";
+
+            //echo "An error has occurred uploading your file. Please try again.<br />";
           }
         }
       } // end addDocument( )
@@ -146,35 +192,71 @@ try {
         $deleteKey = 1;
 
         if ($deleteDocId[0] == "" || $deleteDocId[0] == "blank") {
-          echo "No file selected for deletion.";
+          echo "<script>alert(\"No file selected for deletion.\");</script>";
+
+          //echo "No file selected for deletion.";
           $deleteKey = 0;
         }
         else {
 
+          $stmt = $conn->prepare("SELECT document_name
+                                  FROM document
+                                  WHERE document_id=?");
+          $stmt->bind_param("i", $deleteDocId[0]);
+
+          try {
+            $stmt->execute();
+
+          } catch (Exception $e) {
+            echo "Message: " . $e->getMessage();
+
+          }
+          //$stmt->execute();
+          $result = $stmt->get_result();
+/*
           // Locate document name and extension
           $sql = "SELECT document_name FROM document WHERE document_id=" . $deleteDocId[0];
           $result = $conn->query($sql);
+          */
           $docInfo = $result->fetch_assoc( );
 
           // Check that document was found. If not, display error
           if ($result->num_rows > 0) {
             $docNameToDelete = $docInfo['document_name'];
 
-            echo "Doc ID: " . $deleteDocId[0] . " doc name: " . $docNameToDelete . "<br />"; // DEBUGGING FLAG
+            //echo "Doc ID: " . $deleteDocId[0] . " doc name: " . $docNameToDelete . "<br />"; // DEBUGGING FLAG
 
             if ($deleteKey == 1) {
 
               // Delete document from server folder and remove from db
               if (unlink($deletePath . $docNameToDelete)) {
-                $sql = "DELETE FROM document WHERE " . $deleteDocId[0] . "=document.document_id";
+
+                // Prepared Statement
+                $stmt = $conn->prepare("DELETE FROM document
+                                        WHERE ?=document.document_id");
+                $stmt->bind_param("i", $deleteDocId[0]);
+
+                try {
+                  $stmt->execute();
+      
+                } catch (Exception $e) {
+                  echo "Message: " . $e->getMessage();
+      
+                }
+
+                echo "<script>alert(\"File has been deleted\");</script>";
+
+                //$sql = "DELETE FROM document WHERE " . $deleteDocId[0] . "=document.document_id";
                           
                 // TODO: change true to false below (don't show debugging)
-                runQuery($sql, "Delete document: " . $deleteDocId[0], true);
+                //runQuery($sql, "Delete document: " . $deleteDocId[0], true);
               }
             }
           }
           else {
-            echo "An error occurred while uploading your document.<br />";
+            echo "<script>alert(\"An error occurred while uploading your document.\");</script>";
+
+            //echo "An error occurred while uploading your document.<br />";
           }
         }
       } // end deleteDocument( )
@@ -190,7 +272,8 @@ try {
         // run the query
         if ($conn->query($sql) === TRUE) {
            if($success) {
-              echo "<h4>" . $msg . " successful.</h4>";
+            echo "<script>alert(\"File has been deleted\");</script>";
+              //echo "<h4>" . $msg . " successful.</h4>";
            }
         } else {
            echo "<h4>Error when: " . $msg . " using SQL: " . $sql . " " . $conn->error . "</h4>";
@@ -205,15 +288,25 @@ try {
 
 
       /* ********************************
-       * displayDocumentList( ) - display list of all docments in db
+       * displayDocumentList( ) - display list of all documents for specified student
        * $displayAsLink - display documents as either plain text or as links
        * TODO: modify to only display documents relevant to user
        * ******************************** */
-      function displayDocumentList( ) {
+      function displayDocumentList($studentId) {
         global $conn;
 
-        $sql = "SELECT * FROM document ORDER BY document_date DESC";
-        $result = $conn->query($sql);
+
+        $stmt = $conn->prepare("SELECT * 
+                                FROM document
+                                WHERE student_id=?
+                                ORDER BY document_date DESC");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        //$sql = "SELECT * FROM document ORDER BY document_date DESC";
+        //$result = $conn->query($sql);
+
         if ($result->num_rows > 0) {
           // Start list
           echo "<ul>";
@@ -234,11 +327,19 @@ try {
        * displayDocumentInput( ) - display all documents as input options
        * TODO: modify to only display documents relevant to user
        * ******************************** */
-      function displayDocumentInput( ) {
+      function displayDocumentInput($studentId) {
         global $conn;
 
-        $sql = "SELECT * FROM document";
-        $result = $conn->query($sql);
+        $stmt = $conn->prepare("SELECT * 
+                                FROM document
+                                WHERE student_id=?
+                                ORDER BY document_date DESC");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        //$sql = "SELECT * FROM document";
+        //$result = $conn->query($sql);
         if ($result->num_rows > 0) {
           
           // Display first row document information
@@ -273,39 +374,38 @@ try {
 
     <!-- Page is encompassed in grid -->
     <div class="gridContainer">
-      <header>
-        <!-- Insert logo image here -->
-        <h1>IEP Portal</h1>
-        <div id="accountHolderInfo">
-          <!-- Username, messages button, and account settings button here -->
-        </div>
-        <div id="horizontalNav">
-          <!-- Links are inactive -->
-          <a class="hNavButton" href=""><h3 class="button">Documents</h3></a>
-          <a class="hNavButton" href=""><h3>Goals</h3></a>
-          <a class="hNavButton" href=""><h3>Events</h3></a>
-          <a class="hNavButton" href=""><h3>Messages</h3></a>
-          <a class="hNavButton" href=""><h3>Information</h3></a>
-          <a class="hNavButton" href=""><h3>Settings</h3></a>
-        </div>
-      </header>
+      
+    <header>
+      <!-- Insert logo image here -->
+      <h1>IEP Portal: Documents</h1>
+      <div id="accountHolderInfo">
+        <!-- Username, messages button, and account settings button here -->
+        <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
+      </div>
+      <div id="horizontalNav">
+        <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
+        <a class="hNavButton" id="userMessagesLink" href="iepMessage.php"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
+        <a class="hNavButton" id="userSettingsLink" href="userSettings.php"><h3><i class="fa fa-gear"></i> Settings</h3></a>
+        <a class="hNavButton" id="userLogout" href="iepUserLogout.php"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
+      </div>
+    </header>
 
       <!-- Vertical navigation bar -->
       <div class="left" id="verticalNav">
-        <h3>Navigation</h3>
-        <a class="vNavButton" href=""><h3>Child #1</h3></a>
+<!--         <h3>Navigation</h3>
+        <a class="vNavButton" href=""><h3>Child #1</h3></a> -->
       </div>
 
       <!-- Main content of page -->
       <div class="middle" id="mainContent">
         <div class="currentStudentName">
-            <h3>Student Name</h3>
+            <h3><?php echo $activeStudentName; ?></h3>
         </div>
         
         <div class="contentCard">
           <h3>Documents</h3>
           <?php 
-            displayDocumentList( );
+            displayDocumentList($activeStudentId);
           ?>
         </div>
 
@@ -313,7 +413,7 @@ try {
         <!-- Add (upload) a document -->
         <div class="formAdd">
           <form name="frmAddDocument"
-            action="<?PHP echo htmlentities($_SERVER['PHP_SELF']); ?>"
+            action=""
             method="POST"
             enctype="multipart/form-data" >
             <fieldset name="addDocument">
@@ -325,7 +425,7 @@ try {
               <br /><br />
 
               <!-- Submit button -->
-              <input type="submit" name="btnAdd" value="Add Document">
+              <input type="submit" class="documentChange" name="btnAdd" id="btnDocumentAdd" value="Add Document">
 
             </fieldset>
           </form>
@@ -345,22 +445,21 @@ try {
                 <select name="removeFile">
                   <option value="blank"></option>
                   <?php 
-                    displayDocumentInput( );
+                    displayDocumentInput($activeStudentId);
                   ?>
                 </select>
               <br /><br />
 
               <!-- Submit button -->
-              <input type="submit" name="btnRemove" value="Remove Document">
+              <input type="submit" class="documentChange" name="btnRemove" id="btnDocumentRemove" value="Remove Document">
 
             </fieldset>
           </form>
         </div>
       
-      <footer>
-        <!-- Insert footer info here -->
-      </footer>
+        
 
     </div>
+    <?php include_once(realpath("footer.php")); ?>
   </body>
 </html>

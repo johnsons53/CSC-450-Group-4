@@ -7,13 +7,15 @@ functions.php - library of functions for iepPortal
       Revised: 04/17/2022 Removed refreshReports() function
       Added createStudent(), createUser()
       Revised: 04/22/2022 Added Admin specific functions for loading admin dashboard
-*/
-function test() {
-    echo "Function test() called from functions.php.<br />";
-}
+      Revised: 04/30/2022 Edited comments, removed unused functions
 
-/* Generate Student data given valid studentId and conn */
-function createStudent($studentId, $conn) {
+*/
+
+/* Generate Student data given valid studentId (not userId) and conn 
+    Returns Student object or throws exception if unable to create new Student
+*/
+function createStudent($studentId, $conn)
+{
     try {
         $stmt = $conn->prepare(
             "SELECT *
@@ -25,18 +27,34 @@ function createStudent($studentId, $conn) {
         $stmt->bind_param("i", $studentId);
         $stmt->execute();
         $result = $stmt->get_result();
-        if($result->num_rows == 1) {
-            while($row = $result->fetch_assoc()) {
+        if ($result->num_rows == 1) {
+            while ($row = $result->fetch_assoc()) {
                 $student = new Student(
-                    $row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
-                    $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
-                    $row['user_city'], $row['user_district'], $row['user_type'],
-                    $row['student_id'], $row['provider_id'], $row['student_school'],
-                    $row['student_grade'], $row['student_homeroom'], $row['student_dob'],
-                    $row['student_eval_date'], $row['student_next_evaluation'], $row['student_iep_date'],
-                    $row['student_next_iep'], $row['student_eval_status'], $row['student_iep_status']
+                    $row['user_id'],
+                    $row['user_name'],
+                    $row['user_password'],
+                    $row['user_first_name'],
+                    $row['user_last_name'],
+                    $row['user_email'],
+                    $row['user_phone'],
+                    $row['user_address'],
+                    $row['user_city'],
+                    $row['user_district'],
+                    $row['user_type'],
+                    $row['student_id'],
+                    $row['provider_id'],
+                    $row['student_school'],
+                    $row['student_grade'],
+                    $row['student_homeroom'],
+                    $row['student_dob'],
+                    $row['student_eval_date'],
+                    $row['student_next_evaluation'],
+                    $row['student_iep_date'],
+                    $row['student_next_iep'],
+                    $row['student_eval_status'],
+                    $row['student_iep_status']
                 );
-            }  
+            }
         }
         // Return $student
         return $student;
@@ -45,8 +63,11 @@ function createStudent($studentId, $conn) {
     }
 }
 
-/* Generate User data given valid userId, userType and conn */
-function createUser($userId, $userType, $conn) {
+/* Generate User data given valid userId, userType and conn 
+    Returns object of type Admin, Guardian, Provider or Student 
+*/
+function createUser($userId, $userType, $conn)
+{
     switch ($userType) {
         case "admin":
             // New call to database for Admin user data
@@ -56,24 +77,31 @@ function createUser($userId, $userType, $conn) {
                 INNER JOIN admin
                 USING (user_id)
                 WHERE user_id=?
-                AND admin.admin_active=\"1\"");
+                AND admin.admin_active=\"1\""
+            );
             $stmt->bind_param("i", $userId);
             $stmt->execute();
             $result = $stmt->get_result();
-            if($result->num_rows == 1) {
-                while($row = $result->fetch_assoc()) {
+            if ($result->num_rows == 1) {
+                while ($row = $result->fetch_assoc()) {
                     $admin = new Admin(
-                        $row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
-                        $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
-                        $row['user_city'], $row['user_district'], $row['user_type'],
-                        $row['admin_id'], $row['admin_active']
+                        $row['user_id'],
+                        $row['user_name'],
+                        $row['user_password'],
+                        $row['user_first_name'],
+                        $row['user_last_name'],
+                        $row['user_email'],
+                        $row['user_phone'],
+                        $row['user_address'],
+                        $row['user_city'],
+                        $row['user_district'],
+                        $row['user_type'],
+                        $row['admin_id'],
+                        $row['admin_active']
                     );
-
-                    
                 }
             }
             return $admin;
-            //echo "This is a Admin account"; //Used to check account type
             break;
 
         case "provider":
@@ -83,23 +111,31 @@ function createUser($userId, $userType, $conn) {
                 FROM user
                 INNER JOIN provider
                 USING (user_id)
-                WHERE user_id=?");
+                WHERE user_id=?"
+            );
             $stmt->bind_param("i", $userId);
             $stmt->execute();
             $result = $stmt->get_result();
-            if($result->num_rows == 1) {
-                while($row = $result->fetch_assoc()) {
+            if ($result->num_rows == 1) {
+                while ($row = $result->fetch_assoc()) {
 
                     $provider = new Provider(
-                        $row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
-                        $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
-                        $row['user_city'], $row['user_district'], $row['user_type'],
-                        $row['provider_id'], $row['provider_title']
+                        $row['user_id'],
+                        $row['user_name'],
+                        $row['user_password'],
+                        $row['user_first_name'],
+                        $row['user_last_name'],
+                        $row['user_email'],
+                        $row['user_phone'],
+                        $row['user_address'],
+                        $row['user_city'],
+                        $row['user_district'],
+                        $row['user_type'],
+                        $row['provider_id'],
+                        $row['provider_title']
                     );
-
                 }
-            }                    
-            //echo "This is a Provider account"; //Used to check account type
+            }
             return $provider;
 
             break;
@@ -109,20 +145,28 @@ function createUser($userId, $userType, $conn) {
             $stmt = $conn->prepare(
                 "SELECT * 
                 FROM user
-                WHERE user_id=?");
+                WHERE user_id=?"
+            );
             $stmt->bind_param("i", $userId);
             $stmt->execute();
             $result = $stmt->get_result();
-            if($result->num_rows == 1) {
-                while($row = $result->fetch_assoc()) {
+            if ($result->num_rows == 1) {
+                while ($row = $result->fetch_assoc()) {
                     $guardian = new Guardian(
-                        $row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
-                        $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
-                        $row['user_city'], $row['user_district'], $row['user_type']
+                        $row['user_id'],
+                        $row['user_name'],
+                        $row['user_password'],
+                        $row['user_first_name'],
+                        $row['user_last_name'],
+                        $row['user_email'],
+                        $row['user_phone'],
+                        $row['user_address'],
+                        $row['user_city'],
+                        $row['user_district'],
+                        $row['user_type']
                     );
                 }
-            }                    
-            //echo "This is a Guardian account"; //Used to check account type
+            }
             return $guardian;
 
             break;
@@ -134,29 +178,45 @@ function createUser($userId, $userType, $conn) {
                 FROM user
                 INNER JOIN student
                 USING (user_id)
-                WHERE user_id=?");
+                WHERE user_id=?"
+            );
             $stmt->bind_param("i", $userId);
             $stmt->execute();
             $result = $stmt->get_result();
-            if($result->num_rows == 1) {
-                while($row = $result->fetch_assoc()) {
+            if ($result->num_rows == 1) {
+                while ($row = $result->fetch_assoc()) {
                     $student = new Student(
-                        $row['user_id'], $row['user_name'], $row['user_password'], $row['user_first_name'], 
-                        $row['user_last_name'], $row['user_email'], $row['user_phone'], $row['user_address'], 
-                        $row['user_city'], $row['user_district'], $row['user_type'],
-                        $row['student_id'], $row['provider_id'], $row['student_school'],
-                        $row['student_grade'], $row['student_homeroom'], $row['student_dob'],
-                        $row['student_eval_date'], $row['student_next_evaluation'], $row['student_iep_date'],
-                        $row['student_next_iep'], $row['student_eval_status'], $row['student_iep_status']
+                        $row['user_id'],
+                        $row['user_name'],
+                        $row['user_password'],
+                        $row['user_first_name'],
+                        $row['user_last_name'],
+                        $row['user_email'],
+                        $row['user_phone'],
+                        $row['user_address'],
+                        $row['user_city'],
+                        $row['user_district'],
+                        $row['user_type'],
+                        $row['student_id'],
+                        $row['provider_id'],
+                        $row['student_school'],
+                        $row['student_grade'],
+                        $row['student_homeroom'],
+                        $row['student_dob'],
+                        $row['student_eval_date'],
+                        $row['student_next_evaluation'],
+                        $row['student_iep_date'],
+                        $row['student_next_iep'],
+                        $row['student_eval_status'],
+                        $row['student_iep_status']
                     );
                 }
-            } 
-            
-            //echo "This is a Student account"; //Used to check account type
+            }
+
             return $student;
             break;
-        
-        default :
+
+        default:
             echo "Unable to create current user <br />";
             return;
             break;
@@ -166,100 +226,149 @@ function createUser($userId, $userType, $conn) {
 /*
 Goal functions: deleteGoal, insertGoal, updateGoal 
 */
-function deleteGoal($conn, $goalId) {
-    // Delete selected goal in the database
-    $stmt = $conn->prepare("DELETE 
-                            FROM goal
-                            WHERE goal_id=?");
 
-    // prepare statement, bind parameters
-    $stmt->bind_param("i", $goalId);
+/*
+Deletes goal from database, given valid $conn and $goalId values
+Returns true if successful
+*/
+function deleteGoal($conn, $goalId)
+{
+    try {
+        // Delete selected goal in the database
+        $stmt = $conn->prepare("DELETE 
+        FROM goal
+        WHERE goal_id=?");
 
-    // execute prepared statement
-    $stmt->execute();
-    $result = $stmt->get_result();
+        // prepare statement, bind parameters
+        $stmt->bind_param("i", $goalId);
 
-    return true;
-
-}
-function insertGoal($conn, $studentId, $goalLabel, $goalCategory, $goalText, $goalActive) {
-    //Insert form data into database using prepared statement and bound parameters
-    $stmt = $conn->prepare("INSERT INTO goal (student_id, goal_label, goal_category, goal_text, goal_active) 
-                        VALUES (?,?,?,?,?)");
-
-    // prepare statement, bind parameters
-    $stmt->bind_param("isssi", $studentId, $goalLabel, $goalCategory, $goalText, $goalActive);
-
-    // execute prepared statement
-    $stmt->execute();
-    //$result = $stmt->get_result();
-
-    return true; 
-}
-function updateGoal($conn, $studentId, $goalLabel, $goalCategory, $goalText, $goalActive, $goalId) {
-    // Update selected goal in the database
-    $stmt = $conn->prepare("UPDATE goal
-                            SET student_id=?,
-                                goal_label=?,
-                                goal_category=?,
-                                goal_text=?,
-                                goal_active=?
-                            WHERE goal_id=?");
-
-    // prepare statement, bind parameters
-    $stmt->bind_param("isssii", $studentId, $goalLabel, $goalCategory, $goalText, $goalActive, $goalId);
-
-    // execute prepared statement
-    $stmt->execute();
-    //$result = $stmt->get_result();
-
-    return true;
+        // execute prepared statement
+        $stmt->execute();
+        return true;
+    } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+        return false;
+    }
 }
 
-function refreshGoals($student) {
-    // Clear existing goals
-    $student->goals = [];
-    // Store current goals from database
-    $student->store_student_goals($student->get_student_id());
+/*
+Insert goal into database, given valid $conn and goal values
+Returns true if successful
+*/
+function insertGoal($conn, $studentId, $goalLabel, $goalCategory, $goalText, $goalActive)
+{
+    try {
 
+        //Insert form data into database using prepared statement and bound parameters
+        $stmt = $conn->prepare("INSERT INTO goal (student_id, goal_label, goal_category, goal_text, goal_active) 
+                            VALUES (?,?,?,?,?)");
+
+        // prepare statement, bind parameters
+        $stmt->bind_param("isssi", $studentId, $goalLabel, $goalCategory, $goalText, $goalActive);
+
+        // execute prepared statement
+        $stmt->execute();
+
+        return true;
+    } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+        return false;
+    }
 }
+
+/*
+Update goal in database, given valid $conn and goal values
+Returns true if successful
+*/
+function updateGoal($conn, $studentId, $goalLabel, $goalCategory, $goalText, $goalActive, $goalId)
+{
+    try {
+        // Update selected goal in the database
+        $stmt = $conn->prepare("UPDATE goal
+        SET student_id=?,
+            goal_label=?,
+            goal_category=?,
+            goal_text=?,
+            goal_active=?
+        WHERE goal_id=?");
+
+        // prepare statement, bind parameters
+        $stmt->bind_param("isssii", $studentId, $goalLabel, $goalCategory, $goalText, $goalActive, $goalId);
+
+        // execute prepared statement
+        $stmt->execute();
+        //$result = $stmt->get_result();
+
+        return true;
+    } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+        return false;
+    }
+}
+
 /*
 Objective functions: deleteObjective, insertObjective, updateObjective 
 */
-function deleteObjective($conn, $objectiveId) {
-    // Delete selected objective in the database
-    $stmt = $conn->prepare("DELETE 
-                            FROM objective
-                            WHERE objective_id=?");
 
-    // prepare statement, bind parameters
-    $stmt->bind_param("i", $objectiveId);
+/*
+Deletes objective from database, given valid $conn and $objectiveId values
+Returns true if successful
+*/
+function deleteObjective($conn, $objectiveId)
+{
+    try {
+        // Delete selected objective in the database
+        $stmt = $conn->prepare("DELETE 
+                                FROM objective
+                                WHERE objective_id=?");
 
-    // execute prepared statement
-    $stmt->execute();
-    $result = $stmt->get_result();
+        // prepare statement, bind parameters
+        $stmt->bind_param("i", $objectiveId);
 
-    return true;
+        // execute prepared statement
+        $stmt->execute();
 
+        return true;
+    } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+        return false;
+    }
 }
-function insertObjective($conn, $goalId, $objectiveLabel, $objectiveText, $objectiveAttempts, $objectiveTarget, $objectiveStatus) {
-    //Insert form data into database using prepared statement and bound parameters
-    $stmt = $conn->prepare("INSERT INTO objective (goal_id, objective_label, objective_text, objective_attempts, objective_target, objective_status) 
+
+/*
+Insert objective into database, given valid $conn and objective values
+Returns true if successful
+*/
+function insertObjective($conn, $goalId, $objectiveLabel, $objectiveText, $objectiveAttempts, $objectiveTarget, $objectiveStatus)
+{
+    try {
+        //Insert form data into database using prepared statement and bound parameters
+        $stmt = $conn->prepare("INSERT INTO objective (goal_id, objective_label, objective_text, objective_attempts, objective_target, objective_status) 
                         VALUES (?,?,?,?,?,?)");
 
-    // prepare statement, bind parameters
-    $stmt->bind_param("issiii", $goalId, $objectiveLabel, $objectiveText, $objectiveAttempts, $objectiveTarget, $objectiveStatus);
+        // prepare statement, bind parameters
+        $stmt->bind_param("issiii", $goalId, $objectiveLabel, $objectiveText, $objectiveAttempts, $objectiveTarget, $objectiveStatus);
 
-    // execute prepared statement
-    $stmt->execute();
-    $result = $stmt->get_result();
+        // execute prepared statement
+        $stmt->execute();
 
-    return true; 
-
+        return true;
+    } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+        return false;
+    }
 }
-function updateObjective ($conn, $objectiveId, $goalId, $objectiveLabel, $objectiveText, $objectiveAttempts, $objectiveTarget, $objectiveStatus) {
-    // Update selected objective in the database
-    $stmt = $conn->prepare("UPDATE objective
+
+/*
+Update objective in database, given valid $conn and objective values
+Returns true if successful
+*/
+function updateObjective($conn, $objectiveId, $goalId, $objectiveLabel, $objectiveText, $objectiveAttempts, $objectiveTarget, $objectiveStatus)
+{
+    try {
+
+        // Update selected objective in the database
+        $stmt = $conn->prepare("UPDATE objective
                             SET goal_id=?,
                                 objective_label=?,
                                 objective_text=?,
@@ -268,81 +377,108 @@ function updateObjective ($conn, $objectiveId, $goalId, $objectiveLabel, $object
                                 objective_status=?
                             WHERE objective_id=?");
 
-    // prepare statement, bind parameters
-    $stmt->bind_param("issiiii", $goalId, $objectiveLabel, $objectiveText, $objectiveAttempts, $objectiveTarget, $objectiveStatus, $objectiveId);
+        // prepare statement, bind parameters
+        $stmt->bind_param("issiiii", $goalId, $objectiveLabel, $objectiveText, $objectiveAttempts, $objectiveTarget, $objectiveStatus, $objectiveId);
 
-    // execute prepared statement
-    $stmt->execute();
-    $result = $stmt->get_result();
+        // execute prepared statement
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    return true;
-}
-function refreshObjectives($student) {
-
-    foreach ($student->goals as $g) {
-        // clear existing objectives
-        $g->objectives = [];
-        // Store current objectives
-        $g->store_objectives($g->get_goal_id());
-        // refresh reports for each objective
-        foreach ($g->objectives as $o) {
-            $o->refreshObjectives($student);
-        }
+        return true;
+    } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+        return false;
     }
 }
+
 /*
 Report functions: deleteReport, insertReport, updateReport 
 */
-function deleteReport($conn, $reportId) {
-    // Delete selected report in the database
-    $stmt = $conn->prepare("DELETE 
+
+/*
+Deletes report from database, given valid $conn and $reportId values
+Returns true if successful
+*/
+function deleteReport($conn, $reportId)
+{
+    try {
+        // Delete selected report in the database
+        $stmt = $conn->prepare("DELETE 
                             FROM report
                             WHERE report_id=?");
 
-    // prepare statement, bind parameters
-    $stmt->bind_param("i", $reportId);
+        // prepare statement, bind parameters
+        $stmt->bind_param("i", $reportId);
 
-    // execute prepared statement
-    $stmt->execute();
-    //$result = $stmt->get_result();
-    return true;
-}
-function insertReport($conn, $objectiveId, $reportDate, $reportObserved) {
-    //Insert form data into database using prepared statement and bound parameters
-    $stmt = $conn->prepare("INSERT INTO report (objective_id, report_date, report_observed) VALUES (?,?,?)");
-
-    // prepare statement, bind parameters
-    $stmt->bind_param("isi", $objectiveId, $reportDate, $reportObserved);
-
-    // execute prepared statement
-    $stmt->execute();
-    //$result = $stmt->get_result();
-    return true;
+        // execute prepared statement
+        $stmt->execute();
+        //$result = $stmt->get_result();
+        return true;
+    } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+        return false;
+    }
 }
 
-function updateReport($conn, $objectiveId, $reportDate, $reportObserved, $reportId) {
-    // Update selected report in the database
-    $stmt = $conn->prepare("UPDATE report
+/*
+Insert report into database, given valid $conn and report values
+Returns true if successful
+*/
+function insertReport($conn, $objectiveId, $reportDate, $reportObserved)
+{
+    try {
+        //Insert form data into database using prepared statement and bound parameters
+        $stmt = $conn->prepare("INSERT INTO report (objective_id, report_date, report_observed) VALUES (?,?,?)");
+
+        // prepare statement, bind parameters
+        $stmt->bind_param("isi", $objectiveId, $reportDate, $reportObserved);
+
+        // execute prepared statement
+        $stmt->execute();
+        //$result = $stmt->get_result();
+        return true;
+    } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+        return false;
+    }
+}
+
+/*
+Update report in database, given valid $conn and report values
+Returns true if successful
+*/
+function updateReport($conn, $objectiveId, $reportDate, $reportObserved, $reportId)
+{
+    try {
+        // Update selected report in the database
+        $stmt = $conn->prepare("UPDATE report
                             SET objective_id=?,
                                 report_date=?,
                                 report_observed=?
                             WHERE report_id=?");
 
-    // prepare statement, bind parameters
-    $stmt->bind_param("isii", $objectiveId, $reportDate, $reportObserved, $reportId);
+        // prepare statement, bind parameters
+        $stmt->bind_param("isii", $objectiveId, $reportDate, $reportObserved, $reportId);
 
-    // execute prepared statement
-    $stmt->execute();
-    //$result = $stmt->get_result();
+        // execute prepared statement
+        $stmt->execute();
+        //$result = $stmt->get_result();
 
-    return true;
+        return true;
+    } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+        return false;
+    }
 }
 
-function test_input($data) {
+/*
+Sanitize given data, and return version with dangerous content escaped
+*/
+function test_input($data)
+{
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
-    //echo "<script>alert(\"input tested\");</script>";
     return $data;
 }
 
@@ -354,7 +490,8 @@ Admin Dashboard Functions
 Get all user_id, last and first names from database and return an associative array 
 of user_ids and "Lastname, Firstname" pairs
 */
-function getUserList($conn) {
+function getUserList($conn)
+{
     $userList = array();
     // Get user_id, last name, first name for all users
     $stmt = $conn->prepare("SELECT user_last_name, user_first_name, user_id
@@ -372,7 +509,6 @@ function getUserList($conn) {
     }
 
     return $userList;
-
 }
 /*
 Get number of unread messages for specified user
@@ -389,6 +525,7 @@ function countUnreadMessages($conn, $userId) {
     if ($result->num_rows > 0) {
         $messageCount = $result->num_rows;
     }
+
 
     return $messageCount;
 }
@@ -417,10 +554,13 @@ function userSelectionList($conn) {
       echo "</select>"; // end of select
     }
 }
+
 /*
 Get contact and account information for given userId
+Return an array of user specific data.
 */
-function getUserInfo($conn, $userId) {
+function getUserInfo($conn, $userId)
+{
     $userInfo = array();
 
     $stmt = $conn->prepare("SELECT user_first_name, user_last_name, user_type,
@@ -446,6 +586,3 @@ function getUserInfo($conn, $userId) {
 
     return $userInfo;
 }
-
-
-?>

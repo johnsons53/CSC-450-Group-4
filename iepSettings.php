@@ -4,7 +4,11 @@
       Date Written: 03/2/2022
       Revised: 04/18/2022, Intergrated user interface and now displays user information
       Revised: 04/22/2022 Added selectedUserId and selectedUserInfo to access user data sent on Admin accountSelect change
+      Revised : 04/29/2022 by Lisa 
     -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 
       <?php
 
@@ -13,8 +17,8 @@
 
     // See if selectedUserId exists in POST
     try {
-      if (array_key_exists("selectedUserId", $_POST)) {
-        $selectedUserId = $_POST["selectedUserId"];
+      if (array_key_exists("selectedUserId", $_GET)) {
+        $selectedUserId = $_GET["selectedUserId"];
       } else {
         //$selectedUserId = "";
         //echo "No user selected to edit <br />";
@@ -22,9 +26,7 @@
     } catch (Exception $e) {
       echo "Message: " . $e->getMessage();
     }
-    //echo "Selected User Id: ";
-    //echo $selectedUserId;
-    //echo "<br />";
+   
 
     /*
     $selectedUserInfo is an associative array containing keys: 
@@ -40,43 +42,52 @@
     */
     if (isset($selectedUserId)) {
       $selectedUserInfo = getUserInfo($conn, $selectedUserId);
-      //print_r($selectedUserInfo);
-      //echo "<br />";
+
+      // Use selectedUserInfo values Admin edits
+      $currentUserFullName = $selectedUserInfo["userFullName"];
+      $currentUserType = $selectedUserInfo["userType"];
+      $currentUsername = $selectedUserInfo["userName"];
+      $currentUserPassword = $selectedUserInfo["userPassword"];
+      $currentUserEmail = $selectedUserInfo["userEmail"];
+      $currentUserAddress = $selectedUserInfo["userAddress"];
+      $currentUserPhoneNumber = $selectedUserInfo["userPhone"];
+
+    } else {
+
+          // See if currentUserId and type exist in Session
+      try {
+        $currentUserId = $_SESSION["currentUserId"];
+      } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+      }
+
+      try {
+        $currentUserType = $_SESSION["currentUserType"];
+      } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+      }
+
+
+      // Initialize currentUser as new User of correct type
+      // Pass $currentUserId, $currentUserType, $conn into createUser() function
+      try {
+        $currentUser = createUser($currentUserId, $currentUserType, $conn);
+
+      } catch (Exception $e) {
+        echo "Message: " . $e->getMessage();
+      }
+
+        // Save user information to be displayed
+        $currentUserFullName = $currentUser->get_full_name();
+        $currentUserType = $currentUser->get_user_type();
+        $currentUsername = $currentUser->get_user_name();
+        $currentUserPassword = $currentUser->get_user_password();
+        $currentUserEmail = $currentUser->get_user_email();
+        $currentUserAddress = $currentUser->get_user_address();
+        $currentUserPhoneNumber = $currentUser->get_user_phone();
+
     }
-
-
-      
-    // See if currentUserId and type exist in Session
-    try {
-      $currentUserId = $_SESSION["currentUserId"];
-    } catch (Exception $e) {
-      echo "Message: " . $e->getMessage();
-    }
-
-    try {
-      $currentUserType = $_SESSION["currentUserType"];
-    } catch (Exception $e) {
-      echo "Message: " . $e->getMessage();
-    }
-
-
-    // Initialize currentUser as new User of correct type
-    // Pass $currentUserId, $currentUserType, $conn into createUser() function
-    try {
-      $currentUser = createUser($currentUserId, $currentUserType, $conn);
-
-    } catch (Exception $e) {
-      echo "Message: " . $e->getMessage();
-    }
-
-      // Save user information to be displayed
-      $currentUserFullName = $currentUser->get_full_name();
-      $currentUserType = $currentUser->get_user_type();
-      $currentUsername = $currentUser->get_user_name();
-      $currentUserPassword = $currentUser->get_user_password();
-      $currentUserEmail = $currentUser->get_user_email();
-      $currentUserAddress = $currentUser->get_user_address();
-      $currentUserPhoneNumber = $currentUser->get_user_phone();
+    
       ?>
 
       <!DOCTYPE html>
@@ -98,32 +109,19 @@
             <h1>IEP Portal</h1>
             <div id="accountHolderInfo">
               <!-- Username, messages button, and account settings button here -->
+              <h2><i class="fa fa-user"></i> <?php echo $currentUserFullName; ?></h2>
             </div>
             <div id="horizontalNav">
-              <a class="hNavButton" href="">
-                <h3 class="button">Documents</h3>
-              </a>
-              <a class="hNavButton" href="">
-                <h3>Goals</h3>
-              </a>
-              <a class="hNavButton" href="">
-                <h3>Events</h3>
-              </a>
-              <a class="hNavButton" href="iepMessage.html">
-                <h3>Messages</h3>
-              </a>
-              <a class="hNavButton" href="iepSettings.php">
-                <h3>Information</h3>
-              </a>
-              <a class="hNavButton" href="iepSettings.php">
-                <h3>Settings</h3>
-              </a>
+              <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
+              <a class="hNavButton" id="userMessagesLink" href="iepMessage.html"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
+              <a class="hNavButton" id="userSettingsLink" href="iepSettings.php"><h3><i class="fa fa-gear"></i> Settings</h3></a>
+              <a class="hNavButton" id="userLogout" href="iepUserLogout.php"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
             </div>
           </header>
 
           <!-- Vertical navigation bar -->
           <div class="left" id="verticalNav">
-            <h3>Navigation</h3>
+            <!-- <h3>Navigation</h3> -->
           </div>
 
           <!-- Display User information -->

@@ -7,9 +7,7 @@
     03/29/2022: Removed old code and testing alerts
     04/15/2022: Streamlined database connection code
 */
-//ini_set('display_errors', 1);
-//error_reporting(E_ALL|E_STRICT);      
-//require_once realpath('User.php');
+
 
 class Provider extends User {
     protected $provider_id;
@@ -41,28 +39,13 @@ class Provider extends User {
     }
     function get_provider_students() {
         return array_values($this->students);
-        //return $this->students;
     }
 
     // method to store students for this provider
     function store_provider_students($id) {
         // connection to database
         global $conn;
-        /*$filepath = realpath('login.php');
-        $config = require($filepath);
-        $db_hostname = $config['DB_HOSTNAME'];
-        $db_username = $config['DB_USERNAME'];
-        $db_password = $config['DB_PASSWORD'];
-        $db_database = $config['DB_DATABASE'];
-           
-        // Create connection
-        $conn = new mysqli($db_hostname, $db_username, $db_password, $db_database);
-           
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-        */
+
         $stmt = $conn->prepare("SELECT *
                                 FROM user
                                 INNER JOIN student USING (user_id)
@@ -71,12 +54,6 @@ class Provider extends User {
         $stmt->execute();
         $result = $stmt->get_result();
 
-/*         // Select students for the sepecified provider_id
-        $sql = "SELECT user.*, student.*
-                FROM user
-                INNER JOIN student USING (user_id)
-                WHERE student.provider_id=" . $id;
-        $result = $conn->query($sql); */
         if ($result->num_rows > 0) {
             // students found, store in students array
             while ($row =$result->fetch_assoc()) {
@@ -95,8 +72,7 @@ class Provider extends User {
         } else {
             //echo "0 Students found for Provider with provider_id: ". $id . "<br />";
         }       
-        // close connection to database
-        //$conn->close();
+
     }
 
 }
