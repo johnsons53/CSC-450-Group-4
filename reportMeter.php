@@ -8,7 +8,6 @@ reportMeter.php - Meter Displaying selected report progress
       04/17/2022: Cleanup of unnecessary testing code;
       04/30/2022: Fixed label error
 */
-//include_once realpath("initialization.php");
 
     $value = $_POST["value"];
     $max = $_POST["max"];

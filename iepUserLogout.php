@@ -1,3 +1,10 @@
+<!-- /*
+iepUserLogout.php - Logout user. Unset session variables, alert user of logout, redirect to login page.
+      Spring 100 CSC 450 Capstone, Group 4
+      Author: Lisa Ahnell
+      Date Created: 04/30/2022
+
+*/ -->
 <?php
 
 session_start();

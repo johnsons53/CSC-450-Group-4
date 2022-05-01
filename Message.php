@@ -5,10 +5,7 @@
     Date Written: 03/26/2022
     Revised: 
 */
-
-ini_set('display_errors', 1);
-error_Messageing(E_ALL|E_STRICT);      
-
+     
 class Message {
     // change these to public
     public $message_id;
@@ -32,7 +29,6 @@ class Message {
     function get_message_date() {
         return $this->message_date;
     }
-    // Setter methods--probably don't actually want to include these.
 }
 
 ?>

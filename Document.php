@@ -5,10 +5,7 @@
     Date Written: 03/26/2022
     Revised: 04/20/2022 : Adjust to match changes to document table in database 
 */
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL|E_STRICT);      
-
+     
 class Document {
     // change these to protected
     protected $document_id;

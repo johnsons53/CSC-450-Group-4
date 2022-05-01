@@ -7,13 +7,11 @@
       03/29/2022: Removed old code and testing alerts 
       04/15/2022: Streamlined database connection code 
       */
-//ini_set('display_errors', 1);
-//error_reporting(E_ALL|E_STRICT);    
-
-//include_once realpath("initialization.php");
 
 
-class User {
+
+class User
+{
     //protected $conn;
     protected $user_id;
     protected $user_name;
@@ -31,7 +29,8 @@ class User {
     public $sent_messages = [];
     public $received_messages = [];
 
-    function __construct($id, $name, $password, $first_name, $last_name, $email, $phone, $address, $city, $district, $type) {
+    function __construct($id, $name, $password, $first_name, $last_name, $email, $phone, $address, $city, $district, $type)
+    {
         $this->user_id = $id;
         $this->user_name = $name;
         $this->user_password = $password;
@@ -51,69 +50,67 @@ class User {
 
     // Getter methods
 
-    function get_user_id() {
+    function get_user_id()
+    {
         return $this->user_id;
     }
-    function get_user_name() {
+    function get_user_name()
+    {
         return $this->user_name;
     }
-    function get_user_password() {
+    function get_user_password()
+    {
         return $this->user_password;
     }
-    function get_user_first_name() {
+    function get_user_first_name()
+    {
         return $this->user_first_name;
     }
-    function get_user_last_name() {
+    function get_user_last_name()
+    {
         return $this->user_last_name;
     }
-    function get_user_email() {
+    function get_user_email()
+    {
         return $this->user_email;
     }
-    function get_user_phone() {
+    function get_user_phone()
+    {
         return $this->user_phone;
     }
-    function get_user_address() {
+    function get_user_address()
+    {
         return $this->user_address;
     }
-    function get_user_city() {
+    function get_user_city()
+    {
         return $this->user_city;
     }
-    function get_user_district() {
+    function get_user_district()
+    {
         return $this->user_district;
     }
-    function get_user_type() {
+    function get_user_type()
+    {
         return $this->user_type;
     }
-    function get_full_name() {
+    function get_full_name()
+    {
         return $this->get_user_first_name() . " " . $this->get_user_last_name();
     }
-    function get_sent_messages() {
+    function get_sent_messages()
+    {
         return array_values($this->sent_messages);
     }
-    function get_received_messages() {
+    function get_received_messages()
+    {
         return array_values($this->received_messages);
     }
 
     // Method to collect and store sent messages
-    function store_sent_messages($id) {
-        //include_once realpath("initialization.php");
-        /*
-        // connection to database
-        $filepath = realpath('login.php');
-        $config = require($filepath);
-        $db_hostname = $config['DB_HOSTNAME'];
-        $db_username = $config['DB_USERNAME'];
-        $db_password = $config['DB_PASSWORD'];
-        $db_database = $config['DB_DATABASE'];
-    
-        // Create connection
-        $conn = new mysqli($db_hostname, $db_username, $db_password, $db_database);
-    
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-        */
+    function store_sent_messages($id)
+    {
+
         // run query to select all messages where objective_id matches
         global $conn;
         $stmt = $conn->prepare("SELECT message_id, message_text, message_date
@@ -124,11 +121,6 @@ class User {
         $stmt->execute();
         $result = $stmt->get_result();
 
-/*         $sql = "SELECT message_id, message_text, message_date
-                FROM message
-                WHERE user_id=" . $id;
-        //run query
-        $result = $conn->query($sql); */
         // save each result row as a message object in $received_messages
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -136,37 +128,16 @@ class User {
                 $sent_message = new SentMessage($row['message_id'], $row['message_text'], $row['message_date']);
                 // Add current SentMessage to sent_message array
                 $this->sent_messages[] = $sent_message;
-                
             }
         } else {
             //echo "0 sent message results <br />";
         }
-        // close connection to database
-        //$conn->close();
-
-        //echo "Connection closed.<br />";
     }
 
     // Method to collect and store received messages
-    function store_received_messages($id) {
-        //include_once realpath("initialization.php");
-        /*
-        // connection to database
-        $filepath = realpath('login.php');
-        $config = require($filepath);
-        $db_hostname = $config['DB_HOSTNAME'];
-        $db_username = $config['DB_USERNAME'];
-        $db_password = $config['DB_PASSWORD'];
-        $db_database = $config['DB_DATABASE'];
-    
-        // Create connection
-        $conn = new mysqli($db_hostname, $db_username, $db_password, $db_database);
-    
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-        */
+    function store_received_messages($id)
+    {
+
         global $conn;
 
         $stmt = $conn->prepare("SELECT message_id, message_read
@@ -176,28 +147,16 @@ class User {
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $result = $stmt->get_result();
-        // run query to select all received messages for this user
- /*        $sql = "SELECT message_id, message_read
-                FROM message_recipient
-                WHERE user_id=" . $id;
-        //run query
-        $result = $conn->query($sql);   */ 
+
         // save each result row as a message object in $received_messages
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 // new message object from row data
                 $received_message = new ReceivedMessage($row['message_id'], $row['message_read']);
-                $this->received_messages[] = $received_message;                
+                $this->received_messages[] = $received_message;
             }
         } else {
             //echo "0 received message results <br />";
         }
-        // close connection to database
-        //$conn->close();
-
-        //echo "Connection closed.<br />";
     }
-
 }
-
-?>

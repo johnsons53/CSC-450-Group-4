@@ -150,5 +150,3 @@ class Student extends User {
     }
     
 }
-
-?>
