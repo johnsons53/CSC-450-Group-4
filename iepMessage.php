@@ -84,18 +84,44 @@
         global $conn;
         global $currentUserId;
         global $currentUserName;
-        
-        $otherUser = array($_POST['userSelect']);
-        $otherUserId = $otherUser[0];
-        echo "current user id: " . $currentUserId . "<br />";
-        echo "current user name: " . $currentUserName . "<br />";
-        echo "other user id: " . $otherUserId . "<br />";
 
-        // Locate other user name
-        $sql = "SELECT user_name, user_id FROM user WHERE user_id='" . $otherUserId . "'";
-        $result = $conn->query($sql);
-        $otherUser = $result->fetch_assoc( );
-        $otherUserName = $otherUser['user_name'];
+        // Determine if user has set message recipient
+        // If not, use a default user.
+        $otherUser = array();
+        $otherUserId = 0;
+        $otherUserName = "";
+        if (isset($_POST['btnSend'])) {
+          // Get other user info from form input
+          $otherUser = array($_POST['userSelect']);
+          $otherUserId = $otherUser[0];
+          echo "current user id: " . $currentUserId . "<br />";
+          echo "current user name: " . $currentUserName . "<br />";
+          echo "other user id: " . $otherUserId . "<br />";
+
+          // Locate other user name
+          $sql = "SELECT user_name, user_id FROM user WHERE user_id='" . $otherUserId . "'";
+          $result = $conn->query($sql);
+          $otherUser = $result->fetch_assoc( );
+          $otherUserName = $otherUser['user_name'];
+        }
+        else {
+          // Get other user info from a default option
+          $sql = "SELECT user_last_name, user_first_name, user_id "
+            . " FROM user WHERE user_id <> " . $currentUserId 
+            . " ORDER By user_last_name";
+          $result = $conn->query($sql);
+          $otherUser = $result->fetch_assoc( );
+          $otherUserId = $otherUser['user_id'];
+          $otherUserName = $otherUser['user_first_name'] . " " . $otherUser['user_last_name'];
+        }
+        
+          /* $otherUser = array($_POST['userSelect']);
+          $otherUserId = $otherUser[0];
+          echo "current user id: " . $currentUserId . "<br />";
+          echo "current user name: " . $currentUserName . "<br />";
+          echo "other user id: " . $otherUserId . "<br />"; */
+
+        
 
         echo "other username is: " . $otherUserName . "<br />"; //////////////
 
@@ -288,10 +314,7 @@
 
         <div class="contentCard" id="messageContent">
           <?php 
-            // If the 'send' button was activated, display messages relevant to user
-            if(isset($_POST["btnSend"])) {
-              displayMessages( );
-            }
+            displayMessages( );
           ?>
         </div>
 
