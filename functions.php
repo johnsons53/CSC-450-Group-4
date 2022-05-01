@@ -374,6 +374,29 @@ function getUserList($conn) {
     return $userList;
 
 }
+/*
+Get number of unread messages for specified user
+*/
+function countUnreadMessages($conn, $userId) {
+    $messageCount = 0;
+    $stmt = $conn->prepare("SELECT message_id
+                            FROM message_recipient
+                            WHERE user_id=? AND message_read=\"0\"");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $messageCount = $result->num_rows;
+    }
+
+    return $messageCount;
+}
+
+
+/*
+Display selection list of all users in system, allowing multiple selected users
+*/
 function userSelectionList($conn) {
 
     // function returning Lastname, Firstname and user_id of each user from db

@@ -23,7 +23,7 @@ body {
 
 .navigation {
   font: bold;
-  padding: 2px, 5px, 2px, 5px;
+  padding: 2px 5px 2px 5px;
   border-radius: 5px;
   border: 1px solid black;
 }
@@ -129,6 +129,17 @@ header {
     float: none;
     display: block;
   }
+}
+
+span.badge {
+  position: relative;
+  top: -10px;
+  right: -10px; 
+  padding: 5px 10px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+  font-size: x-small;
 }
 
 

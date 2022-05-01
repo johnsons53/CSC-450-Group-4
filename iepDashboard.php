@@ -533,6 +533,7 @@ include_once realpath("initialization.php");
     }
 
     $currentUserName = $currentUser->get_full_name();
+    $unreadMessageCount = countUnreadMessages($conn, $currentUserId);
 
     // Provider, Guardian and Student users will view student IEP data
     // Admin users will view and modify general user account data for any other user
@@ -585,7 +586,7 @@ include_once realpath("initialization.php");
         </div>
         <div id="horizontalNav">
           <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
-          <a class="hNavButton" id="userMessagesLink" href="iepMessage.php"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
+          <a class="hNavButton notification" id="userMessagesLink" href="iepMessage.php"><h3><i class="fa fa-fw fa-envelope"></i> Messages<span class="badge"><?php echo $unreadMessageCount;?></span></h3></a>
           <a class="hNavButton" id="userSettingsLink" href="javascript:void(0)"><h3><i class="fa fa-gear"></i> Settings</h3></a>
           <a class="hNavButton" id="userLogout" href="#"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
 
