@@ -9,6 +9,7 @@
       Revised: 04/19/2022, Added temporary user interface
       Revised: 04/30/2022, Deleted leftover code
       Revised: 04/30/2022, Added check for if user has logged in already
+      Revised: 04/30/2022, Added alert for if user fails to login
     -->
 
     <?php
@@ -58,10 +59,7 @@
                     $userId = $row["user_id"];
                 }
             } else {
-                echo "You have entered incorrect information";
-                $_POST["username"] = "Unable to Login with this username";
-                $_POST["password"] = "";
-                header("Location: iepLogin.php");
+                echo ("<script> alert('The username or password you typed is incorrect. Please try again.'); location.href='iepLogin.php'; </script>");
                 exit();
             }
 
