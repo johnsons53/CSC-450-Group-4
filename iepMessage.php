@@ -46,6 +46,8 @@
       }
 
       $currentUserName = $currentUser->get_full_name();
+      $unreadMessageCount = countUnreadMessages($conn, $currentUserId);
+
 
 
 /*
@@ -185,22 +187,32 @@
 
     <!-- Page is encompassed in grid -->
     <div class="gridContainer">
-      <header>
-        <!-- Insert logo image here -->
-        <h1>IEP Portal</h1>
-        <div id="accountHolderInfo">
-          <!-- Username, messages button, and account settings button here -->
-        </div>
-        <div id="horizontalNav">
-          <!-- Links are inactive -->
-          <a class="hNavButton" href=""><h3 class="button">Documents</h3></a>
-          <a class="hNavButton" href=""><h3>Goals</h3></a>
-          <a class="hNavButton" href=""><h3>Events</h3></a>
-          <a class="hNavButton" href=""><h3>Messages</h3></a>
-          <a class="hNavButton" href=""><h3>Information</h3></a>
-          <a class="hNavButton" href=""><h3>Settings</h3></a>
-        </div>
-      </header>
+    <header>
+      <!-- Insert logo image here -->
+      <h1>IEP Portal</h1>
+      <div id="accountHolderInfo">
+        <!-- Username, messages button, and account settings button here -->
+
+        <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
+      </div>
+      <div id="horizontalNav">
+        <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php">
+          <h3><i class="fa fa-fw fa-home"></i> Home</h3>
+        </a>
+        <a class="hNavButton" id="userMessagesLink" href="iepMessage.php">
+          <h3><i class="fa fa-fw fa-envelope"></i> Messages<span class="badge"><?php echo $unreadMessageCount;?></span></h3>
+        </a>
+        <a class="hNavButton" id="userSettingsLink" href="userSettings.php">
+          <h3><i class="fa fa-gear"></i> Settings</h3>
+        </a>
+        <a class="hNavButton" id="userLogout" href="iepUserLogout.php">
+          <h3><i class="fa fa-sign-out"></i> Logout</h3>
+        </a>
+
+
+      </div>
+
+    </header>
 
       <!-- Vertical navigation bar -->
       <div class="left" id="verticalNav">

@@ -39,6 +39,8 @@
 
         $currentUserId = $currentUser->get_user_id();
         $currentUserName = $currentUser->get_full_name();
+        $unreadMessageCount = countUnreadMessages($conn, $currentUserId);
+
 
 
          $query = "SELECT * FROM user WHERE user_id = $currentUserId";
@@ -63,22 +65,31 @@
           <div class="gridContainer">
 
           <header>
-        <!-- Insert logo image here -->
-        <h1>IEP Portal: User Settings</h1>
-        <div id="accountHolderInfo">
-          <!-- Username, messages button, and account settings button here -->
-          
-          <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
-        </div>
-        <div id="horizontalNav">
-          <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
-          <a class="hNavButton" id="userMessagesLink" href="iepMessage.php"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
-          <a class="hNavButton" id="userSettingsLink" href="userSettings.php"><h3><i class="fa fa-gear"></i> Settings</h3></a>
-          <a class="hNavButton" id="userLogout" href="iepUserLogout.php"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
+      <!-- Insert logo image here -->
+      <h1>IEP Portal</h1>
+      <div id="accountHolderInfo">
+        <!-- Username, messages button, and account settings button here -->
 
-        </div>
+        <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
+      </div>
+      <div id="horizontalNav">
+        <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php">
+          <h3><i class="fa fa-fw fa-home"></i> Home</h3>
+        </a>
+        <a class="hNavButton" id="userMessagesLink" href="iepMessage.php">
+          <h3><i class="fa fa-fw fa-envelope"></i> Messages<span class="badge"><?php echo $unreadMessageCount;?></span></h3>
+        </a>
+        <a class="hNavButton" id="userSettingsLink" href="userSettings.php">
+          <h3><i class="fa fa-gear"></i> Settings</h3>
+        </a>
+        <a class="hNavButton" id="userLogout" href="iepUserLogout.php">
+          <h3><i class="fa fa-sign-out"></i> Logout</h3>
+        </a>
 
-      </header>
+
+      </div>
+
+    </header>
                     <!-- Vertical navigation bar -->
             <div class="left" id="verticalNav">
                 

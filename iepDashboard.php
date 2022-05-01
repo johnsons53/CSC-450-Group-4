@@ -557,7 +557,7 @@ include_once realpath("initialization.php");
           <h3><i class="fa fa-fw fa-home"></i> Home</h3>
         </a>
         <a class="hNavButton" id="userMessagesLink" href="iepMessage.php">
-          <h3><i class="fa fa-fw fa-envelope"></i> Messages</h3>
+          <h3><i class="fa fa-fw fa-envelope"></i> Messages<span class="badge"><?php echo $unreadMessageCount;?></span></h3>
         </a>
         <a class="hNavButton" id="userSettingsLink" href="userSettings.php">
           <h3><i class="fa fa-gear"></i> Settings</h3>

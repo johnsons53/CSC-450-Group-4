@@ -65,6 +65,8 @@ try {
 } catch (Exception $e) {
   echo "Message: " . $e->getMessage();
 }
+$currentUserName = $currentUser->get_full_name();
+$unreadMessageCount = countUnreadMessages($conn, $currentUserId);
 
 try {
   $activeStudent = createStudent($activeStudentId, $conn);
@@ -377,17 +379,29 @@ $activeStudentName = $activeStudent->get_full_name();
       
     <header>
       <!-- Insert logo image here -->
-      <h1>IEP Portal: Documents</h1>
+      <h1>IEP Portal</h1>
       <div id="accountHolderInfo">
         <!-- Username, messages button, and account settings button here -->
+
         <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
       </div>
       <div id="horizontalNav">
-        <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
-        <a class="hNavButton" id="userMessagesLink" href="iepMessage.php"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
-        <a class="hNavButton" id="userSettingsLink" href="userSettings.php"><h3><i class="fa fa-gear"></i> Settings</h3></a>
-        <a class="hNavButton" id="userLogout" href="iepUserLogout.php"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
+        <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php">
+          <h3><i class="fa fa-fw fa-home"></i> Home</h3>
+        </a>
+        <a class="hNavButton" id="userMessagesLink" href="iepMessage.php">
+          <h3><i class="fa fa-fw fa-envelope"></i> Messages<span class="badge"><?php echo $unreadMessageCount;?></span></h3>
+        </a>
+        <a class="hNavButton" id="userSettingsLink" href="userSettings.php">
+          <h3><i class="fa fa-gear"></i> Settings</h3>
+        </a>
+        <a class="hNavButton" id="userLogout" href="iepUserLogout.php">
+          <h3><i class="fa fa-sign-out"></i> Logout</h3>
+        </a>
+
+
       </div>
+
     </header>
 
       <!-- Vertical navigation bar -->
