@@ -20,6 +20,16 @@ ini_set('error_log', realpath('error_log'));
 // start session 
 session_start();
 
+// Authorizes session to prevent user from accessing pages without logging in
+// WILL TURN ON WHEN FINALIZED
+/*
+if (!isset($_SESSION['currentUserId']))
+{
+    header("Location: iepLogin.php");
+    die();
+}
+*/
+
 // Token for this session, check to see if expired
 if (!isset($_SESSION["token"]) || time() > $_SESSION["tokenExpires"]) {
     // set token and time
