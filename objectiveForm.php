@@ -109,18 +109,25 @@ if (array_key_exists("objectiveStatus", $_POST)) {
 
         <!-- Radio buttons to set objectiveStatus -->
         <div class="flex-formContainer">
-            <div class="formElement formLabel">
-                <label for="objectiveStatus">Objective Status</label>
-            </div>
-            <div class="formElement">
+            <fieldset>
+                <legend>Objective Status: </legend>
                 <label><input type="radio" name="objectiveStatus" <?php
                                                                     if ($objectiveStatus === "") echo "checked";
                                                                     if (isset($objectiveStatus) && $objectiveStatus == "0") echo "checked";
                                                                     ?> value="0">Active</label>
+                <label><input type="radio" name="objectiveStatus" <?php if (isset($objectiveStatus) && $objectiveStatus == "1") echo "checked"; ?> value="1">Complete</label>
+
+            </fieldset>
+            <!-- <div class="formElement formLabel">
+                <label for="objectiveStatus">Objective Status</label>
+
             </div>
             <div class="formElement">
-                <label><input type="radio" name="objectiveStatus" <?php if (isset($objectiveStatus) && $objectiveStatus == "1") echo "checked"; ?> value="1">Complete</label>
+
             </div>
+            <div class="formElement">
+
+            </div> -->
         </div>
 
         <div class="flex-formContainer">

@@ -338,8 +338,7 @@ foreach ($goals as $g) {
     echo "</div>"; //end of expandedDetails
 
     // Expand/Hide button
-    echo "<button type='custom' class=\"detailViewButton\" data-detailDivId=\"" . $objectiveDetailsID . "\" id='btn" . $objectiveDetailsID . "' onclick='showHide(\"" . $objectiveDetailsID . "\");'><i class=\"fa fa-minus\"></i></button>";
-
+    echo "<input type=\"button\" value=\"Hide Details\" class=\"detailViewButton\" data-detailDivId=\"" . $objectiveDetailsID . "\" id='btn" . $objectiveDetailsID . "' onclick='showHide(\"" . $objectiveDetailsID . "\");'></input>";
     echo "</div>"; // end of Objective Div
 
   } // end of foreach(objectives)
@@ -353,7 +352,8 @@ foreach ($goals as $g) {
   echo "</div>"; // end of expandedDetails
 
   // Expand/Hide button
-  echo "<button type='custom' class=\"detailViewButton\" data-detailDivId=\"" . $goalDetailsID . "\" id='btn" . $goalDetailsID . "' onclick='showHide(\"" . $goalDetailsID . "\");'><i class=\"fa fa-minus\"></i></button>";
+  echo "<input type=\"button\" value=\"Hide Details\" class=\"detailViewButton\" data-detailDivId=\"" . $goalDetailsID . "\" id='btn" . $goalDetailsID . "' onclick='showHide(\"" . $goalDetailsID . "\");'></input>";
+
   echo "</div>"; // end of Goal Div
 } // end of foreach(goal)
 

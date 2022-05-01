@@ -84,10 +84,10 @@ include_once realpath("initialization.php");
         // if it has display of none, set to block
         if ($("#" + detailDivId).attr("display") == "block") {
           $("#" + detailDivId).attr("display", "none");
-          $("#btn" + detailDivId).html("<i class=\"fa fa-minus\"></i>");
+          $("#btn" + detailDivId).val("Hide Details");
         } else {
           $("#" + detailDivId).attr("display", "block");
-          $("#btn" + detailDivId).html("<i class=\"fa fa-plus\"></i>");
+          $("#btn" + detailDivId).val("Show Details");
         }
       });
       // Hide the detail views
@@ -591,12 +591,10 @@ include_once realpath("initialization.php");
           // Version from testing
           if ($studentCount == 0) {
             echo "<div class=\"tab vNavButton tablinks\" id=\"defaultOpen\" data-studentName=\"" . $studentName . "\" data-studentId=\"" . $studentId . "\">";
-            //echo "<a class=\"vNavButton tablinks\" href='javascript:void(0)' id='defaultOpen' data-studentName=\"" . $studentName . "\" data-studentId='" . $studentId . "'><h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3></a>";
             echo "<h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3>";
             echo "</div>";
           } else {
             echo "<div class=\"tab vNavButton tablinks\" data-studentName=\"" . $studentName . "\" data-studentId=\"" . $studentId . "\">";
-            //echo "<a class=\"vNavButton tablinks\" href='javascript:void(0)' data-studentName=\"" . $studentName . "\" data-studentId='" . $studentId . "'><h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3></a>";
             echo "<h3><i class=\"fa fa-star\"></i> " . $studentName . "</h3>";
 
             echo "</div>";

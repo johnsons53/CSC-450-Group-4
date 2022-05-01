@@ -15,7 +15,7 @@ reportMeter.php - Meter Displaying selected report progress
     $low = $_POST["low"];
     echo "<p>";
     echo "<h4>Selected Report Progress: </h4>";
-    echo "<meter aria-label=\"Report Meter\" id=\"reportMeter\" name=\"reportMeter\" min='0' max='" . $max . "' high='" . $high ."' low='" . $low . "' optimum='" . $max . "' value='" . $value . "'>" . $value . "</meter>";
+    echo "<meter title=\"Observed: " . $value . "\" aria-label=\"Report Meter\" id=\"reportMeter\" name=\"reportMeter\" min='0' max='" . $max . "' high='" . $high ."' low='" . $low . "' optimum='" . $max . "' value='" . $value . "'>" . $value . "</meter>";
     echo "</p>"; 
 
 ?>
