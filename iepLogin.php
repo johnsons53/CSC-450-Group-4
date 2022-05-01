@@ -7,20 +7,22 @@
       Revised: 04/10/2022, Created switch statement that assigns current session user to user_type of user's login information
       Revised: 04/12/2022, Revised switch statement to ensure correct data present to create Admin, Provider and Student objects. (Lisa Ahnell)
       Revised: 04/19/2022, Added temporary user interface
-      Revised: 04/30/2022, Deleted leftover code
-      Revised: 04/30/2022, Added check for if user has logged in already
+      Revised: 04/30/2022, Deleting leftover code
     -->
 
     <?php
 
     include_once realpath("loginInitialization.php");
+
     global $conn;
 
-    // Check if user is already logged in, if so redirects to iepDashboard.php
-    if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true) {
-        header("location: iepDashboard.php");
+    /* Will test feature when fully functional
+    // Check if user is already logged in
+    if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
+        header("location: iepLogin.php");
         exit;
     }
+    */
 
     // Username and password sent from form
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -65,10 +67,9 @@
                 exit();
             }
 
-            // Places userId and userType into SESSION along with a flag that checks if user has logged in, redirecting to dashboard 
+            // Put userId and userType into SESSION
             $_SESSION["currentUserId"] = $userId;
             $_SESSION["currentUserType"] = $userType;
-            $_SESSION['loggedin'] = true;
             header("Location: iepDashboard.php");
             exit();
         }
@@ -95,8 +96,8 @@
 
             <!-- Text field for username_Login-->
             <div class="wrapper">
-                <h1 style="text-align:center;font-size:40px">IEP Login</h1>
-                <label for="username_Login">Username</label>
+            <h1 style="text-align:center;font-size:40px">IEP Login</h1>
+                <label for="username_Login">Username</label> 
                 <input type="text" placeholder="Enter Username" name="username" required>
 
                 <label for="password_Login">Password</label>
