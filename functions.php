@@ -510,6 +510,34 @@ function getUserList($conn)
 
     return $userList;
 }
+
+/*
+Get all user_id, last and first names from database and return an associative array 
+of user_ids and "Lastname, Firstname" pairs
+EXCLUDING the current user
+*/
+function getUserListModified($conn, $currentUserId)
+{
+    $userList = array();
+    // Get user_id, last name, first name for all users
+    $stmt = $conn->prepare("SELECT user_last_name, user_first_name, user_id
+                            FROM user
+                            WHERE user_id <> " . $currentUserId . 
+                            " ORDER By user_last_name");
+    // execute prepared statement
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            // Add values from $row to userList
+            $userList[$row["user_id"]] = $row["user_last_name"] . ", " . $row["user_first_name"];
+        }
+    }
+
+    return $userList;
+}
+
 /*
 Get number of unread messages for specified user
 */
@@ -534,10 +562,10 @@ function countUnreadMessages($conn, $userId) {
 /*
 Display selection list of all users in system, allowing multiple selected users
 */
-function userSelectionList($conn) {
+function userSelectionList($conn, $currentUserId) {
 
     // function returning Lastname, Firstname and user_id of each user from db
-    $accounts = getUserList($conn);
+    $accounts = getUserListModified($conn, $currentUserId);
     //print_r($accounts);
 
     // Select input for each available account
@@ -545,13 +573,20 @@ function userSelectionList($conn) {
 
     if (isset($accounts) && count($accounts) > 0) {
       // select input for accounts  
-      echo "<label for=\"userSelect\">Select Recipient(s)</label>";
-      echo "<select name=\"userSelect\" class=\"userSelect\" id=\"userSelect\" size=\"5\" multiple>";
+      //echo "<label for=\"userSelect\">Select Recipient(s)</label>";
+      //echo "<select name=\"userSelect\" class=\"userSelect\" id=\"userSelect\" size=\"5\" multiple>";
         // Options for accountSelect
+        $counter = 0;
         foreach($accounts as $a => $a_value) {
-            echo "<option class=\"accountOption vNavButton\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
+            if ($counter == 0) {
+                echo "<option class=\"accountOption vNavButton\" selected='selected' value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
+            }
+            else {
+                echo "<option class=\"accountOption vNavButton\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
+            }
+            $counter += 1;
         }
-      echo "</select>"; // end of select
+      //echo "</select>"; // end of select
     }
 }
 
