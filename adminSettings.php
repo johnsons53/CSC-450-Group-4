@@ -27,7 +27,7 @@
         } catch (Exception $e) {
             echo "Message: " . $e->getMessage();
         }
-    
+
         try {
             $currentUserType = $_SESSION["currentUserType"];
         } catch (Exception $e) {
@@ -35,11 +35,10 @@
         }
         try {
             $currentUser = createUser($currentUserId, $currentUserType, $conn);
-    
         } catch (Exception $e) {
             echo "Message: " . $e->getMessage();
         }
-    
+
         $currentUserName = $currentUser->get_full_name();
         ?>
 
@@ -60,12 +59,13 @@
           <div class="gridContainer">
 
 
-<!--           <header>
+              <!--           <header>
         
         <h1>IEP Portal</h1>
         <div id="accountHolderInfo">
           
-          <h2><i class="fa fa-user"></i> <?php //echo $currentUserName; ?></h2>
+          <h2><i class="fa fa-user"></i> <?php //echo $currentUserName; 
+                                            ?></h2>
         </div>
         <div id="horizontalNav">
           <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
@@ -87,15 +87,23 @@
                       <div id="users_table">
                           <table class="table table-bordered">
                               <tr>
-                                  <th width="100%"><h3>Accounts</h3></th>
-                                  <th width="30%"><h3>Update </h3></th>
-                                  <th width="30%"><h3>View</h3></th>
+                                  <th width="100%">
+                                      <h3>Accounts</h3>
+                                  </th>
+                                  <th width="30%">
+                                      <h3>Update </h3>
+                                  </th>
+                                  <th width="30%">
+                                      <h3>View</h3>
+                                  </th>
                               </tr>
                               <?php
                                 while ($row = mysqli_fetch_array($result)) {
                                 ?>
                                   <tr>
-                                      <td><h4><?php echo $row["user_first_name"] . ' ' . $row["user_last_name"]; ?></h4></td>
+                                      <td>
+                                          <h4><?php echo $row["user_first_name"] . ' ' . $row["user_last_name"]; ?></h4>
+                                      </td>
                                       <td><input type="button" name="edit" value="Update" id="<?php echo $row["user_id"]; ?>" class="btn btn-info btn-xs edit_data" /></td>
                                       <td><input type="button" name="view" value="View" id="<?php echo $row["user_id"]; ?>" class="btn btn-info btn-xs view_data" /></td>
                                   </tr>
@@ -137,14 +145,18 @@
                   </div>
                   <div class="modal-body">
                       <form method="post" id="insert_form">
+                          <label>Update First Name</label>
+                          <input type="text" name="firstname" id="firstname" class="form-control"></input>
+                          <label>Update Last Name</label>
+                          <input type="text" name="lastname" id="lastname" class="form-control"></input>
+                          <label>Update Password</label>
+                          <input type="pass" name="password" id="password" class="form-control"></input>
                           <label>Update Email</label>
                           <input type="text" name="email" id="email" class="form-control" />
-                          <br />
                           <label>Update Address</label>
                           <input name="address" id="address" class="form-control"></input>
-                          <br />
                           <label>Update Phone Number</label>
-                          <input type="tel" name="phone" id="phone" class="form-control" />
+                          <input type="tel" name="phone" id="phone" maxlength="10" pattern="\d{10}" class="form-control" />
                           <br />
                           <input type="hidden" name="temp_id" id="temp_id" />
                           <input type="submit" name="insert" id="insert" value="Insert" class="btn btn-xs btn-success" />
@@ -174,10 +186,13 @@
                       url: "fetch.php",
                       method: "POST",
                       data: {
-                        temp_id: temp_id
+                          temp_id: temp_id
                       },
                       dataType: "json",
                       success: function(data) {
+                          $('#firstname').val(data.user_first_name);
+                          $('#lastname').val(data.user_last_name);
+                          $('#password').val(data.user_password);
                           $('#email').val(data.user_email);
                           $('#address').val(data.user_address);
                           $('#phone').val(data.user_phone);
@@ -189,9 +204,15 @@
               });
 
               // Sends updated information to database to update
-              $('#insert').on("click", function(event){ 
+              $('#insert').on("click", function(event) {
                   event.preventDefault();
-                  if ($('#email').val() == "") {
+                  if ($('#firstname').val() == "") {
+                      alert("First name is required");
+                  } else if ($('#lastname').val() == '') {
+                      alert("Last name is required");
+                  } else if ($('#password').val() == '') {
+                      alert("Password is required");
+                  } else if ($('#email').val() == '') {
                       alert("Email is required");
                   } else if ($('#address').val() == '') {
                       alert("Address is required");
@@ -223,7 +244,7 @@
                           url: "select.php",
                           method: "POST",
                           data: {
-                            temp_id: temp_id
+                              temp_id: temp_id
                           },
                           success: function(data) {
                               $('#user_detail').html(data);
