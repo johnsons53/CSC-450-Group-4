@@ -10,25 +10,8 @@ goalForm.php - Provider Goal Form
 // for testing:
 error_reporting((E_ALL | E_STRICT));
 
-// for normal use:
-    /*
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-ini_set('error_log', realpath('error_log'));
-    */
-
 // start session 
 session_start();
-
-// Authorizes session to prevent user from accessing pages without logging in
-// WILL TURN ON WHEN FINALIZED
-/*
-if (!isset($_SESSION['currentUserId']))
-{
-    header("Location: iepLogin.php");
-    die();
-}
-*/
 
 // Token for this session, check to see if expired
 if (!isset($_SESSION["token"]) || time() > $_SESSION["tokenExpires"]) {
@@ -41,7 +24,6 @@ if (!isset($_SESSION["token"]) || time() > $_SESSION["tokenExpires"]) {
 // include constants defined on login.php
 include_once realpath("login.php");
 
-
 // Database connection
 $conn = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
 
@@ -52,7 +34,6 @@ if ($conn->connect_error) {
 } else {
     //echo "Database Connection created \n";
 }
-
 
 // include other backend files for page
 
@@ -67,7 +48,4 @@ require_once realpath('Objective.php');
 require_once realpath('Student.php');
 require_once realpath('SentMessage.php');
 require_once realpath('ReceivedMessage.php');
-
 require_once realpath('functions.php');
-
-?>
