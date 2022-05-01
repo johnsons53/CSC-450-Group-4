@@ -47,34 +47,12 @@
 
       $currentUserName = $currentUser->get_full_name();
 
-
-/*
-      // Connection constants for use with AMPPS
-      define("SERVER_NAME", "localhost");
-      define("DBF_USER_NAME", "root"); 
-      define("DBF_PASSWORD", "mysql");
-      define("DATABASE_NAME", "iep_portal");
-
-      // Create new connection object, then test connection
-      $conn = new mysqli(SERVER_NAME, DBF_USER_NAME, DBF_PASSWORD);
-      if ($conn->connect_error) {
-          die("Connection failed: " . $conn->connect_error);
-      }
       
-      // Select database
-      $conn->select_db(DATABASE_NAME);
- */   
       // If the 'send' button was activated, send the message
       if(isset($_POST["btnSend"])) {
         sendMessage( );
       }
 
-      /*$otherUserId = array();
-      if(isset($_POST["btnSubmit"])) {
-        echo "user is set<br />";
-        $otherUserId = array($_POST["userToMessage"]);
-        echo "other user id is: " . $otherUserId[0] . "<br />";
-      } */
 
       /** runQuery($sql, $msg, $success) - execute sql query, display message on failure/success
        * $sql - string to execute
@@ -91,7 +69,8 @@
         } else {
            echo "<h4>Error when: " . $msg . " using SQL: " . $sql . " " . $conn->error . "</h4>";
         }   
-     } // end of runQuery( )
+      } // end of runQuery( )
+
       
       /* **  Close database ** */
       function close_db( ) {
@@ -99,13 +78,16 @@
         $conn->close();
       }
 
+
       /* displayMessages( ) - display messages to/from users */
       function displayMessages( ) {
         global $conn;
         global $currentUserId;
         global $currentUserName;
-        global $otherUserId;
+        
+        $otherUserId = array($_POST['user_select']);
         $otherUser = $otherUserId[0];
+        echo "other user id: " . $otherUser . "<br />";
 
         // Locate other user name
         $sql = "SELECT user_name, user_id FROM user WHERE user_id='" . $otherUser . "'";
@@ -160,31 +142,37 @@
         
         $message = array($_POST['txtMessage']);
 
-        // Insert message into SENT message table
-        $sql = "INSERT INTO message (message.user_id, message_text) "
+        // If message is blank, do not send
+        if ($message[0] == "") {
+          echo "message is blank<br />"; /////////////////////////////
+        }
+        else {
+          // Insert message into SENT message table
+          $sql = "INSERT INTO message (message.user_id, message_text) "
           . "VALUES ('" . $currentUserId . "', '"
           . $message[0] . "')";
-        runQuery($sql, "Message sent", true);
+          runQuery($sql, "Message sent", true);
 
-        echo "message is: " . $message[0] . "<br />"; ////////////////
-        echo "current user id is: " . $currentUserId . "<br />"; ////////////////
+          echo "message is: " . $message[0] . "<br />"; ////////////////
+          echo "current user id is: " . $currentUserId . "<br />"; ////////////////
 
-        // Find message id of message just sent
-        $sql = "SELECT message_id, message.user_id, message_text, message_date FROM message WHERE message.user_id='"
+          // Find message id of message just sent
+          $sql = "SELECT message_id, message.user_id, message_text, message_date FROM message WHERE message.user_id='"
           . $currentUserId . "' AND message_text='" . $message[0] . "' ORDER BY message_date DESC";
-        $result = $conn->query($sql);
+          $result = $conn->query($sql);
 
-        if($result->num_rows > 0) {
+          if($result->num_rows > 0) {
 
           // Pull message id
           $firstRow = $result->fetch_assoc( );
           $sentMessage = $firstRow['message_id'];
-  
+
           // Insert message into message_recipient table
           $sql = "INSERT INTO message_recipient (message_id, message_recipient.user_id) "
             . "VALUES ('" . $sentMessage . "', '"
             . $sendToUser . "')";
           runQuery($sql, "Message received by other user ", true);
+          }
         }
       } // end sendMessage( )
 
@@ -256,8 +244,7 @@
             }
           }
         }
-        
-      }
+      } // end selectUserRecipient( )
       
     ?>
 
@@ -291,42 +278,12 @@
         
         <h3>Messages</h3>
 
-        <!-- Form to select user message history to view & to message -->
-        <form name="frmSelectRecipient"
-          action="<?PHP echo htmlentities($_SERVER['PHP_SELF']); ?>"
-          method="POST">
-          <fieldset name="selectRecipient">
-            <legend>Select a user to message</legend>
-            <select name="userToMessage" id="userToMessage">
-            <?php
-              selectMessageRecipient( );
-            ?>
-            </select>
-
-            <!-- Submit button: send message -->
-            <input type="submit" name="btnSubmit" value="Submit">
-
-          </fieldset>
-        </form>
-
         <div class="contentCard" id="messageContent">
           <?php 
-            /*if (isset($_POST['btnSubmit'])) {
-              global $otherUserId;
-
-              echo "other user id: " . $otheruserId[0] . "<br />";
-
-              */
-
-            $otherUserId;
-            if(isset($_POST["btnSubmit"])) {
-              echo "user is set<br />";
-              $otherUserId = array($_POST["userToMessage"]);
-              echo "other user id is: " . $otherUserId[0] . "<br />";
+            // If the 'send' button was activated, display messages relevant to user
+            if(isset($_POST["btnSend"])) {
+              displayMessages( );
             }
-            displayMessages($otherUserId);
-              /*
-            }*/
           ?>
         </div>
 
@@ -339,10 +296,13 @@
             method="POST">
             <fieldset name="sendMessage">
               <legend>Send a message</legend>
-              <!-- Selection List for message recipients -->
-              <?php
-                // userSelectionList($conn);
-              ?>
+              <label for="userSelect">Select recipient:</label>
+              <select name="userSelect" class="userSelect" id="userSelect" size='5' multiple>
+                <!-- Selection List for message recipients -->
+                <?php
+                  userSelectionList($conn);
+                ?>
+              </select>
               <br /><br />
 
               <!-- Text field to type message -->
@@ -353,7 +313,9 @@
               <input type="submit" name="btnSend" value="Send">
 
             </fieldset>
+          </form>
         </div>
+      </div>
     </div>
   </body>
 </html>

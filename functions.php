@@ -545,13 +545,13 @@ function userSelectionList($conn) {
 
     if (isset($accounts) && count($accounts) > 0) {
       // select input for accounts  
-      echo "<label for=\"userSelect\">Select Recipient(s)</label>";
-      echo "<select name=\"userSelect\" class=\"userSelect\" id=\"userSelect\" size=\"5\" multiple>";
+      //echo "<label for=\"userSelect\">Select Recipient(s)</label>";
+      //echo "<select name=\"userSelect\" class=\"userSelect\" id=\"userSelect\" size=\"5\" multiple>";
         // Options for accountSelect
         foreach($accounts as $a => $a_value) {
             echo "<option class=\"accountOption vNavButton\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
         }
-      echo "</select>"; // end of select
+      //echo "</select>"; // end of select
     }
 }
 
