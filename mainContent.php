@@ -227,7 +227,7 @@ include_once realpath("initialization.php");
               // if there are existing Reports, display them with selector
               if (isset($reports) && count($reports) > 0) {
                 // Select Report to display, default to most recent  
-                echo "<label for=\"reportSelect\">Select Report Date</label>";
+                echo "<label for=\"reportSelect" . $objectiveId . "\">Select Report Date</label>";
                 echo "<select name=\"reportSelect\" class=\"reportSelect\" id=\"reportSelect" . $objectiveId . "\" data-objectiveId=\"" . $objectiveId . "\" data-max=\"" . $objectiveAttempts . "\" data-high=\"" . $objectiveTarget . "\" data-low=\"" . $objectiveTarget/2 . "\">";
                   // Options for reportSelect
                   $reportCount = 0;

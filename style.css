@@ -139,6 +139,7 @@ header {
   flex-flow: column wrap;
   grid-area: left;
   padding: 0em;
+  width: 20%;
 
 }
 

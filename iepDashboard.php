@@ -580,7 +580,7 @@ include_once realpath("initialization.php");
         <div id="horizontalNav">
           <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
           <a class="hNavButton" id="userMessagesLink" href="iepMessage.php"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
-          <a class="hNavButton" id="userSettingsLink" href="iepSettings.php"><h3><i class="fa fa-gear"></i> Settings</h3></a>
+          <a class="hNavButton" id="userSettingsLink" href="userSettings.php"><h3><i class="fa fa-gear"></i> Settings</h3></a>
           <a class="hNavButton" id="userLogout" href="iepUserLogout.php"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
 
         </div>
@@ -594,6 +594,7 @@ include_once realpath("initialization.php");
         <?php
         // For Admin User, this section to contain select input with each available user account
         if (strcmp($currentUserType, "admin") === 0) {
+          /*
           echo "<h3><i class=\"fa fa-users\"></i> Available Accounts</h3>";
 
           // function returning Lastname, Firstname and user_id of each user from db
@@ -613,7 +614,8 @@ include_once realpath("initialization.php");
                   echo "<option class=\"accountOption vNavButton\" data-url=\"iepSettings.php\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
               }
             echo "</select>"; // end of select
-          } // end of if accounts set and has values  
+          } // end of if accounts set and has values 
+          */ 
         } else {
           // For other users, this section to contain tab links to available student data
           echo "<h3><i class=\"fa fa-users\"></i> Your Student Accounts</h3>";
@@ -654,7 +656,14 @@ include_once realpath("initialization.php");
       <div class="middle accountContent" id="accountContent" display="block"></div>
 
       <!-- Main content of page -->
-      <div class="middle mainContent tabcontent" id="mainContent"></div>
+      <div class="middle mainContent tabcontent" id="mainContent">
+        <?php
+        // Display list of accounts to edit if user is an Admin
+          if (strcmp($currentUserType, "admin") === 0) {
+            include_once(realpath("adminSettings.php"));
+          }
+        ?>
+      </div>
     
       <footer>
         <!-- Insert footer info here -->

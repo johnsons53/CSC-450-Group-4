@@ -58,13 +58,14 @@
 
       <body>
           <div class="gridContainer">
-          <header>
-        <!-- Insert logo image here -->
+
+
+<!--           <header>
+        
         <h1>IEP Portal</h1>
         <div id="accountHolderInfo">
-          <!-- Username, messages button, and account settings button here -->
           
-          <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
+          <h2><i class="fa fa-user"></i> <?php //echo $currentUserName; ?></h2>
         </div>
         <div id="horizontalNav">
           <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
@@ -74,27 +75,27 @@
 
         </div>
 
-      </header>
+      </header> -->
 
 
               <!-- Table to populate users -->
               <br /><br />
-              <div class="container">
+              <div class="container contentCard">
                   <br />
                   <div class="table-responsive">
                       <br />
                       <div id="users_table">
                           <table class="table table-bordered">
                               <tr>
-                                  <th width="100%">Accounts</th>
-                                  <th width="30%">Update Information</th>
-                                  <th width="30%">Account Information</th>
+                                  <th width="100%"><h3>Accounts</h3></th>
+                                  <th width="30%"><h3>Update </h3></th>
+                                  <th width="30%"><h3>View</h3></th>
                               </tr>
                               <?php
                                 while ($row = mysqli_fetch_array($result)) {
                                 ?>
                                   <tr>
-                                      <td><?php echo $row["user_first_name"] . ' ' . $row["user_last_name"]; ?></td>
+                                      <td><h4><?php echo $row["user_first_name"] . ' ' . $row["user_last_name"]; ?></h4></td>
                                       <td><input type="button" name="edit" value="Update" id="<?php echo $row["user_id"]; ?>" class="btn btn-info btn-xs edit_data" /></td>
                                       <td><input type="button" name="view" value="View" id="<?php echo $row["user_id"]; ?>" class="btn btn-info btn-xs view_data" /></td>
                                   </tr>
