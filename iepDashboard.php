@@ -76,12 +76,14 @@ include_once realpath("initialization.php");
           // if it has display of none, set to block
           if ($("#" + detailDivId).attr("display") == "block") {
             $("#" + detailDivId).attr("display", "none");
+            $("#btn" + detailDivId).html("<i class=\"fa fa-minus\"></i>");
           } else {
             $("#" + detailDivId).attr("display", "block");
+            $("#btn" + detailDivId).html("<i class=\"fa fa-plus\"></i>");
           }
         });
         // Hide the detail views
-        $(".detailViewButton").click();
+        //$(".detailViewButton").click();
 
         // Change Report meter display when different report selected
         $(document).on("change", ".reportSelect", function() {
@@ -96,15 +98,6 @@ include_once realpath("initialization.php");
           });
         });
 
-        // Load Settings page for selected user when selected by admin
-        $(document).on("change", ".accountSelect", function () {
-        
-          // Load url on new page
-          window.location = "iepSettings.php?selectedUserId=" + $(this).find(":selected").val();
-          return false;
-          alert("on.(change, accountSelect) complete");
-                  
-        });
 
         // Open Goal Form on page to modify existing goal with button click
         $(document).on("click", ".modifyGoalFormButton", function() {
@@ -536,35 +529,10 @@ include_once realpath("initialization.php");
 
       }
 
-      // Check for existing activeStudentId
-      try {
-        //echo $_SESSION["activeStudentId"];
-        //echo "<br />";
-      } catch (Exception $e) {
-        echo "Message: " . $e->getMessage();
-      
-      } 
       if (isset($_SESSION["activeStudentId"])) {
         $activeStudentId = $_SESSION["activeStudentId"];
-      } else {
-
-        // Default active student value:
-        //$activeStudent = $students[0];
-        //$activeStudentId = $activeStudent->get_student_id();
-        //$activeStudentName = $activeStudent->get_full_name();
-
-
-        // Save activeStudentId to SESSION
-        //$_SESSION["activeStudentId"] = $activeStudentId;
-      }
-
- 
-
-
-    } else {
-      // User is an admin
-
-    }
+      } 
+    } 
 
   ?>
     <!-- Page is encompassed in grid -->
@@ -670,6 +638,8 @@ include_once realpath("initialization.php");
       </footer>
 
     </div> 
+
+    <?php include_once(realpath("footer.php")); ?>
   </body>
 
 

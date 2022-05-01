@@ -377,7 +377,7 @@ $activeStudentName = $activeStudent->get_full_name();
       
     <header>
       <!-- Insert logo image here -->
-      <h1>IEP Portal</h1>
+      <h1>IEP Portal: Documents</h1>
       <div id="accountHolderInfo">
         <!-- Username, messages button, and account settings button here -->
         <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
