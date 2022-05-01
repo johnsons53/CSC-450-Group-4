@@ -1,4 +1,4 @@
-      <!-- adminSettings.php - IEP Admin Settings
+      <!-- userSettings.php - IEP User Settings
       Spring 100 CSC 450 Capstone, Group 4
       Author: Andy Yang
       Date Written: 03/2/2022 for iepSettings.php
@@ -16,31 +16,32 @@
         include_once realpath("initialization.php");
         global $conn;
 
-        $query = "SELECT * FROM user";
-        $result = mysqli_query($conn, $query);
-
-        // Initialize currentUser as new User of correct type
-        // Pass $currentUserId, $currentUserType, $conn into createUser() function
         // See if currentUserId and type exist in Session
         try {
             $currentUserId = $_SESSION["currentUserId"];
         } catch (Exception $e) {
             echo "Message: " . $e->getMessage();
         }
-    
+
         try {
             $currentUserType = $_SESSION["currentUserType"];
         } catch (Exception $e) {
             echo "Message: " . $e->getMessage();
         }
+
+        // Initialize currentUser as new User of correct type
+        // Pass $currentUserId, $currentUserType, $conn into createUser() function
         try {
             $currentUser = createUser($currentUserId, $currentUserType, $conn);
-    
         } catch (Exception $e) {
             echo "Message: " . $e->getMessage();
         }
-    
-        $currentUserName = $currentUser->get_full_name();
+
+        $currentUserId = $currentUser->get_user_id();
+
+        $query = "SELECT * FROM user WHERE user_id = $currentUserId";
+        $result = mysqli_query($conn, $query);
+
         ?>
 
       <!DOCTYPE html>
@@ -51,30 +52,36 @@
           <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
           <link rel="stylesheet" type="text/css" href="style.css">
           <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
-          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
           <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
       </head>
 
       <body>
           <div class="gridContainer">
-          <header>
-        <!-- Insert logo image here -->
-        <h1>IEP Portal</h1>
-        <div id="accountHolderInfo">
-          <!-- Username, messages button, and account settings button here -->
-          
-          <h2><i class="fa fa-user"></i> <?php echo $currentUserName; ?></h2>
-        </div>
-        <div id="horizontalNav">
-          <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php"><h3><i class="fa fa-fw fa-home"></i> Home</h3></a>
-          <a class="hNavButton" id="userMessagesLink" href="iepMessage.php"><h3><i class="fa fa-fw fa-envelope"></i> Messages</h3></a>
-          <a class="hNavButton" id="userSettingsLink" href="iepSettings.php"><h3><i class="fa fa-gear"></i> Settings</h3></a>
-          <a class="hNavButton" id="userLogout" href="iepUserLogout.php"><h3><i class="fa fa-sign-out"></i> Logout</h3></a>
+              <header>
+                  <!-- Header settings -->
+                  <!-- Insert logo image here -->
+                  <h1>IEP Portal</h1>
+                  <div id="accountHolderInfo">
+                      <!-- Username, messages button, and account settings button here -->
 
-        </div>
-
-      </header>
+                      <!-- Add Logout button here -->
+                  </div>
+                  <div id="horizontalNav">
+                      <a class="hNavButton active" id="userHomeLink" href="iepDashboard.php">
+                          <h3>Home</h3>
+                      </a>
+                      <a class="hNavButton" id="userMessagesLink" href="javascript:void(0)">
+                          <h3>Messages</h3>
+                      </a>
+                      <a class="hNavButton" id="userSettingsLink" href="javascript:void(0)">
+                          <h3>Settings</h3>
+                      </a>
+                      <a class="hNavButton" id="userLogout" href="#">
+                          <h3>Logout</h3>
+                      </a>
+                  </div>
+                  <!-- Insert logo image here -->
+              </header>
 
 
               <!-- Table to populate users -->
@@ -86,7 +93,7 @@
                       <div id="users_table">
                           <table class="table table-bordered">
                               <tr>
-                                  <th width="100%">Accounts</th>
+                                  <th width="100%">Account</th>
                                   <th width="30%">Update Information</th>
                                   <th width="30%">Account Information</th>
                               </tr>
@@ -173,7 +180,7 @@
                       url: "fetch.php",
                       method: "POST",
                       data: {
-                        temp_id: temp_id
+                          temp_id: temp_id
                       },
                       dataType: "json",
                       success: function(data) {
@@ -188,7 +195,7 @@
               });
 
               // Sends updated information to database to update
-              $('#insert').on("click", function(event){ 
+              $('#insert').on("click", function(event) {
                   event.preventDefault();
                   if ($('#email').val() == "") {
                       alert("Email is required");
@@ -198,7 +205,7 @@
                       alert("Phone is required");
                   } else {
                       $.ajax({
-                          url: "adminInsert.php",
+                          url: "userInsert.php",
                           method: "POST",
                           data: $('#insert_form').serialize(),
                           beforeSend: function() {
@@ -222,7 +229,7 @@
                           url: "select.php",
                           method: "POST",
                           data: {
-                            temp_id: temp_id
+                              temp_id: temp_id
                           },
                           success: function(data) {
                               $('#user_detail').html(data);
