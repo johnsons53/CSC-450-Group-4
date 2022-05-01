@@ -84,10 +84,10 @@ include_once realpath("initialization.php");
         // if it has display of none, set to block
         if ($("#" + detailDivId).attr("display") == "block") {
           $("#" + detailDivId).attr("display", "none");
-          $("#btn" + detailDivId).html("<i class=\"fa fa-minus\"></i>");
+          $("#btn" + detailDivId).val("Hide Details");
         } else {
           $("#" + detailDivId).attr("display", "block");
-          $("#btn" + detailDivId).html("<i class=\"fa fa-plus\"></i>");
+          $("#btn" + detailDivId).val("Show Details");
         }
       });
       // Hide the detail views

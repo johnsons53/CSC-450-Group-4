@@ -72,47 +72,56 @@ include_once realpath("initialization.php");
             <!-- Text field for goalLabel-->
             <div class="flex-formContainer">
                 <div class="formElement formLabel">
-                    <label for="goalLabel">Goal Label</label>
+                    <label for="goalLabel<?php echo $studentId; ?>">Goal Label</label>
                 </div>
                 <div class="formElement">
-                    <input type="text" id="goalLabel<?php echo $studentId ?>" name="goalLabel" value="<?php echo $goalLabel; ?>">
+                    <input type="text" id="goalLabel<?php echo $studentId; ?>" name="goalLabel" value="<?php echo $goalLabel; ?>">
                 </div>
             </div>
 
             <!-- Text field for goalCategory-->
             <div class="flex-formContainer">
                 <div class="formElement formLabel">
-                    <label for="goalCategory--">Goal Category</label>
+                    <label for="goalCategory<?php echo $studentId; ?>">Goal Category</label>
                 </div>
                 <div class="formElement">
-                    <input type="text" id="goalCategory<?php echo $studentId ?>" name="goalCategory" value="<?php echo $goalCategory; ?>">
+                    <input type="text" id="goalCategory<?php echo $studentId; ?>" name="goalCategory" value="<?php echo $goalCategory; ?>">
                 </div>
             </div>
 
             <!-- Text field for goalText-->
             <div class="flex-formContainer">
                 <div class="formElement formLabel">
-                    <label for="goalText">Goal Description</label>
+                    <label for="goalText<?php echo $studentId; ?>">Goal Description</label>
                 </div>
                 <div class="formElement">
-                    <textarea id="goalText<?php echo $studentId ?>" name="goalText" rows="6" cols="40"><?php echo $goalText; ?></textarea>
+                    <textarea id="goalText<?php echo $studentId; ?>" name="goalText" rows="6" cols="40"><?php echo $goalText; ?></textarea>
                 </div>
             </div>
 
             <!-- Radio buttons to set goalActive -->
             <div class="flex-formContainer">
-                <div class="formElement formLabel">
+                <!-- <div class="formElement formLabel">
                     <label for="goalActive">Goal Status</label>
-                </div>
-                <div class="formElement">
+                </div> -->
+                <fieldset>
+                    <legend>Goal Status:</legend>
                     <label><input type="radio" name="goalActive" <?php
                                                                     if ($goalActive === "") echo "checked";
                                                                     if (isset($goalActive) && $goalActive == "0") echo "checked";
                                                                     ?> value="0">Active</label>
+                    <label><input type="radio" name="goalActive" <?php if (isset($goalActive) && $goalActive == "1") echo "checked"; ?> value="1">Complete</label>                                                
+
+                </fieldset>
+                <!-- <div class="formElement">
+                    <label><input type="radio" name="goalActive" <?php
+                                                                    //if ($goalActive === "") echo "checked";
+                                                                    //if (isset($goalActive) && $goalActive == "0") echo "checked";
+                                                                    ?> value="0">Active</label>
                 </div>
                 <div class="formElement">
-                    <label><input type="radio" name="goalActive" <?php if (isset($goalActive) && $goalActive == "1") echo "checked"; ?> value="1">Complete</label>
-                </div>
+                    <label><input type="radio" name="goalActive" <?php //if (isset($goalActive) && $goalActive == "1") echo "checked"; ?> value="1">Complete</label>
+                </div> -->
 
             </div>
 
