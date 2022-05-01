@@ -186,7 +186,6 @@
           $result = $conn->query($sql);
 
           if($result->num_rows > 0) {
-            echo "result found flag 33<br />";
 
             // Pull message id
             $firstRow = $result->fetch_assoc( );
