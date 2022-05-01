@@ -548,8 +548,15 @@ function userSelectionList($conn) {
       //echo "<label for=\"userSelect\">Select Recipient(s)</label>";
       //echo "<select name=\"userSelect\" class=\"userSelect\" id=\"userSelect\" size=\"5\" multiple>";
         // Options for accountSelect
+        $counter = 0;
         foreach($accounts as $a => $a_value) {
-            echo "<option class=\"accountOption vNavButton\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
+            if ($counter == 0) {
+                echo "<option class=\"accountOption vNavButton\" selected='selected' value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
+            }
+            else {
+                echo "<option class=\"accountOption vNavButton\" value=\"" . $a . "\"><i class=\"fa fa-user-circle\"></i>" . $a_value . "</option>";
+            }
+            $counter += 1;
         }
       //echo "</select>"; // end of select
     }

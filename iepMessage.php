@@ -85,14 +85,19 @@
         global $currentUserId;
         global $currentUserName;
         
-        $otherUserId = array($_POST['user_select']);
-        $otherUser = $otherUserId[0];
-        echo "other user id: " . $otherUser . "<br />";
+        $otherUser = array($_POST['userSelect']);
+        $otherUserId = $otherUser[0];
+        echo "current user id: " . $currentUserId . "<br />";
+        echo "current user name: " . $currentUserName . "<br />";
+        echo "other user id: " . $otherUserId . "<br />";
 
         // Locate other user name
-        $sql = "SELECT user_name, user_id FROM user WHERE user_id='" . $otherUser . "'";
+        $sql = "SELECT user_name, user_id FROM user WHERE user_id='" . $otherUserId . "'";
         $result = $conn->query($sql);
-        $otherUserName = $result->fetch_assoc( );
+        $otherUser = $result->fetch_assoc( );
+        $otherUserName = $otherUser['user_name'];
+
+        echo "other username is: " . $otherUserName . "<br />"; //////////////
 
         /* Locate active user's user name
         $sql = "SELECT user_name, user_id FROM user WHERE user_id='" . $currentUserId . "'";
@@ -104,21 +109,22 @@
           . "message_recipient.user_id AS 'recipient', message.message_id, message_recipient.message_id, "
           . "message.message_text, message.message_date, message_recipient.message_read " 
           . "FROM message INNER JOIN message_recipient ON message.message_id = message_recipient.message_id "
-          . "WHERE (message.user_id='" . $currentUserId . "' OR message.user_id='" . $otherUser . "') " 
-          . " AND (message_recipient.user_id='" . $currentUserId . "' OR message_recipient.user_id='" . $otherUser . "')"
+          . "WHERE (message.user_id='" . $currentUserId . "' OR message.user_id='" . $otherUserId . "') " 
+          . " AND (message_recipient.user_id='" . $currentUserId . "' OR message_recipient.user_id='" . $otherUserId . "')"
           . " ORDER BY message.message_date ASC";
         $result = $conn->query($sql);
 
         // Display messages as divs
         if ($result->num_rows > 0) {
+          echo "results found<br />";
 
           while($oneMessage = $result->fetch_assoc( )) {
             $messageClass = "otherMessageCard";
-            $sentBy = $otherUserName['user_name'];
+            $sentBy = $otherUserName;
 
             if ($oneMessage['sender'] == $currentUserId) {
               $messageClass = "userMessageCard";
-              $sentBy = $currentUserName['user_name'];
+              $sentBy = $currentUserName;
             }
 
             // Start displaying message
@@ -137,8 +143,9 @@
         global $conn;
         global $currentUserId;
 
-        // Hardcoded users for now
-        $sendToUser = 16;
+        // Find other user id
+        $otherUser = array($_POST['userSelect']);
+        $otherUserId = $otherUser[0];
         
         $message = array($_POST['txtMessage']);
 
@@ -162,23 +169,24 @@
           $result = $conn->query($sql);
 
           if($result->num_rows > 0) {
+            echo "result found flag 33<br />";
 
-          // Pull message id
-          $firstRow = $result->fetch_assoc( );
-          $sentMessage = $firstRow['message_id'];
+            // Pull message id
+            $firstRow = $result->fetch_assoc( );
+            $sentMessage = $firstRow['message_id'];
 
-          // Insert message into message_recipient table
-          $sql = "INSERT INTO message_recipient (message_id, message_recipient.user_id) "
-            . "VALUES ('" . $sentMessage . "', '"
-            . $sendToUser . "')";
-          runQuery($sql, "Message received by other user ", true);
+            // Insert message into message_recipient table
+            $sql = "INSERT INTO message_recipient (message_id, message_recipient.user_id) "
+              . "VALUES ('" . $sentMessage . "', '"
+              . $otherUserId . "')";
+            runQuery($sql, "Message received by other user ", true);
           }
         }
       } // end sendMessage( )
 
 
       /* selectMessageRecipient( ) - display list of all users associated with current user
-       * user can select one to open the message history and send a message */
+       * user can select one to open the message history and send a message *
       function selectMessageRecipient( ) {
         global $conn;
         global $currentUserId;
@@ -213,7 +221,7 @@
           . "INNER JOIN student_parent ON student_parent.user_id = user.user_id "
           . "INNER JOIN student ON student.student_id = student_parent.student_id "
           . "INNER JOIN provider ON provider.provider_id = student.provider_id "
-          . "ORDER BY user.user_id ASC"; */
+          . "ORDER BY user.user_id ASC"; *
           $result = $conn->query($sql);
 
           if ($result->num_rows > 0) {
@@ -244,7 +252,7 @@
             }
           }
         }
-      } // end selectUserRecipient( )
+      } // end selectUserRecipient( ) */
       
     ?>
 
