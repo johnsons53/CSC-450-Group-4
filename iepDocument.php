@@ -88,7 +88,6 @@
 
         //echo "current datetime is: " . $currentDateTime . "<br />";
         
-        // TODO: update file path with path for server
         //$path = "http://localhost/capstoneCurrent/documents/";
         //$path = "http://localhost:8888/CSC-450-GROUP-4/documents/";
         $path = "documents/";
