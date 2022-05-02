@@ -90,7 +90,6 @@
         
         //$path = "http://localhost/capstoneCurrent/documents/";
         //$path = "http://localhost:8888/CSC-450-GROUP-4/documents/";
-        $path = "documents/";
 
         // File file and file extension to be uploaded
         $filePath = "documents/";
