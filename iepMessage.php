@@ -70,10 +70,10 @@
           echo "other user id: " . $otherUserId . "<br />"; */
 
           // Locate other user name
-          $sql = "SELECT user_name, user_id FROM user WHERE user_id='" . $otherUserId . "'";
+          $sql = "SELECT user_id, user_first_name, user_last_name FROM user WHERE user_id='" . $otherUserId . "'";
           $result = $conn->query($sql);
           $otherUser = $result->fetch_assoc( );
-          $otherUserName = $otherUser['user_name'];
+          $otherUserName = $otherUser['user_first_name'] . " " . $otherUser['user_last_name'];
         }
         else {
           // Get other user info from a default option

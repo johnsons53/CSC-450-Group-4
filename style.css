@@ -317,7 +317,7 @@ input[type=button]:hover, input[type=submit]:hover {
   display: flex;
   flex-flow: column nowrap;
   grid-area: middle;
-  max-height: 70%;
+  height: 400px;
   justify-content: end;
   overflow: scroll;
   padding: 0.2em;

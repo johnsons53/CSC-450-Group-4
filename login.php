@@ -11,11 +11,15 @@
 
     /* Replace these values for use on your local host, will update for site hosting. */
     
-    define('DB_HOSTNAME', 'localhost');
-    define('DB_DATABASE', 'iep_portal');
-    define('DB_USERNAME', 'root');
-    define('DB_PASSWORD', 'root');
+    // define('DB_HOSTNAME', 'localhost');
+    // define('DB_DATABASE', 'iep_portal');
+    // define('DB_USERNAME', 'root');
+    // define('DB_PASSWORD', 'root');
       
+    define('DB_HOSTNAME', 'sql303.epizy.com');
+    define('DB_DATABASE', 'epiz_30973512_iep_portal');
+    define('DB_USERNAME', 'epiz_30973512');
+    define('DB_PASSWORD', 'KgHINoFyCQbDEe');
 ?>
 
 
